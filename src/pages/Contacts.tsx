@@ -1,23 +1,13 @@
-import { Search, ArrowLeft, X } from "lucide-react";
+import { Search, ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
+  Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useState } from "react";
 
@@ -36,12 +26,14 @@ interface Contact {
 }
 
 const contacts: Contact[] = [
-  { id: 1, name: "Maria Oliveira", type: "Beneficiário", location: "São Paulo, SP", lastInteraction: "Hoje", tickets: 3, phone: "(11) 99999-0000", email: "maria@email.com", cpf: "123.456.789-00", healthHistory: ["Tratamento ortodôntico - Ago 2024", "Limpeza dental - Mar 2024"], linkedTickets: [{ id: "TKT-001", subject: "Dúvida sobre tratamento", date: "05/04/2025", status: "Aberto" }, { id: "TKT-098", subject: "Consulta finalizada", date: "15/08/2024", status: "Resolvido" }] },
+  { id: 1, name: "Maria Oliveira", type: "Beneficiário", location: "São Paulo, SP", lastInteraction: "Hoje", tickets: 3, phone: "(11) 99999-0000", email: "maria@email.com", cpf: "123.456.789-00", healthHistory: ["Tratamento ortodôntico - Ago 2024", "Limpeza dental - Mar 2024", "Consulta inicial - Jan 2024"], linkedTickets: [{ id: "TKT-001", subject: "Dúvida sobre tratamento", date: "05/04/2025", status: "Aberto" }, { id: "TKT-098", subject: "Consulta finalizada", date: "15/08/2024", status: "Resolvido" }, { id: "TKT-050", subject: "Agendamento limpeza", date: "10/03/2024", status: "Resolvido" }] },
   { id: 2, name: "Instituto Sorria", type: "Parceria", location: "Rio de Janeiro, RJ", lastInteraction: "Ontem", tickets: 5, phone: "(21) 3333-4444", email: "contato@sorria.org", cpf: "12.345.678/0001-00", healthHistory: [], linkedTickets: [{ id: "TKT-002", subject: "Proposta de parceria", date: "05/04/2025", status: "Aberto" }] },
   { id: 3, name: "Pedro Almeida", type: "Doador", location: "Belo Horizonte, MG", lastInteraction: "Há 2 dias", tickets: 2, phone: "(31) 98888-7777", email: "pedro@email.com", cpf: "987.654.321-00", healthHistory: [], linkedTickets: [{ id: "TKT-004", subject: "Urgência odontológica", date: "05/04/2025", status: "Novo" }] },
   { id: 4, name: "Dra. Fernanda Costa", type: "Voluntário", location: "Curitiba, PR", lastInteraction: "Há 1 semana", tickets: 8, phone: "(41) 97777-6666", email: "fernanda@dentist.com", cpf: "456.789.123-00", healthHistory: [], linkedTickets: [] },
   { id: 5, name: "Fundação ABC", type: "Parceria", location: "Salvador, BA", lastInteraction: "Há 3 dias", tickets: 4, phone: "(71) 3222-1111", email: "contato@fundacaoabc.org", cpf: "98.765.432/0001-00", healthHistory: [], linkedTickets: [{ id: "TKT-005", subject: "Doação mensal", date: "05/04/2025", status: "Aberto" }] },
   { id: 6, name: "Lucia Ferreira", type: "Beneficiário", location: "Fortaleza, CE", lastInteraction: "Hoje", tickets: 1, phone: "(85) 96666-5555", email: "lucia@email.com", cpf: "321.654.987-00", healthHistory: ["Extração dental - Jan 2025"], linkedTickets: [{ id: "TKT-006", subject: "Feedback pós-atendimento", date: "05/04/2025", status: "Aberto" }] },
+  { id: 7, name: "Roberto Dias", type: "Beneficiário", location: "Recife, PE", lastInteraction: "Há 5 dias", tickets: 2, phone: "(81) 95555-4444", email: "roberto@email.com", cpf: "654.321.987-00", healthHistory: ["Prótese dentária - Nov 2024"], linkedTickets: [{ id: "TKT-008", subject: "Agendar retorno", date: "05/04/2025", status: "Aguardando" }] },
+  { id: 8, name: "Carla Nunes", type: "Beneficiário", location: "Manaus, AM", lastInteraction: "Hoje", tickets: 1, phone: "(92) 94444-3333", email: "carla@email.com", cpf: "789.123.456-00", healthHistory: [], linkedTickets: [{ id: "TKT-010", subject: "Informação sobre voluntariado", date: "05/04/2025", status: "Novo" }] },
 ];
 
 const typeColors: Record<string, string> = {
@@ -51,7 +43,7 @@ const typeColors: Record<string, string> = {
   Parceria: "bg-info/15 text-info",
 };
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 export default function Contacts() {
   const [search, setSearch] = useState("");
@@ -78,13 +70,12 @@ export default function Contacts() {
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Personal Info */}
           <Card className="lg:col-span-1">
             <CardHeader><CardTitle className="text-base">Informações Pessoais</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                  {selected.name.split(" ").map((n) => n[0]).join("")}
+                  {selected.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                 </div>
                 <div>
                   <p className="font-semibold">{selected.name}</p>
@@ -101,7 +92,6 @@ export default function Contacts() {
             </CardContent>
           </Card>
 
-          {/* Health History & Tickets */}
           <div className="lg:col-span-2 space-y-5">
             {selected.healthHistory.length > 0 && (
               <Card>

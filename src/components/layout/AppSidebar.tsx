@@ -38,6 +38,7 @@ const channels = [
 
 const extra = [
   { title: "Dentistas", url: "/dentists", icon: Stethoscope },
+  { title: "Comunicação Dentistas", url: "/dentist-comms", icon: MessageCircle },
   { title: "Financeiro", url: "/financial", icon: DollarSign },
 ];
 
@@ -84,7 +85,6 @@ export function AppSidebar() {
                 isActive(item.url)
                   ? "bg-sidebar-accent text-sidebar-primary-foreground font-medium"
                   : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
-                item.url === "/archived" && "opacity-60"
               )}
             >
               <item.icon className="w-4 h-4 shrink-0" />

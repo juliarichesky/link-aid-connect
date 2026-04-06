@@ -2,63 +2,73 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, FileText, TrendingUp, TrendingDown, Wallet } from "lucide-react";
+import { Download, FileText, TrendingUp, TrendingDown, Wallet, X, Search, CreditCard, Receipt, Clock } from "lucide-react";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
+  Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 type Period = "weekly" | "monthly" | "yearly";
+
+interface Transaction {
+  id: string;
+  date: string;
+  entity: string;
+  description: string;
+  value: string;
+  type: string;
+  status: string;
+  category: string;
+  dentist: string;
+  paymentMethod: string;
+  receipt: string;
+  history: { date: string; action: string; user: string }[];
+}
 
 const summaryByPeriod: Record<Period, { label: string; value: string; icon: React.ElementType; color: string }[]> = {
   weekly: [
     { label: "Receita", value: "R$ 18.500", icon: TrendingUp, color: "text-success" },
     { label: "Gastos", value: "R$ 7.200", icon: TrendingDown, color: "text-destructive" },
-    { label: "Saldo", value: "R$ 11.300", icon: Wallet, color: "text-primary" },
+    { label: "Saldo Líquido", value: "R$ 11.300", icon: Wallet, color: "text-primary" },
   ],
   monthly: [
     { label: "Receita", value: "R$ 78.500", icon: TrendingUp, color: "text-success" },
     { label: "Gastos", value: "R$ 32.700", icon: TrendingDown, color: "text-destructive" },
-    { label: "Saldo", value: "R$ 45.800", icon: Wallet, color: "text-primary" },
+    { label: "Saldo Líquido", value: "R$ 45.800", icon: Wallet, color: "text-primary" },
   ],
   yearly: [
     { label: "Receita", value: "R$ 942.000", icon: TrendingUp, color: "text-success" },
     { label: "Gastos", value: "R$ 392.400", icon: TrendingDown, color: "text-destructive" },
-    { label: "Saldo", value: "R$ 549.600", icon: Wallet, color: "text-primary" },
+    { label: "Saldo Líquido", value: "R$ 549.600", icon: Wallet, color: "text-primary" },
   ],
 };
 
-const transactions = [
-  { date: "05/04/2025", entity: "Pedro Almeida", description: "Doação mensal", value: "R$ 2.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-" },
-  { date: "04/04/2025", entity: "Fornecedor Dental", description: "Materiais odontológicos", value: "R$ 1.500", type: "Despesa", status: "Pago", category: "Material", dentist: "Dra. Fernanda Costa" },
-  { date: "03/04/2025", entity: "Fundação ABC", description: "Patrocínio evento", value: "R$ 10.000", type: "Receita", status: "Pendente", category: "Patrocínio", dentist: "-" },
-  { date: "02/04/2025", entity: "Aluguel sala", description: "Aluguel mensal clínica", value: "R$ 3.200", type: "Despesa", status: "Pago", category: "Infraestrutura", dentist: "-" },
-  { date: "01/04/2025", entity: "Maria Oliveira", description: "Doação eventual", value: "R$ 500", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-" },
-  { date: "30/03/2025", entity: "Lab Próteses", description: "Próteses dentárias", value: "R$ 4.800", type: "Despesa", status: "Pendente", category: "Material", dentist: "Dr. Marcos Lima" },
+const transactions: Transaction[] = [
+  { id: "FIN-001", date: "05/04/2025", entity: "Pedro Almeida", description: "Doação mensal", value: "R$ 2.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-001", history: [{ date: "05/04/2025 09:00", action: "Transação criada", user: "Sistema" }, { date: "05/04/2025 09:15", action: "Pagamento confirmado", user: "Ana Costa" }] },
+  { id: "FIN-002", date: "04/04/2025", entity: "Fornecedor Dental", description: "Materiais odontológicos", value: "R$ 1.500", type: "Despesa", status: "Pago", category: "Material", dentist: "Dra. Fernanda Costa", paymentMethod: "Boleto", receipt: "NF-2025-002", history: [{ date: "04/04/2025 10:00", action: "Transação criada", user: "Paula Rocha" }, { date: "04/04/2025 14:00", action: "Pagamento efetuado", user: "Ana Costa" }] },
+  { id: "FIN-003", date: "03/04/2025", entity: "Fundação ABC", description: "Patrocínio evento", value: "R$ 10.000", type: "Receita", status: "Pendente", category: "Patrocínio", dentist: "-", paymentMethod: "Transferência", receipt: "-", history: [{ date: "03/04/2025 08:00", action: "Transação criada", user: "Sistema" }] },
+  { id: "FIN-004", date: "02/04/2025", entity: "Aluguel sala", description: "Aluguel mensal clínica", value: "R$ 3.200", type: "Despesa", status: "Pago", category: "Infraestrutura", dentist: "-", paymentMethod: "Débito Automático", receipt: "NF-2025-004", history: [{ date: "02/04/2025 07:00", action: "Débito automático", user: "Sistema" }] },
+  { id: "FIN-005", date: "01/04/2025", entity: "Maria Oliveira", description: "Doação eventual", value: "R$ 500", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-005", history: [{ date: "01/04/2025 16:00", action: "Transação criada", user: "Sistema" }, { date: "01/04/2025 16:05", action: "Confirmação automática", user: "Sistema" }] },
+  { id: "FIN-006", date: "30/03/2025", entity: "Lab Próteses", description: "Próteses dentárias", value: "R$ 4.800", type: "Despesa", status: "Pendente", category: "Material", dentist: "Dr. Marcos Lima", paymentMethod: "Boleto", receipt: "-", history: [{ date: "30/03/2025 11:00", action: "Transação criada", user: "Paula Rocha" }] },
+  { id: "FIN-007", date: "28/03/2025", entity: "Empresa XYZ", description: "Doação corporativa", value: "R$ 15.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Transferência", receipt: "NF-2025-007", history: [{ date: "28/03/2025 09:00", action: "Transação criada", user: "Sistema" }] },
+  { id: "FIN-008", date: "25/03/2025", entity: "Seguradora Dental", description: "Seguro equipamentos", value: "R$ 800", type: "Despesa", status: "Pago", category: "Seguro", dentist: "-", paymentMethod: "Boleto", receipt: "NF-2025-008", history: [{ date: "25/03/2025 10:00", action: "Pagamento efetuado", user: "Ana Costa" }] },
+  { id: "FIN-009", date: "22/03/2025", entity: "João Santos", description: "Doação mensal", value: "R$ 1.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-009", history: [] },
+  { id: "FIN-010", date: "20/03/2025", entity: "Fornecedor Insumos", description: "Luvas e materiais", value: "R$ 2.300", type: "Despesa", status: "Pago", category: "Material", dentist: "Dra. Ana Ribeiro", paymentMethod: "Cartão", receipt: "NF-2025-010", history: [] },
+  { id: "FIN-011", date: "18/03/2025", entity: "Prefeitura Municipal", description: "Subvenção social", value: "R$ 25.000", type: "Receita", status: "Confirmado", category: "Subvenção", dentist: "-", paymentMethod: "Transferência", receipt: "NF-2025-011", history: [] },
+  { id: "FIN-012", date: "15/03/2025", entity: "Manutenção Predial", description: "Reparos elétricos", value: "R$ 1.200", type: "Despesa", status: "Pago", category: "Infraestrutura", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-012", history: [] },
 ];
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 export default function Financial() {
   const [period, setPeriod] = useState<Period>("monthly");
@@ -67,6 +77,7 @@ export default function Financial() {
   const [dentistFilter, setDentistFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
 
   const summary = summaryByPeriod[period];
   const categories = [...new Set(transactions.map((t) => t.category))];
@@ -85,12 +96,12 @@ export default function Financial() {
 
   return (
     <div className="p-6 space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-display font-bold">Financeiro</h1>
-          <p className="text-sm text-muted-foreground">Gestão de recursos</p>
+          <p className="text-sm text-muted-foreground">Gestão de recursos e declaração</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Select value={period} onValueChange={(v) => setPeriod(v as Period)}>
             <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -118,7 +129,6 @@ export default function Financial() {
         ))}
       </div>
 
-      {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -149,42 +159,37 @@ export default function Financial() {
         </Select>
       </div>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Transações</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Data</TableHead>
-                <TableHead>Doador/Fornecedor</TableHead>
-                <TableHead>Descrição</TableHead>
-                <TableHead>Categoria</TableHead>
-                <TableHead>Valor</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Status</TableHead>
+      <div className="border border-border rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead>Data</TableHead>
+              <TableHead>Doador/Fornecedor</TableHead>
+              <TableHead>Descrição</TableHead>
+              <TableHead>Categoria</TableHead>
+              <TableHead>Valor</TableHead>
+              <TableHead>Tipo</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginated.map((t) => (
+              <TableRow key={t.id} className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setSelectedTx(t)}>
+                <TableCell className="text-sm">{t.date}</TableCell>
+                <TableCell className="font-medium text-sm">{t.entity}</TableCell>
+                <TableCell className="text-sm">{t.description}</TableCell>
+                <TableCell><Badge variant="outline" className="text-xs">{t.category}</Badge></TableCell>
+                <TableCell className={`font-medium text-sm ${t.type === "Receita" ? "text-success" : "text-destructive"}`}>{t.type === "Despesa" ? `- ${t.value}` : t.value}</TableCell>
+                <TableCell><Badge variant={t.type === "Receita" ? "default" : "secondary"}>{t.type}</Badge></TableCell>
+                <TableCell><Badge variant="outline" className={`text-xs ${t.status === "Pendente" ? "border-warning text-warning" : ""}`}>{t.status}</Badge></TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginated.map((t, i) => (
-                <TableRow key={i}>
-                  <TableCell className="text-sm">{t.date}</TableCell>
-                  <TableCell className="font-medium text-sm">{t.entity}</TableCell>
-                  <TableCell className="text-sm">{t.description}</TableCell>
-                  <TableCell><Badge variant="outline" className="text-xs">{t.category}</Badge></TableCell>
-                  <TableCell className="font-medium text-sm">{t.value}</TableCell>
-                  <TableCell><Badge variant={t.type === "Receita" ? "default" : "secondary"}>{t.type}</Badge></TableCell>
-                  <TableCell className="text-sm">{t.status}</TableCell>
-                </TableRow>
-              ))}
-              {paginated.length === 0 && (
-                <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Nenhuma transação encontrada</TableCell></TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+            ))}
+            {paginated.length === 0 && (
+              <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Nenhuma transação encontrada</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
       {totalPages > 1 && (
         <Pagination>
@@ -197,6 +202,55 @@ export default function Financial() {
           </PaginationContent>
         </Pagination>
       )}
+
+      {/* Transaction Detail Modal */}
+      <Dialog open={!!selectedTx} onOpenChange={(open) => !open && setSelectedTx(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Receipt className="w-5 h-5 text-primary" />
+              Detalhe da Transação
+            </DialogTitle>
+          </DialogHeader>
+          {selectedTx && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div><p className="text-xs text-muted-foreground">ID</p><p className="font-mono font-medium">{selectedTx.id}</p></div>
+                <div><p className="text-xs text-muted-foreground">Data</p><p className="font-medium">{selectedTx.date}</p></div>
+                <div><p className="text-xs text-muted-foreground">Entidade</p><p className="font-medium">{selectedTx.entity}</p></div>
+                <div><p className="text-xs text-muted-foreground">Categoria</p><Badge variant="outline">{selectedTx.category}</Badge></div>
+                <div><p className="text-xs text-muted-foreground">Valor</p><p className={`font-bold text-lg ${selectedTx.type === "Receita" ? "text-success" : "text-destructive"}`}>{selectedTx.value}</p></div>
+                <div><p className="text-xs text-muted-foreground">Tipo</p><Badge variant={selectedTx.type === "Receita" ? "default" : "secondary"}>{selectedTx.type}</Badge></div>
+                <div><p className="text-xs text-muted-foreground">Status</p><Badge variant="outline">{selectedTx.status}</Badge></div>
+                <div className="flex items-start gap-1.5"><div><p className="text-xs text-muted-foreground">Método de Pagamento</p><p className="font-medium flex items-center gap-1"><CreditCard className="w-3 h-3" /> {selectedTx.paymentMethod}</p></div></div>
+                <div><p className="text-xs text-muted-foreground">Comprovante / NF</p><p className="font-medium">{selectedTx.receipt}</p></div>
+                <div><p className="text-xs text-muted-foreground">Dentista Vinculado</p><p className="font-medium">{selectedTx.dentist}</p></div>
+              </div>
+
+              <Separator />
+
+              <div>
+                <p className="text-sm font-medium flex items-center gap-1.5 mb-3"><Clock className="w-4 h-4 text-muted-foreground" /> Histórico de Alterações</p>
+                {selectedTx.history.length > 0 ? (
+                  <div className="space-y-2">
+                    {selectedTx.history.map((h, i) => (
+                      <div key={i} className="flex items-start gap-3 text-sm">
+                        <div className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />
+                        <div>
+                          <p className="font-medium">{h.action}</p>
+                          <p className="text-xs text-muted-foreground">{h.date} · {h.user}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Sem alterações registradas</p>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

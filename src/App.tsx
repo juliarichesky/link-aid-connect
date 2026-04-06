@@ -16,6 +16,7 @@ import Settings from "./pages/Settings";
 import Dentists from "./pages/Dentists";
 import Financial from "./pages/Financial";
 import History from "./pages/History";
+import DentistComms from "./pages/DentistComms";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="/settings" element={<Settings />} />
               <Route path="/dentists" element={<Dentists />} />
               <Route path="/financial" element={<Financial />} />
+              <Route path="/dentist-comms" element={<DentistComms />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLayout>
