@@ -1,4 +1,4 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Inbox,
@@ -14,6 +14,7 @@ import {
   DollarSign,
   ChevronLeft,
   ChevronRight,
+  History,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -22,16 +23,17 @@ const mainMenu = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Tickets", url: "/tickets", icon: Inbox },
   { title: "Arquivados", url: "/archived", icon: Archive },
+  { title: "Histórico", url: "/history", icon: History },
   { title: "Contatos", url: "/contacts", icon: Users },
   { title: "Relatórios", url: "/reports", icon: BarChart3 },
   { title: "Configurações", url: "/settings", icon: Settings },
 ];
 
 const channels = [
-  { title: "WhatsApp", icon: MessageCircle, count: 12 },
-  { title: "Instagram", icon: Instagram, count: 5 },
-  { title: "E-mail", icon: Mail, count: 8 },
-  { title: "Outros", icon: MoreHorizontal, count: 2 },
+  { title: "WhatsApp", icon: MessageCircle, count: 12, filter: "WhatsApp" },
+  { title: "Instagram", icon: Instagram, count: 5, filter: "Instagram" },
+  { title: "E-mail", icon: Mail, count: 8, filter: "E-mail" },
+  { title: "Outros", icon: MoreHorizontal, count: 2, filter: "Outro" },
 ];
 
 const extra = [
@@ -41,6 +43,7 @@ const extra = [
 
 export function AppSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
@@ -100,7 +103,13 @@ export function AppSidebar() {
           {channels.map((ch) => (
             <button
               key={ch.title}
-              className="flex items-center gap-3 px-3 py-2 rounded-md text-sm w-full text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors"
+              onClick={() => navigate(`/tickets?channel=${encodeURIComponent(ch.filter)}`)}
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-md text-sm w-full text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors",
+                location.pathname === "/tickets" && new URLSearchParams(location.search).get("channel") === ch.filter
+                  ? "bg-sidebar-accent text-sidebar-primary-foreground font-medium"
+                  : ""
+              )}
             >
               <ch.icon className="w-4 h-4 shrink-0" />
               {!collapsed && (

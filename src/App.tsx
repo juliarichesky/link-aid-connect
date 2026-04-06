@@ -15,6 +15,7 @@ import Archived from "./pages/Archived";
 import Settings from "./pages/Settings";
 import Dentists from "./pages/Dentists";
 import Financial from "./pages/Financial";
+import History from "./pages/History";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/archived" element={<Archived />} />
+              <Route path="/history" element={<History />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/dentists" element={<Dentists />} />
               <Route path="/financial" element={<Financial />} />
