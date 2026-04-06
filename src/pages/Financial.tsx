@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, FileText, TrendingUp, TrendingDown, Wallet, X, Search, CreditCard, Receipt, Clock } from "lucide-react";
+import { Download, FileText, TrendingUp, TrendingDown, Wallet, Search, CreditCard, Receipt, Clock, Plus } from "lucide-react";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -17,6 +17,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 type Period = "weekly" | "monthly" | "yearly";
 
@@ -32,6 +35,7 @@ interface Transaction {
   dentist: string;
   paymentMethod: string;
   receipt: string;
+  responsible: string;
   history: { date: string; action: string; user: string }[];
 }
 
@@ -53,22 +57,23 @@ const summaryByPeriod: Record<Period, { label: string; value: string; icon: Reac
   ],
 };
 
-const transactions: Transaction[] = [
-  { id: "FIN-001", date: "05/04/2025", entity: "Pedro Almeida", description: "Doação mensal", value: "R$ 2.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-001", history: [{ date: "05/04/2025 09:00", action: "Transação criada", user: "Sistema" }, { date: "05/04/2025 09:15", action: "Pagamento confirmado", user: "Ana Costa" }] },
-  { id: "FIN-002", date: "04/04/2025", entity: "Fornecedor Dental", description: "Materiais odontológicos", value: "R$ 1.500", type: "Despesa", status: "Pago", category: "Material", dentist: "Dra. Fernanda Costa", paymentMethod: "Boleto", receipt: "NF-2025-002", history: [{ date: "04/04/2025 10:00", action: "Transação criada", user: "Paula Rocha" }, { date: "04/04/2025 14:00", action: "Pagamento efetuado", user: "Ana Costa" }] },
-  { id: "FIN-003", date: "03/04/2025", entity: "Fundação ABC", description: "Patrocínio evento", value: "R$ 10.000", type: "Receita", status: "Pendente", category: "Patrocínio", dentist: "-", paymentMethod: "Transferência", receipt: "-", history: [{ date: "03/04/2025 08:00", action: "Transação criada", user: "Sistema" }] },
-  { id: "FIN-004", date: "02/04/2025", entity: "Aluguel sala", description: "Aluguel mensal clínica", value: "R$ 3.200", type: "Despesa", status: "Pago", category: "Infraestrutura", dentist: "-", paymentMethod: "Débito Automático", receipt: "NF-2025-004", history: [{ date: "02/04/2025 07:00", action: "Débito automático", user: "Sistema" }] },
-  { id: "FIN-005", date: "01/04/2025", entity: "Maria Oliveira", description: "Doação eventual", value: "R$ 500", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-005", history: [{ date: "01/04/2025 16:00", action: "Transação criada", user: "Sistema" }, { date: "01/04/2025 16:05", action: "Confirmação automática", user: "Sistema" }] },
-  { id: "FIN-006", date: "30/03/2025", entity: "Lab Próteses", description: "Próteses dentárias", value: "R$ 4.800", type: "Despesa", status: "Pendente", category: "Material", dentist: "Dr. Marcos Lima", paymentMethod: "Boleto", receipt: "-", history: [{ date: "30/03/2025 11:00", action: "Transação criada", user: "Paula Rocha" }] },
-  { id: "FIN-007", date: "28/03/2025", entity: "Empresa XYZ", description: "Doação corporativa", value: "R$ 15.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Transferência", receipt: "NF-2025-007", history: [{ date: "28/03/2025 09:00", action: "Transação criada", user: "Sistema" }] },
-  { id: "FIN-008", date: "25/03/2025", entity: "Seguradora Dental", description: "Seguro equipamentos", value: "R$ 800", type: "Despesa", status: "Pago", category: "Seguro", dentist: "-", paymentMethod: "Boleto", receipt: "NF-2025-008", history: [{ date: "25/03/2025 10:00", action: "Pagamento efetuado", user: "Ana Costa" }] },
-  { id: "FIN-009", date: "22/03/2025", entity: "João Santos", description: "Doação mensal", value: "R$ 1.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-009", history: [] },
-  { id: "FIN-010", date: "20/03/2025", entity: "Fornecedor Insumos", description: "Luvas e materiais", value: "R$ 2.300", type: "Despesa", status: "Pago", category: "Material", dentist: "Dra. Ana Ribeiro", paymentMethod: "Cartão", receipt: "NF-2025-010", history: [] },
-  { id: "FIN-011", date: "18/03/2025", entity: "Prefeitura Municipal", description: "Subvenção social", value: "R$ 25.000", type: "Receita", status: "Confirmado", category: "Subvenção", dentist: "-", paymentMethod: "Transferência", receipt: "NF-2025-011", history: [] },
-  { id: "FIN-012", date: "15/03/2025", entity: "Manutenção Predial", description: "Reparos elétricos", value: "R$ 1.200", type: "Despesa", status: "Pago", category: "Infraestrutura", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-012", history: [] },
+const initialTransactions: Transaction[] = [
+  { id: "FIN-001", date: "05/04/2025", entity: "Pedro Almeida", description: "Doação mensal", value: "R$ 2.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-001", responsible: "Ana Costa", history: [{ date: "05/04/2025 09:00", action: "Transação criada", user: "Sistema" }, { date: "05/04/2025 09:15", action: "Pagamento confirmado", user: "Ana Costa" }] },
+  { id: "FIN-002", date: "04/04/2025", entity: "Fornecedor Dental", description: "Materiais odontológicos", value: "R$ 1.500", type: "Despesa", status: "Pago", category: "Material", dentist: "Dra. Fernanda Costa", paymentMethod: "Boleto", receipt: "NF-2025-002", responsible: "Paula Rocha", history: [{ date: "04/04/2025 10:00", action: "Transação criada", user: "Paula Rocha" }, { date: "04/04/2025 14:00", action: "Pagamento efetuado", user: "Ana Costa" }] },
+  { id: "FIN-003", date: "03/04/2025", entity: "Fundação ABC", description: "Patrocínio evento", value: "R$ 10.000", type: "Receita", status: "Pendente", category: "Patrocínio", dentist: "-", paymentMethod: "Transferência", receipt: "-", responsible: "Ana Costa", history: [{ date: "03/04/2025 08:00", action: "Transação criada", user: "Sistema" }] },
+  { id: "FIN-004", date: "02/04/2025", entity: "Aluguel sala", description: "Aluguel mensal clínica", value: "R$ 3.200", type: "Despesa", status: "Pago", category: "Infraestrutura", dentist: "-", paymentMethod: "Débito Automático", receipt: "NF-2025-004", responsible: "Sistema", history: [{ date: "02/04/2025 07:00", action: "Débito automático", user: "Sistema" }] },
+  { id: "FIN-005", date: "01/04/2025", entity: "Maria Oliveira", description: "Doação eventual", value: "R$ 500", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-005", responsible: "Sistema", history: [{ date: "01/04/2025 16:00", action: "Transação criada", user: "Sistema" }, { date: "01/04/2025 16:05", action: "Confirmação automática", user: "Sistema" }] },
+  { id: "FIN-006", date: "30/03/2025", entity: "Lab Próteses", description: "Próteses dentárias", value: "R$ 4.800", type: "Despesa", status: "Pendente", category: "Material", dentist: "Dr. Marcos Lima", paymentMethod: "Boleto", receipt: "-", responsible: "Paula Rocha", history: [{ date: "30/03/2025 11:00", action: "Transação criada", user: "Paula Rocha" }] },
+  { id: "FIN-007", date: "28/03/2025", entity: "Empresa XYZ", description: "Doação corporativa", value: "R$ 15.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Transferência", receipt: "NF-2025-007", responsible: "Ana Costa", history: [{ date: "28/03/2025 09:00", action: "Transação criada", user: "Sistema" }] },
+  { id: "FIN-008", date: "25/03/2025", entity: "Seguradora Dental", description: "Seguro equipamentos", value: "R$ 800", type: "Despesa", status: "Pago", category: "Seguro", dentist: "-", paymentMethod: "Boleto", receipt: "NF-2025-008", responsible: "Ana Costa", history: [{ date: "25/03/2025 10:00", action: "Pagamento efetuado", user: "Ana Costa" }] },
+  { id: "FIN-009", date: "22/03/2025", entity: "João Santos", description: "Doação mensal", value: "R$ 1.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-009", responsible: "Sistema", history: [] },
+  { id: "FIN-010", date: "20/03/2025", entity: "Fornecedor Insumos", description: "Luvas e materiais", value: "R$ 2.300", type: "Despesa", status: "Pago", category: "Material", dentist: "Dra. Ana Ribeiro", paymentMethod: "Cartão", receipt: "NF-2025-010", responsible: "Paula Rocha", history: [] },
+  { id: "FIN-011", date: "18/03/2025", entity: "Prefeitura Municipal", description: "Subvenção social", value: "R$ 25.000", type: "Receita", status: "Confirmado", category: "Subvenção", dentist: "-", paymentMethod: "Transferência", receipt: "NF-2025-011", responsible: "Ana Costa", history: [] },
+  { id: "FIN-012", date: "15/03/2025", entity: "Manutenção Predial", description: "Reparos elétricos", value: "R$ 1.200", type: "Despesa", status: "Pago", category: "Infraestrutura", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-012", responsible: "Sistema", history: [] },
 ];
 
 const ITEMS_PER_PAGE = 10;
+const categoryOptions = ["Doação", "Material", "Patrocínio", "Infraestrutura", "Seguro", "Subvenção", "Aluguel", "Equipamento"];
 
 export default function Financial() {
   const [period, setPeriod] = useState<Period>("monthly");
@@ -78,6 +83,18 @@ export default function Financial() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const [showNewTx, setShowNewTx] = useState(false);
+
+  // New transaction form
+  const [newType, setNewType] = useState("Receita");
+  const [newValue, setNewValue] = useState("");
+  const [newDate, setNewDate] = useState("");
+  const [newCategory, setNewCategory] = useState("");
+  const [newEntity, setNewEntity] = useState("");
+  const [newDescription, setNewDescription] = useState("");
+  const [newResponsible, setNewResponsible] = useState("");
+  const [newPaymentMethod, setNewPaymentMethod] = useState("");
 
   const summary = summaryByPeriod[period];
   const categories = [...new Set(transactions.map((t) => t.category))];
@@ -94,6 +111,32 @@ export default function Financial() {
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
+  const handleCreateTx = () => {
+    if (!newValue || !newEntity || !newCategory) {
+      toast.error("Preencha os campos obrigatórios: Entidade, Valor e Categoria");
+      return;
+    }
+    const newTx: Transaction = {
+      id: `FIN-${String(transactions.length + 1).padStart(3, "0")}`,
+      date: newDate || new Date().toLocaleDateString("pt-BR"),
+      entity: newEntity,
+      description: newDescription,
+      value: newValue.startsWith("R$") ? newValue : `R$ ${newValue}`,
+      type: newType === "Receita" ? "Receita" : "Despesa",
+      status: "Pendente",
+      category: newCategory,
+      dentist: "-",
+      paymentMethod: newPaymentMethod || "Pix",
+      receipt: "-",
+      responsible: newResponsible || "Sistema",
+      history: [{ date: `${newDate || new Date().toLocaleDateString("pt-BR")} ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`, action: "Transação criada", user: newResponsible || "Sistema" }],
+    };
+    setTransactions((prev) => [newTx, ...prev]);
+    setShowNewTx(false);
+    setNewType("Receita"); setNewValue(""); setNewDate(""); setNewCategory(""); setNewEntity(""); setNewDescription(""); setNewResponsible(""); setNewPaymentMethod("");
+    toast.success("Transação registrada com sucesso");
+  };
+
   return (
     <div className="p-6 space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -102,6 +145,9 @@ export default function Financial() {
           <p className="text-sm text-muted-foreground">Gestão de recursos e declaração</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button onClick={() => setShowNewTx(true)}>
+            <Plus className="w-4 h-4 mr-2" /> Nova Transação
+          </Button>
           <Select value={period} onValueChange={(v) => setPeriod(v as Period)}>
             <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -208,8 +254,7 @@ export default function Financial() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Receipt className="w-5 h-5 text-primary" />
-              Detalhe da Transação
+              <Receipt className="w-5 h-5 text-primary" /> Detalhe da Transação
             </DialogTitle>
           </DialogHeader>
           {selectedTx && (
@@ -222,13 +267,12 @@ export default function Financial() {
                 <div><p className="text-xs text-muted-foreground">Valor</p><p className={`font-bold text-lg ${selectedTx.type === "Receita" ? "text-success" : "text-destructive"}`}>{selectedTx.value}</p></div>
                 <div><p className="text-xs text-muted-foreground">Tipo</p><Badge variant={selectedTx.type === "Receita" ? "default" : "secondary"}>{selectedTx.type}</Badge></div>
                 <div><p className="text-xs text-muted-foreground">Status</p><Badge variant="outline">{selectedTx.status}</Badge></div>
-                <div className="flex items-start gap-1.5"><div><p className="text-xs text-muted-foreground">Método de Pagamento</p><p className="font-medium flex items-center gap-1"><CreditCard className="w-3 h-3" /> {selectedTx.paymentMethod}</p></div></div>
+                <div><p className="text-xs text-muted-foreground">Método</p><p className="font-medium flex items-center gap-1"><CreditCard className="w-3 h-3" /> {selectedTx.paymentMethod}</p></div>
                 <div><p className="text-xs text-muted-foreground">Comprovante / NF</p><p className="font-medium">{selectedTx.receipt}</p></div>
+                <div><p className="text-xs text-muted-foreground">Responsável</p><p className="font-medium">{selectedTx.responsible}</p></div>
                 <div><p className="text-xs text-muted-foreground">Dentista Vinculado</p><p className="font-medium">{selectedTx.dentist}</p></div>
               </div>
-
               <Separator />
-
               <div>
                 <p className="text-sm font-medium flex items-center gap-1.5 mb-3"><Clock className="w-4 h-4 text-muted-foreground" /> Histórico de Alterações</p>
                 {selectedTx.history.length > 0 ? (
@@ -236,10 +280,7 @@ export default function Financial() {
                     {selectedTx.history.map((h, i) => (
                       <div key={i} className="flex items-start gap-3 text-sm">
                         <div className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />
-                        <div>
-                          <p className="font-medium">{h.action}</p>
-                          <p className="text-xs text-muted-foreground">{h.date} · {h.user}</p>
-                        </div>
+                        <div><p className="font-medium">{h.action}</p><p className="text-xs text-muted-foreground">{h.date} · {h.user}</p></div>
                       </div>
                     ))}
                   </div>
@@ -249,6 +290,87 @@ export default function Financial() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* New Transaction Dialog */}
+      <Dialog open={showNewTx} onOpenChange={setShowNewTx}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="w-5 h-5 text-primary" /> Nova Transação
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs">Tipo *</Label>
+                <Select value={newType} onValueChange={setNewType}>
+                  <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Receita">Entrada / Doação</SelectItem>
+                    <SelectItem value="Despesa">Saída / Gasto</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-xs">Valor (R$) *</Label>
+                <Input className="h-9" placeholder="Ex: 2.500" value={newValue} onChange={(e) => setNewValue(e.target.value)} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs">Data</Label>
+                <Input className="h-9" type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
+              </div>
+              <div>
+                <Label className="text-xs">Categoria *</Label>
+                <Select value={newCategory} onValueChange={setNewCategory}>
+                  <SelectTrigger className="h-9"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>
+                    {categoryOptions.map((c) => (<SelectItem key={c} value={c}>{c}</SelectItem>))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div>
+              <Label className="text-xs">Doador / Fornecedor *</Label>
+              <Input className="h-9" placeholder="Nome da entidade" value={newEntity} onChange={(e) => setNewEntity(e.target.value)} />
+            </div>
+            <div>
+              <Label className="text-xs">Descrição detalhada</Label>
+              <Textarea placeholder="Descreva a transação..." value={newDescription} onChange={(e) => setNewDescription(e.target.value)} rows={2} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs">Responsável</Label>
+                <Select value={newResponsible} onValueChange={setNewResponsible}>
+                  <SelectTrigger className="h-9"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Ana Costa">Ana Costa</SelectItem>
+                    <SelectItem value="Paula Rocha">Paula Rocha</SelectItem>
+                    <SelectItem value="Carlos Silva">Carlos Silva</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-xs">Método de Pagamento</Label>
+                <Select value={newPaymentMethod} onValueChange={setNewPaymentMethod}>
+                  <SelectTrigger className="h-9"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Pix">Pix</SelectItem>
+                    <SelectItem value="Boleto">Boleto</SelectItem>
+                    <SelectItem value="Transferência">Transferência</SelectItem>
+                    <SelectItem value="Cartão">Cartão</SelectItem>
+                    <SelectItem value="Débito Automático">Débito Automático</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <Button className="w-full" onClick={handleCreateTx}>
+              Registrar Transação
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

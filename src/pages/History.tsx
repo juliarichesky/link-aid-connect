@@ -198,6 +198,7 @@ export default function History() {
             <SelectItem value="WhatsApp">WhatsApp</SelectItem>
             <SelectItem value="Instagram">Instagram</SelectItem>
             <SelectItem value="E-mail">E-mail</SelectItem>
+            <SelectItem value="Outro">Outros</SelectItem>
           </SelectContent>
         </Select>
         <Select value={dentistFilter} onValueChange={(v) => { setDentistFilter(v); setPage(1); }}>

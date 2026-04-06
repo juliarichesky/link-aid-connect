@@ -2,7 +2,6 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Inbox,
-  Archive,
   Users,
   BarChart3,
   Settings,
@@ -22,7 +21,6 @@ import { useState } from "react";
 const mainMenu = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Tickets", url: "/tickets", icon: Inbox },
-  { title: "Arquivados", url: "/archived", icon: Archive },
   { title: "Histórico", url: "/history", icon: History },
   { title: "Contatos", url: "/contacts", icon: Users },
   { title: "Relatórios", url: "/reports", icon: BarChart3 },
