@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTickets, type Priority } from "@/contexts/TicketsContext";
 
 const channelIcon: Record<string, React.ElementType> = {
   WhatsApp: MessageCircle,
@@ -22,8 +23,6 @@ const channelIcon: Record<string, React.ElementType> = {
   Outro: MoreHorizontal,
 };
 
-type Priority = "Crítica" | "Alta" | "Média" | "Baixa";
-
 const priorityClasses: Record<Priority, string> = {
   Crítica: "bg-status-critical text-status-critical-foreground",
   Alta: "bg-status-high text-status-high-foreground",
@@ -31,36 +30,10 @@ const priorityClasses: Record<Priority, string> = {
   Baixa: "bg-status-low text-status-low-foreground",
 };
 
-interface Ticket {
-  id: string;
-  channel: string;
-  sender: string;
-  subject: string;
-  classification: string;
-  priority: Priority;
-  status: string;
-  responsible: string;
-  updated: string;
-}
-
-const tickets: Ticket[] = [
-  { id: "TKT-001", channel: "WhatsApp", sender: "Maria Oliveira", subject: "Dúvida sobre tratamento", classification: "Saúde", priority: "Alta", status: "Novo", responsible: "Carlos Silva", updated: "10 min" },
-  { id: "TKT-002", channel: "E-mail", sender: "Instituto Sorria", subject: "Proposta de parceria", classification: "Parceria", priority: "Média", status: "Aberto", responsible: "Ana Costa", updated: "25 min" },
-  { id: "TKT-003", channel: "Instagram", sender: "João Santos", subject: "Solicitação de agendamento", classification: "Agendamento", priority: "Baixa", status: "Aguardando", responsible: "Maria Santos", updated: "1h" },
-  { id: "TKT-004", channel: "WhatsApp", sender: "Pedro Almeida", subject: "Urgência odontológica", classification: "Emergência", priority: "Crítica", status: "Novo", responsible: "Carlos Silva", updated: "5 min" },
-  { id: "TKT-005", channel: "E-mail", sender: "Fundação ABC", subject: "Doação mensal", classification: "Doação", priority: "Média", status: "Aberto", responsible: "Paula Rocha", updated: "2h" },
-  { id: "TKT-006", channel: "WhatsApp", sender: "Lucia Ferreira", subject: "Feedback pós-atendimento", classification: "Feedback", priority: "Baixa", status: "Aberto", responsible: "João Lima", updated: "3h" },
-  { id: "TKT-007", channel: "Outro", sender: "CREAS Regional", subject: "Encaminhamento social", classification: "Social", priority: "Alta", status: "Novo", responsible: "Ana Costa", updated: "15 min" },
-  { id: "TKT-008", channel: "WhatsApp", sender: "Roberto Dias", subject: "Agendar retorno", classification: "Agendamento", priority: "Baixa", status: "Aguardando", responsible: "Maria Santos", updated: "4h" },
-  { id: "TKT-009", channel: "E-mail", sender: "Empresa XYZ", subject: "Patrocínio mensal", classification: "Doação", priority: "Média", status: "Aberto", responsible: "Paula Rocha", updated: "5h" },
-  { id: "TKT-010", channel: "Instagram", sender: "Carla Nunes", subject: "Informação sobre voluntariado", classification: "Social", priority: "Baixa", status: "Novo", responsible: "Ana Costa", updated: "6h" },
-  { id: "TKT-011", channel: "WhatsApp", sender: "Fernando Tavares", subject: "Dor de dente aguda", classification: "Emergência", priority: "Crítica", status: "Novo", responsible: "Carlos Silva", updated: "2 min" },
-  { id: "TKT-012", channel: "E-mail", sender: "Prefeitura Municipal", subject: "Convênio público", classification: "Parceria", priority: "Alta", status: "Aberto", responsible: "Ana Costa", updated: "1h" },
-];
-
 const ITEMS_PER_PAGE = 10;
 
 export default function Tickets() {
+  const { tickets } = useTickets();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
@@ -159,7 +132,14 @@ export default function Tickets() {
             {paginated.map((t) => {
               const ChIcon = channelIcon[t.channel] || MoreHorizontal;
               return (
-                <TableRow key={t.id} className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => navigate(`/tickets/${t.id}`)}>
+                <TableRow
+                  key={t.id}
+                  className="cursor-pointer hover:bg-accent/50 transition-colors"
+                  onClick={() => {
+                    const backUrl = channelFilter !== "all" ? `/tickets?channel=${encodeURIComponent(channelFilter)}` : "/tickets";
+                    navigate(`/tickets/${t.id}`, { state: { backUrl } });
+                  }}
+                >
                   <TableCell className="font-mono text-xs">{t.id}</TableCell>
                   <TableCell><ChIcon className="w-4 h-4 text-muted-foreground" /></TableCell>
                   <TableCell className="font-medium text-sm">{t.sender}</TableCell>
