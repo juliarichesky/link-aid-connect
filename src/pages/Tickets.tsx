@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Plus, Archive, MessageCircle, Instagram, Mail, MoreHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,8 +18,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const channelIcon: Record<string, React.ElementType> = {
   WhatsApp: MessageCircle,
@@ -59,22 +67,40 @@ const tickets: Ticket[] = [
   { id: "TKT-007", channel: "Outro", sender: "CREAS Regional", subject: "Encaminhamento social", classification: "Social", priority: "Alta", status: "Novo", responsible: "Ana Costa", updated: "15 min" },
 ];
 
+const ITEMS_PER_PAGE = 5;
+
 export default function Tickets() {
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+  const [classificationFilter, setClassificationFilter] = useState("all");
+  const [page, setPage] = useState(1);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  const filtered = tickets.filter(
-    (t) =>
-      t.sender.toLowerCase().includes(search.toLowerCase()) ||
-      t.subject.toLowerCase().includes(search.toLowerCase()) ||
-      t.id.toLowerCase().includes(search.toLowerCase())
-  );
+  const channelFilter = searchParams.get("channel") || "all";
+
+  const classifications = [...new Set(tickets.map((t) => t.classification))];
+
+  const filtered = tickets.filter((t) => {
+    const matchSearch = t.sender.toLowerCase().includes(search.toLowerCase()) || t.subject.toLowerCase().includes(search.toLowerCase()) || t.id.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === "all" || t.status === statusFilter;
+    const matchPriority = priorityFilter === "all" || t.priority === priorityFilter;
+    const matchClassification = classificationFilter === "all" || t.classification === classificationFilter;
+    const matchChannel = channelFilter === "all" || t.channel === channelFilter;
+    return matchSearch && matchStatus && matchPriority && matchClassification && matchChannel;
+  });
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   return (
     <div className="p-6 space-y-5 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-display font-bold">Tickets</h1>
+          <h1 className="text-2xl font-display font-bold">
+            Tickets {channelFilter !== "all" && <span className="text-primary">— {channelFilter}</span>}
+          </h1>
           <p className="text-sm text-muted-foreground">Visão geral de atendimentos</p>
         </div>
         <Button onClick={() => navigate("/tickets/new")}>
@@ -87,36 +113,41 @@ export default function Tickets() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar tickets..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
-          />
+          <Input placeholder="Buscar tickets..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
-        <Select>
-          <SelectTrigger className="w-36">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
+        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="new">Novo</SelectItem>
-            <SelectItem value="open">Aberto</SelectItem>
-            <SelectItem value="waiting">Aguardando</SelectItem>
+            <SelectItem value="Novo">Novo</SelectItem>
+            <SelectItem value="Aberto">Aberto</SelectItem>
+            <SelectItem value="Aguardando">Aguardando</SelectItem>
           </SelectContent>
         </Select>
-        <Select>
-          <SelectTrigger className="w-36">
-            <SelectValue placeholder="Prioridade" />
-          </SelectTrigger>
+        <Select value={priorityFilter} onValueChange={(v) => { setPriorityFilter(v); setPage(1); }}>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Prioridade" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas</SelectItem>
-            <SelectItem value="critical">Crítica</SelectItem>
-            <SelectItem value="high">Alta</SelectItem>
-            <SelectItem value="medium">Média</SelectItem>
-            <SelectItem value="low">Baixa</SelectItem>
+            <SelectItem value="Crítica">Crítica</SelectItem>
+            <SelectItem value="Alta">Alta</SelectItem>
+            <SelectItem value="Média">Média</SelectItem>
+            <SelectItem value="Baixa">Baixa</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={classificationFilter} onValueChange={(v) => { setClassificationFilter(v); setPage(1); }}>
+          <SelectTrigger className="w-40"><SelectValue placeholder="Classificação" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas</SelectItem>
+            {classifications.map((c) => (
+              <SelectItem key={c} value={c}>{c}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {channelFilter !== "all" && (
+          <Button variant="ghost" size="sm" onClick={() => navigate("/tickets")}>
+            Limpar filtro de canal
+          </Button>
+        )}
       </div>
 
       {/* Table */}
@@ -137,30 +168,17 @@ export default function Tickets() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map((t) => {
+            {paginated.map((t) => {
               const ChIcon = channelIcon[t.channel] || MoreHorizontal;
               return (
-                <TableRow
-                  key={t.id}
-                  className="cursor-pointer hover:bg-accent/50 transition-colors"
-                  onClick={() => navigate(`/tickets/${t.id}`)}
-                >
+                <TableRow key={t.id} className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => navigate(`/tickets/${t.id}`)}>
                   <TableCell className="font-mono text-xs">{t.id}</TableCell>
-                  <TableCell>
-                    <ChIcon className="w-4 h-4 text-muted-foreground" />
-                  </TableCell>
+                  <TableCell><ChIcon className="w-4 h-4 text-muted-foreground" /></TableCell>
                   <TableCell className="font-medium text-sm">{t.sender}</TableCell>
                   <TableCell className="text-sm">{t.subject}</TableCell>
+                  <TableCell><Badge variant="secondary" className="text-xs">{t.classification}</Badge></TableCell>
                   <TableCell>
-                    <Badge variant="secondary" className="text-xs">{t.classification}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      className={cn(
-                        "inline-flex items-center justify-center text-xs font-medium px-2.5 py-0.5 rounded-full min-w-[72px]",
-                        priorityClasses[t.priority]
-                      )}
-                    >
+                    <span className={cn("inline-flex items-center justify-center text-xs font-medium px-2.5 py-0.5 rounded-full min-w-[72px]", priorityClasses[t.priority])}>
                       {t.priority}
                     </span>
                   </TableCell>
@@ -168,19 +186,41 @@ export default function Tickets() {
                   <TableCell className="text-sm">{t.responsible}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{t.updated}</TableCell>
                   <TableCell>
-                    <button
-                      className="text-muted-foreground hover:text-foreground"
-                      onClick={(e) => { e.stopPropagation(); }}
-                    >
+                    <button className="text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); }}>
                       <Archive className="w-4 h-4" />
                     </button>
                   </TableCell>
                 </TableRow>
               );
             })}
+            {paginated.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">Nenhum ticket encontrado</TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
+
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious href="#" onClick={(e) => { e.preventDefault(); setPage(Math.max(1, page - 1)); }} />
+            </PaginationItem>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <PaginationItem key={i}>
+                <PaginationLink href="#" isActive={page === i + 1} onClick={(e) => { e.preventDefault(); setPage(i + 1); }}>
+                  {i + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext href="#" onClick={(e) => { e.preventDefault(); setPage(Math.min(totalPages, page + 1)); }} />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 }
