@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTickets, type Priority } from "@/contexts/TicketsContext";
 import { maskCPF, maskCNPJ, maskPhone } from "@/lib/masks";
@@ -16,49 +19,69 @@ import { toast } from "sonner";
 
 const channelMap: Record<string, string> = { whatsapp: "WhatsApp", instagram: "Instagram", email: "E-mail", other: "Outro" };
 const priorityMap: Record<string, Priority> = { critical: "Crítica", high: "Alta", medium: "Média", low: "Baixa" };
-const responsibleMap: Record<string, string> = { carlos: "Carlos Silva", ana: "Ana Costa", maria: "Maria Santos" };
+
+const typeOptions = [
+  { value: "Beneficiário", label: "Beneficiário" },
+  { value: "Parceiro", label: "Parceiro" },
+  { value: "Doador", label: "Doador" },
+  { value: "Voluntário", label: "Voluntário" },
+];
 
 export default function CreateTicket() {
   const navigate = useNavigate();
-  const { tickets, addTicket } = useTickets();
-  const [type, setType] = useState("pf");
+  const { tickets, teamMembers, dentists, addTicket, addDentist } = useTickets();
+  const [tab, setTab] = useState("pf");
 
-  // PF fields
-  const [pfName, setPfName] = useState("");
-  const [pfCpf, setPfCpf] = useState("");
-  const [pfPhone, setPfPhone] = useState("");
-  const [pfChannel, setPfChannel] = useState("");
-  const [pfCity, setPfCity] = useState("");
-  const [pfState, setPfState] = useState("");
-  const [pfSubject, setPfSubject] = useState("");
-  const [pfDesc, setPfDesc] = useState("");
-  const [pfPriority, setPfPriority] = useState("");
-  const [pfResponsible, setPfResponsible] = useState("");
+  const [name, setName] = useState("");
+  const [doc, setDoc] = useState("");
+  const [phone, setPhone] = useState("");
+  const [channel, setChannel] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [subject, setSubject] = useState("");
+  const [desc, setDesc] = useState("");
+  const [priority, setPriority] = useState("");
+  const [responsible, setResponsible] = useState("");
+  const [dentistResp, setDentistResp] = useState("");
+  const [ticketType, setTicketType] = useState("Beneficiário");
 
-  // PJ fields
-  const [pjName, setPjName] = useState("");
-  const [pjCnpj, setPjCnpj] = useState("");
-  const [pjPhone, setPjPhone] = useState("");
-  const [pjChannel, setPjChannel] = useState("");
-  const [pjCity, setPjCity] = useState("");
-  const [pjState, setPjState] = useState("");
-  const [pjSubject, setPjSubject] = useState("");
-  const [pjDesc, setPjDesc] = useState("");
-  const [pjPriority, setPjPriority] = useState("");
-  const [pjResponsible, setPjResponsible] = useState("");
+  // New dentist modal
+  const [newDentistOpen, setNewDentistOpen] = useState(false);
+  const [ndName, setNdName] = useState("");
+  const [ndSpecialty, setNdSpecialty] = useState("");
+  const [ndPhone, setNdPhone] = useState("");
+  const [ndEmail, setNdEmail] = useState("");
+  const [ndCrm, setNdCrm] = useState("");
+  const [ndCity, setNdCity] = useState("");
+  const [ndUf, setNdUf] = useState("");
+
+  const handleCreateDentist = () => {
+    if (!ndName || !ndSpecialty) {
+      toast.error("Preencha nome e especialidade do dentista");
+      return;
+    }
+    const newId = dentists.length + 1;
+    addDentist({
+      id: newId,
+      name: ndName,
+      specialty: ndSpecialty,
+      status: "Ativo",
+      totalSlots: 0,
+      openSlots: 0,
+      phone: ndPhone,
+      email: ndEmail,
+      crm: ndCrm,
+      location: ndCity,
+      uf: ndUf.toUpperCase().slice(0, 2),
+      country: "Brasil",
+      schedule: [],
+    });
+    toast.success("Dentista cadastrado com sucesso!");
+    setNewDentistOpen(false);
+    setNdName(""); setNdSpecialty(""); setNdPhone(""); setNdEmail(""); setNdCrm(""); setNdCity(""); setNdUf("");
+  };
 
   const handleCreate = () => {
-    const isPf = type === "pf";
-    const name = isPf ? pfName : pjName;
-    const doc = isPf ? pfCpf : pjCnpj;
-    const phone = isPf ? pfPhone : pjPhone;
-    const channel = isPf ? pfChannel : pjChannel;
-    const subject = isPf ? pfSubject : pjSubject;
-    const priority = isPf ? pfPriority : pjPriority;
-    const responsible = isPf ? pfResponsible : pjResponsible;
-    const city = isPf ? pfCity : pjCity;
-    const state = isPf ? pfState : pjState;
-
     if (!name || !subject || !priority || !channel) {
       toast.error("Preencha os campos obrigatórios: Nome, Assunto, Canal e Prioridade");
       return;
@@ -76,19 +99,127 @@ export default function CreateTicket() {
       classification: "Geral",
       priority: priorityMap[priority] || "Média",
       status: "Novo",
-      responsible: responsibleMap[responsible] || "Sem responsável",
+      responsible: responsible || "Sem responsável",
+      dentistResponsible: dentistResp || undefined,
       updated: "agora",
       openedAt,
       phone,
       email: "",
-      location: `${city}, ${state}`,
-      type: isPf ? "Beneficiário" : "Parceiro",
+      location: city && state ? `${city}, ${state}` : "",
+      type: ticketType,
       cpf: doc,
     });
 
     toast.success("Ticket criado com sucesso!");
     navigate("/tickets");
   };
+
+  const renderForm = () => (
+    <Card className="shadow-sm">
+      <CardHeader><CardTitle className="text-base">Dados do {tab === "pf" ? "Paciente" : "Empresa"}</CardTitle></CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div><Label>{tab === "pf" ? "Nome Completo" : "Razão Social"}</Label><Input placeholder={tab === "pf" ? "Nome completo" : "Razão social"} value={name} onChange={(e) => setName(e.target.value)} /></div>
+          <div>
+            <Label>{tab === "pf" ? "CPF" : "CNPJ"}</Label>
+            <Input placeholder={tab === "pf" ? "000.000.000-00" : "00.000.000/0000-00"} value={doc} onChange={(e) => setDoc(tab === "pf" ? maskCPF(e.target.value) : maskCNPJ(e.target.value))} />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div><Label>Telefone</Label><Input placeholder="(00) 00000-0000" value={phone} onChange={(e) => setPhone(maskPhone(e.target.value))} /></div>
+          <div>
+            <Label>Canal *</Label>
+            <Select value={channel} onValueChange={setChannel}>
+              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                <SelectItem value="instagram">Instagram</SelectItem>
+                <SelectItem value="email">E-mail</SelectItem>
+                <SelectItem value="other">Outros</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div><Label>Cidade</Label><Input placeholder="Cidade" value={city} onChange={(e) => setCity(e.target.value)} /></div>
+          <div><Label>Estado</Label><Input placeholder="UF" value={state} onChange={(e) => setState(e.target.value.toUpperCase().slice(0, 2))} /></div>
+          <div>
+            <Label>Tipo / Etiqueta</Label>
+            <Select value={ticketType} onValueChange={setTicketType}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {typeOptions.map((t) => (<SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div><Label>Assunto *</Label><Input placeholder="Assunto do ticket" value={subject} onChange={(e) => setSubject(e.target.value)} /></div>
+        <div><Label>Descrição</Label><Textarea placeholder="Descreva o atendimento..." rows={3} value={desc} onChange={(e) => setDesc(e.target.value)} /></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <Label>Prioridade *</Label>
+            <Select value={priority} onValueChange={setPriority}>
+              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="critical">Crítica</SelectItem>
+                <SelectItem value="high">Alta</SelectItem>
+                <SelectItem value="medium">Média</SelectItem>
+                <SelectItem value="low">Baixa</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Responsável (Atendimento)</Label>
+            <Select value={responsible} onValueChange={setResponsible}>
+              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+              <SelectContent>
+                {teamMembers.map((m) => (
+                  <SelectItem key={m.name} value={m.name}>{m.name} — {m.role}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+          <div>
+            <Label>Dentista Responsável (Clínico)</Label>
+            <Select value={dentistResp} onValueChange={setDentistResp}>
+              <SelectTrigger><SelectValue placeholder="Selecione (opcional)" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Nenhum</SelectItem>
+                {dentists.filter((d) => d.status === "Ativo").map((d) => (
+                  <SelectItem key={d.id} value={d.name}>{d.name} — {d.specialty}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Dialog open={newDentistOpen} onOpenChange={setNewDentistOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="gap-2"><UserPlus className="w-4 h-4" /> Novo Dentista</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader><DialogTitle>Cadastrar Novo Dentista/Voluntário</DialogTitle></DialogHeader>
+              <div className="space-y-3">
+                <div><Label>Nome</Label><Input value={ndName} onChange={(e) => setNdName(e.target.value)} placeholder="Nome completo" /></div>
+                <div><Label>Especialidade</Label><Input value={ndSpecialty} onChange={(e) => setNdSpecialty(e.target.value)} placeholder="Ex: Ortodontia" /></div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div><Label>Telefone</Label><Input value={ndPhone} onChange={(e) => setNdPhone(maskPhone(e.target.value))} placeholder="(00) 00000-0000" /></div>
+                  <div><Label>E-mail</Label><Input value={ndEmail} onChange={(e) => setNdEmail(e.target.value)} placeholder="email@..." /></div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div><Label>CRO</Label><Input value={ndCrm} onChange={(e) => setNdCrm(e.target.value)} placeholder="CRO-XX 0000" /></div>
+                  <div><Label>Cidade</Label><Input value={ndCity} onChange={(e) => setNdCity(e.target.value)} /></div>
+                  <div><Label>UF</Label><Input value={ndUf} onChange={(e) => setNdUf(e.target.value.toUpperCase().slice(0, 2))} /></div>
+                </div>
+                <Button className="w-full" onClick={handleCreateDentist}><Plus className="w-4 h-4 mr-1" /> Cadastrar</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+        <Button className="w-full mt-2" onClick={handleCreate}>Criar Ticket</Button>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-5 animate-fade-in">
@@ -101,129 +232,13 @@ export default function CreateTicket() {
         <p className="text-sm text-muted-foreground">Cadastro manual de atendimento</p>
       </div>
 
-      <Tabs value={type} onValueChange={setType}>
+      <Tabs value={tab} onValueChange={(v) => { setTab(v); setDoc(""); }}>
         <TabsList>
           <TabsTrigger value="pf">Pessoa Física</TabsTrigger>
           <TabsTrigger value="pj">Pessoa Jurídica</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="pf">
-          <Card>
-            <CardHeader><CardTitle className="text-base">Dados da Pessoa Física</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div><Label>Nome</Label><Input placeholder="Nome completo" value={pfName} onChange={(e) => setPfName(e.target.value)} /></div>
-                <div><Label>CPF</Label><Input placeholder="000.000.000-00" value={pfCpf} onChange={(e) => setPfCpf(maskCPF(e.target.value))} /></div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div><Label>Telefone</Label><Input placeholder="(00) 00000-0000" value={pfPhone} onChange={(e) => setPfPhone(maskPhone(e.target.value))} /></div>
-                <div>
-                  <Label>Canal</Label>
-                  <Select value={pfChannel} onValueChange={setPfChannel}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                      <SelectItem value="instagram">Instagram</SelectItem>
-                      <SelectItem value="email">E-mail</SelectItem>
-                      <SelectItem value="other">Outros</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div><Label>Cidade</Label><Input placeholder="Cidade" value={pfCity} onChange={(e) => setPfCity(e.target.value)} /></div>
-                <div><Label>Estado</Label><Input placeholder="UF" value={pfState} onChange={(e) => setPfState(e.target.value.toUpperCase().slice(0, 2))} /></div>
-              </div>
-              <div><Label>Assunto</Label><Input placeholder="Assunto do ticket" value={pfSubject} onChange={(e) => setPfSubject(e.target.value)} /></div>
-              <div><Label>Descrição</Label><Textarea placeholder="Descreva o atendimento..." rows={3} value={pfDesc} onChange={(e) => setPfDesc(e.target.value)} /></div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Prioridade</Label>
-                  <Select value={pfPriority} onValueChange={setPfPriority}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="critical">Crítica</SelectItem>
-                      <SelectItem value="high">Alta</SelectItem>
-                      <SelectItem value="medium">Média</SelectItem>
-                      <SelectItem value="low">Baixa</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Responsável</Label>
-                  <Select value={pfResponsible} onValueChange={setPfResponsible}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="carlos">Carlos Silva</SelectItem>
-                      <SelectItem value="ana">Ana Costa</SelectItem>
-                      <SelectItem value="maria">Maria Santos</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <Button className="w-full" onClick={handleCreate}>Criar Ticket</Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="pj">
-          <Card>
-            <CardHeader><CardTitle className="text-base">Dados da Pessoa Jurídica</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div><Label>Nome da Empresa</Label><Input placeholder="Razão social" value={pjName} onChange={(e) => setPjName(e.target.value)} /></div>
-                <div><Label>CNPJ</Label><Input placeholder="00.000.000/0000-00" value={pjCnpj} onChange={(e) => setPjCnpj(maskCNPJ(e.target.value))} /></div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div><Label>Telefone</Label><Input placeholder="(00) 00000-0000" value={pjPhone} onChange={(e) => setPjPhone(maskPhone(e.target.value))} /></div>
-                <div>
-                  <Label>Canal</Label>
-                  <Select value={pjChannel} onValueChange={setPjChannel}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                      <SelectItem value="instagram">Instagram</SelectItem>
-                      <SelectItem value="email">E-mail</SelectItem>
-                      <SelectItem value="other">Outros</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div><Label>Cidade</Label><Input placeholder="Cidade" value={pjCity} onChange={(e) => setPjCity(e.target.value)} /></div>
-                <div><Label>Estado</Label><Input placeholder="UF" value={pjState} onChange={(e) => setPjState(e.target.value.toUpperCase().slice(0, 2))} /></div>
-              </div>
-              <div><Label>Assunto</Label><Input placeholder="Assunto do ticket" value={pjSubject} onChange={(e) => setPjSubject(e.target.value)} /></div>
-              <div><Label>Descrição</Label><Textarea placeholder="Descreva o atendimento..." rows={3} value={pjDesc} onChange={(e) => setPjDesc(e.target.value)} /></div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Prioridade</Label>
-                  <Select value={pjPriority} onValueChange={setPjPriority}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="critical">Crítica</SelectItem>
-                      <SelectItem value="high">Alta</SelectItem>
-                      <SelectItem value="medium">Média</SelectItem>
-                      <SelectItem value="low">Baixa</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Responsável</Label>
-                  <Select value={pjResponsible} onValueChange={setPjResponsible}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="carlos">Carlos Silva</SelectItem>
-                      <SelectItem value="ana">Ana Costa</SelectItem>
-                      <SelectItem value="maria">Maria Santos</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <Button className="w-full" onClick={handleCreate}>Criar Ticket</Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        <TabsContent value="pf">{renderForm()}</TabsContent>
+        <TabsContent value="pj">{renderForm()}</TabsContent>
       </Tabs>
     </div>
   );
