@@ -18,6 +18,12 @@ export interface Ticket {
   location: string;
   type: string;
   cpf: string;
+  // Clinical details (for history)
+  procedureDescription?: string;
+  medications?: string;
+  surgeryHistory?: string;
+  // Chat messages
+  chatMessages?: { from: string; text: string; time: string }[];
 }
 
 const initialTickets: Ticket[] = [
@@ -35,24 +41,81 @@ const initialTickets: Ticket[] = [
   { id: "TKT-012", channel: "E-mail", sender: "Prefeitura Municipal", subject: "Convênio público", classification: "Parceria", priority: "Alta", status: "Aberto", responsible: "Ana Costa", updated: "1h", openedAt: "05/04/2025 13:00", phone: "(31) 3333-2222", email: "prefeitura@gov.br", location: "Belo Horizonte, MG", type: "Parceiro", cpf: "18.720.000/0001-55" },
 ];
 
+interface Contact {
+  name: string;
+  phone: string;
+  email: string;
+  cpf: string;
+  location: string;
+  type: string;
+}
+
 interface TicketsContextType {
   tickets: Ticket[];
+  contacts: Contact[];
   updateTicket: (id: string, updates: Partial<Ticket>) => void;
+  addTicket: (ticket: Ticket) => void;
+  archiveTicket: (id: string) => void;
+  addChatMessage: (id: string, message: { from: string; text: string; time: string }) => void;
 }
 
 const TicketsContext = createContext<TicketsContextType | undefined>(undefined);
 
 export function TicketsProvider({ children }: { children: ReactNode }) {
   const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
+  const [contacts, setContacts] = useState<Contact[]>([]);
 
   const updateTicket = (id: string, updates: Partial<Ticket>) => {
     setTickets((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, ...updates } : t))
+      prev.map((t) => {
+        if (t.id !== id) return t;
+        const updated = { ...t, ...updates };
+        // If status changed to Resolvido, auto-mark
+        if (updates.status === "Resolvido") {
+          updated.updated = "agora";
+        }
+        return updated;
+      })
+    );
+  };
+
+  const addTicket = (ticket: Ticket) => {
+    setTickets((prev) => [ticket, ...prev]);
+    // Auto-add contact if not exists
+    const exists = contacts.some((c) => c.cpf === ticket.cpf) || 
+                   initialTickets.some((t) => t.cpf === ticket.cpf);
+    if (!exists && ticket.cpf && ticket.cpf !== "-") {
+      setContacts((prev) => [...prev, {
+        name: ticket.sender,
+        phone: ticket.phone,
+        email: ticket.email,
+        cpf: ticket.cpf,
+        location: ticket.location,
+        type: ticket.type,
+      }]);
+    }
+  };
+
+  const archiveTicket = (id: string) => {
+    setTickets((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, status: "Resolvido", updated: "agora" } : t
+      )
+    );
+  };
+
+  const addChatMessage = (id: string, message: { from: string; text: string; time: string }) => {
+    setTickets((prev) =>
+      prev.map((t) =>
+        t.id === id
+          ? { ...t, chatMessages: [...(t.chatMessages || []), message] }
+          : t
+      )
     );
   };
 
   return (
-    <TicketsContext.Provider value={{ tickets, updateTicket }}>
+    <TicketsContext.Provider value={{ tickets, contacts, updateTicket, addTicket, archiveTicket, addChatMessage }}>
       {children}
     </TicketsContext.Provider>
   );

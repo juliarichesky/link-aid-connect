@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Settings() {
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-5 animate-fade-in">
+    <div className="p-6 space-y-5 animate-fade-in">
       <div>
         <h1 className="text-2xl font-display font-bold">Configurações</h1>
         <p className="text-sm text-muted-foreground">Gerencie usuários, integrações e automações</p>
@@ -24,7 +24,7 @@ export default function Settings() {
           <Card>
             <CardHeader><CardTitle className="text-base">Gestão de Usuários</CardTitle></CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div><Label>Nome</Label><Input placeholder="Nome do colaborador" /></div>
                 <div><Label>E-mail</Label><Input placeholder="email@ong.org" /></div>
               </div>

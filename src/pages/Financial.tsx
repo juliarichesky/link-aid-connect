@@ -20,6 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { maskCurrency } from "@/lib/masks";
 
 type Period = "weekly" | "monthly" | "yearly";
 
@@ -57,19 +58,19 @@ const summaryByPeriod: Record<Period, { label: string; value: string; icon: Reac
   ],
 };
 
-const initialTransactions: Transaction[] = [
-  { id: "FIN-001", date: "05/04/2025", entity: "Pedro Almeida", description: "Doação mensal", value: "R$ 2.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-001", responsible: "Ana Costa", history: [{ date: "05/04/2025 09:00", action: "Transação criada", user: "Sistema" }, { date: "05/04/2025 09:15", action: "Pagamento confirmado", user: "Ana Costa" }] },
-  { id: "FIN-002", date: "04/04/2025", entity: "Fornecedor Dental", description: "Materiais odontológicos", value: "R$ 1.500", type: "Despesa", status: "Pago", category: "Material", dentist: "Dra. Fernanda Costa", paymentMethod: "Boleto", receipt: "NF-2025-002", responsible: "Paula Rocha", history: [{ date: "04/04/2025 10:00", action: "Transação criada", user: "Paula Rocha" }, { date: "04/04/2025 14:00", action: "Pagamento efetuado", user: "Ana Costa" }] },
-  { id: "FIN-003", date: "03/04/2025", entity: "Fundação ABC", description: "Patrocínio evento", value: "R$ 10.000", type: "Receita", status: "Pendente", category: "Patrocínio", dentist: "-", paymentMethod: "Transferência", receipt: "-", responsible: "Ana Costa", history: [{ date: "03/04/2025 08:00", action: "Transação criada", user: "Sistema" }] },
-  { id: "FIN-004", date: "02/04/2025", entity: "Aluguel sala", description: "Aluguel mensal clínica", value: "R$ 3.200", type: "Despesa", status: "Pago", category: "Infraestrutura", dentist: "-", paymentMethod: "Débito Automático", receipt: "NF-2025-004", responsible: "Sistema", history: [{ date: "02/04/2025 07:00", action: "Débito automático", user: "Sistema" }] },
-  { id: "FIN-005", date: "01/04/2025", entity: "Maria Oliveira", description: "Doação eventual", value: "R$ 500", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-005", responsible: "Sistema", history: [{ date: "01/04/2025 16:00", action: "Transação criada", user: "Sistema" }, { date: "01/04/2025 16:05", action: "Confirmação automática", user: "Sistema" }] },
-  { id: "FIN-006", date: "30/03/2025", entity: "Lab Próteses", description: "Próteses dentárias", value: "R$ 4.800", type: "Despesa", status: "Pendente", category: "Material", dentist: "Dr. Marcos Lima", paymentMethod: "Boleto", receipt: "-", responsible: "Paula Rocha", history: [{ date: "30/03/2025 11:00", action: "Transação criada", user: "Paula Rocha" }] },
-  { id: "FIN-007", date: "28/03/2025", entity: "Empresa XYZ", description: "Doação corporativa", value: "R$ 15.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Transferência", receipt: "NF-2025-007", responsible: "Ana Costa", history: [{ date: "28/03/2025 09:00", action: "Transação criada", user: "Sistema" }] },
-  { id: "FIN-008", date: "25/03/2025", entity: "Seguradora Dental", description: "Seguro equipamentos", value: "R$ 800", type: "Despesa", status: "Pago", category: "Seguro", dentist: "-", paymentMethod: "Boleto", receipt: "NF-2025-008", responsible: "Ana Costa", history: [{ date: "25/03/2025 10:00", action: "Pagamento efetuado", user: "Ana Costa" }] },
-  { id: "FIN-009", date: "22/03/2025", entity: "João Santos", description: "Doação mensal", value: "R$ 1.000", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-009", responsible: "Sistema", history: [] },
-  { id: "FIN-010", date: "20/03/2025", entity: "Fornecedor Insumos", description: "Luvas e materiais", value: "R$ 2.300", type: "Despesa", status: "Pago", category: "Material", dentist: "Dra. Ana Ribeiro", paymentMethod: "Cartão", receipt: "NF-2025-010", responsible: "Paula Rocha", history: [] },
-  { id: "FIN-011", date: "18/03/2025", entity: "Prefeitura Municipal", description: "Subvenção social", value: "R$ 25.000", type: "Receita", status: "Confirmado", category: "Subvenção", dentist: "-", paymentMethod: "Transferência", receipt: "NF-2025-011", responsible: "Ana Costa", history: [] },
-  { id: "FIN-012", date: "15/03/2025", entity: "Manutenção Predial", description: "Reparos elétricos", value: "R$ 1.200", type: "Despesa", status: "Pago", category: "Infraestrutura", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-012", responsible: "Sistema", history: [] },
+const allTransactions: Transaction[] = [
+  { id: "FIN-001", date: "05/04/2025", entity: "Pedro Almeida", description: "Doação mensal", value: "R$ 2.000,00", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-001", responsible: "Ana Costa", history: [{ date: "05/04/2025 09:00", action: "Transação criada", user: "Sistema" }, { date: "05/04/2025 09:15", action: "Pagamento confirmado", user: "Ana Costa" }] },
+  { id: "FIN-002", date: "04/04/2025", entity: "Fornecedor Dental", description: "Materiais odontológicos", value: "R$ 1.500,00", type: "Despesa", status: "Pago", category: "Material", dentist: "Dra. Fernanda Costa", paymentMethod: "Boleto", receipt: "NF-2025-002", responsible: "Paula Rocha", history: [{ date: "04/04/2025 10:00", action: "Transação criada", user: "Paula Rocha" }, { date: "04/04/2025 14:00", action: "Pagamento efetuado", user: "Ana Costa" }] },
+  { id: "FIN-003", date: "03/04/2025", entity: "Fundação ABC", description: "Patrocínio evento", value: "R$ 10.000,00", type: "Receita", status: "Pendente", category: "Patrocínio", dentist: "-", paymentMethod: "Transferência", receipt: "-", responsible: "Ana Costa", history: [{ date: "03/04/2025 08:00", action: "Transação criada", user: "Sistema" }] },
+  { id: "FIN-004", date: "02/04/2025", entity: "Aluguel sala", description: "Aluguel mensal clínica", value: "R$ 3.200,00", type: "Despesa", status: "Pago", category: "Infraestrutura", dentist: "-", paymentMethod: "Débito Automático", receipt: "NF-2025-004", responsible: "Sistema", history: [{ date: "02/04/2025 07:00", action: "Débito automático", user: "Sistema" }] },
+  { id: "FIN-005", date: "01/04/2025", entity: "Maria Oliveira", description: "Doação eventual", value: "R$ 500,00", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-005", responsible: "Sistema", history: [{ date: "01/04/2025 16:00", action: "Transação criada", user: "Sistema" }, { date: "01/04/2025 16:05", action: "Confirmação automática", user: "Sistema" }] },
+  { id: "FIN-006", date: "30/03/2025", entity: "Lab Próteses", description: "Próteses dentárias", value: "R$ 4.800,00", type: "Despesa", status: "Pendente", category: "Material", dentist: "Dr. Marcos Lima", paymentMethod: "Boleto", receipt: "-", responsible: "Paula Rocha", history: [{ date: "30/03/2025 11:00", action: "Transação criada", user: "Paula Rocha" }] },
+  { id: "FIN-007", date: "28/03/2025", entity: "Empresa XYZ", description: "Doação corporativa", value: "R$ 15.000,00", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Transferência", receipt: "NF-2025-007", responsible: "Ana Costa", history: [{ date: "28/03/2025 09:00", action: "Transação criada", user: "Sistema" }] },
+  { id: "FIN-008", date: "25/03/2025", entity: "Seguradora Dental", description: "Seguro equipamentos", value: "R$ 800,00", type: "Despesa", status: "Pago", category: "Seguro", dentist: "-", paymentMethod: "Boleto", receipt: "NF-2025-008", responsible: "Ana Costa", history: [{ date: "25/03/2025 10:00", action: "Pagamento efetuado", user: "Ana Costa" }] },
+  { id: "FIN-009", date: "22/03/2025", entity: "João Santos", description: "Doação mensal", value: "R$ 1.000,00", type: "Receita", status: "Confirmado", category: "Doação", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-009", responsible: "Sistema", history: [] },
+  { id: "FIN-010", date: "20/03/2025", entity: "Fornecedor Insumos", description: "Luvas e materiais", value: "R$ 2.300,00", type: "Despesa", status: "Pago", category: "Material", dentist: "Dra. Ana Ribeiro", paymentMethod: "Cartão", receipt: "NF-2025-010", responsible: "Paula Rocha", history: [] },
+  { id: "FIN-011", date: "18/03/2025", entity: "Prefeitura Municipal", description: "Subvenção social", value: "R$ 25.000,00", type: "Receita", status: "Confirmado", category: "Subvenção", dentist: "-", paymentMethod: "Transferência", receipt: "NF-2025-011", responsible: "Ana Costa", history: [] },
+  { id: "FIN-012", date: "15/03/2025", entity: "Manutenção Predial", description: "Reparos elétricos", value: "R$ 1.200,00", type: "Despesa", status: "Pago", category: "Infraestrutura", dentist: "-", paymentMethod: "Pix", receipt: "NF-2025-012", responsible: "Sistema", history: [] },
 ];
 
 const ITEMS_PER_PAGE = 10;
@@ -83,7 +84,7 @@ export default function Financial() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const [transactions, setTransactions] = useState<Transaction[]>(allTransactions);
   const [showNewTx, setShowNewTx] = useState(false);
 
   // New transaction form
@@ -121,7 +122,7 @@ export default function Financial() {
       date: newDate || new Date().toLocaleDateString("pt-BR"),
       entity: newEntity,
       description: newDescription,
-      value: newValue.startsWith("R$") ? newValue : `R$ ${newValue}`,
+      value: newValue,
       type: newType === "Receita" ? "Receita" : "Despesa",
       status: "Pendente",
       category: newCategory,
@@ -315,7 +316,7 @@ export default function Financial() {
               </div>
               <div>
                 <Label className="text-xs">Valor (R$) *</Label>
-                <Input className="h-9" placeholder="Ex: 2.500" value={newValue} onChange={(e) => setNewValue(e.target.value)} />
+                <Input className="h-9" placeholder="R$ 0,00" value={newValue} onChange={(e) => setNewValue(maskCurrency(e.target.value))} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">

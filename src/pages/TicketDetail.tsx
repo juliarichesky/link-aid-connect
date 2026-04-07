@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 import { useTickets } from "@/contexts/TicketsContext";
 import { toast } from "sonner";
 
-const messages = [
+const defaultMessages = [
   { from: "client", text: "Olá, gostaria de saber sobre o tratamento odontológico gratuito.", time: "14:30" },
   { from: "ai", text: "Classificação automática: Saúde — Prioridade: Alta. Resumo: Beneficiário buscando informações sobre tratamento gratuito.", time: "14:30" },
   { from: "agent", text: "Olá Maria! Obrigado por entrar em contato. Vou verificar as vagas disponíveis para você.", time: "14:35" },
@@ -31,7 +31,7 @@ export default function TicketDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { tickets, updateTicket } = useTickets();
+  const { tickets, updateTicket, addChatMessage } = useTickets();
   const [reply, setReply] = useState("");
 
   const ticket = tickets.find((t) => t.id === id);
@@ -53,11 +53,26 @@ export default function TicketDetail() {
 
   const handleSave = (field: string, value: string) => {
     if (!id) return;
-    const updates: Record<string, string> = {};
-    updates[field] = value;
-    updateTicket(id, updates);
+    updateTicket(id, { [field]: value });
+    // If status changed to Resolvido, auto-move to history
+    if (field === "status" && value === "Resolvido") {
+      toast.success("Ticket resolvido e movido para Histórico");
+      setTimeout(() => navigate(backUrl), 500);
+      return;
+    }
     toast.success("Alteração salva com sucesso");
   };
+
+  const handleSendReply = () => {
+    if (!reply.trim() || !id) return;
+    const now = new Date();
+    const time = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    addChatMessage(id, { from: "agent", text: reply, time });
+    setReply("");
+    toast.success("Mensagem enviada");
+  };
+
+  const allMessages = [...defaultMessages, ...(ticket?.chatMessages || [])];
 
   if (!ticket) {
     return (
@@ -180,11 +195,12 @@ export default function TicketDetail() {
           </CardContent>
         </Card>
 
-        {/* Tabs: History & Personal Data */}
+        {/* Tabs: History, Personal Data, Clinical */}
         <Tabs defaultValue="history" className="w-full">
           <TabsList className="w-full">
             <TabsTrigger value="history" className="flex-1 text-xs">Histórico</TabsTrigger>
             <TabsTrigger value="personal" className="flex-1 text-xs">Dados Pessoais</TabsTrigger>
+            <TabsTrigger value="clinical" className="flex-1 text-xs">Clínico</TabsTrigger>
           </TabsList>
           <TabsContent value="history">
             <div className="space-y-2 mt-2">
@@ -220,13 +236,29 @@ export default function TicketDetail() {
               <Button size="sm" className="w-full" onClick={() => toast.success("Dados pessoais salvos com sucesso")}>Salvar Alterações</Button>
             </div>
           </TabsContent>
+          <TabsContent value="clinical">
+            <div className="space-y-3 mt-2">
+              <div>
+                <Label className="text-xs">Descrição do Procedimento</Label>
+                <Textarea className="text-sm" rows={2} defaultValue={ticket.procedureDescription || ""} placeholder="Descreva o procedimento realizado..." onBlur={(e) => { if (id) { updateTicket(id, { procedureDescription: e.target.value }); toast.success("Procedimento salvo"); } }} />
+              </div>
+              <div>
+                <Label className="text-xs">Medicamentos Prescritos</Label>
+                <Textarea className="text-sm" rows={2} defaultValue={ticket.medications || ""} placeholder="Liste os medicamentos prescritos..." onBlur={(e) => { if (id) { updateTicket(id, { medications: e.target.value }); toast.success("Medicamentos salvos"); } }} />
+              </div>
+              <div>
+                <Label className="text-xs">Histórico de Cirurgias / Intervenções</Label>
+                <Textarea className="text-sm" rows={2} defaultValue={ticket.surgeryHistory || ""} placeholder="Registre cirurgias ou intervenções..." onBlur={(e) => { if (id) { updateTicket(id, { surgeryHistory: e.target.value }); toast.success("Histórico cirúrgico salvo"); } }} />
+              </div>
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
 
       {/* Right — Chat */}
       <div className="flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin">
-          {messages.map((m, i) => (
+          {allMessages.map((m, i) => (
             <div key={i} className={`flex ${m.from === "client" ? "justify-start" : "justify-end"}`}>
               <div className={`max-w-md px-4 py-2.5 rounded-xl text-sm ${
                 m.from === "client" ? "bg-muted text-foreground rounded-tl-none"
@@ -253,8 +285,8 @@ export default function TicketDetail() {
         <div className="border-t border-border p-4 bg-card">
           <div className="flex items-end gap-2">
             <Button variant="ghost" size="icon" className="shrink-0"><Paperclip className="w-4 h-4" /></Button>
-            <Textarea placeholder="Digite sua resposta..." value={reply} onChange={(e) => setReply(e.target.value)} className="min-h-[44px] max-h-32 resize-none" rows={1} />
-            <Button size="icon" className="shrink-0"><Send className="w-4 h-4" /></Button>
+            <Textarea placeholder="Digite sua resposta..." value={reply} onChange={(e) => setReply(e.target.value)} className="min-h-[44px] max-h-32 resize-none" rows={1} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendReply(); } }} />
+            <Button size="icon" className="shrink-0" onClick={handleSendReply}><Send className="w-4 h-4" /></Button>
           </div>
         </div>
       </div>
