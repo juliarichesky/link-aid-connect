@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTickets, type Priority } from "@/contexts/TicketsContext";
+import { toast } from "sonner";
 
 const channelIcon: Record<string, React.ElementType> = {
   WhatsApp: MessageCircle,
@@ -33,7 +34,7 @@ const priorityClasses: Record<Priority, string> = {
 const ITEMS_PER_PAGE = 10;
 
 export default function Tickets() {
-  const { tickets } = useTickets();
+  const { tickets, archiveTicket } = useTickets();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
@@ -45,7 +46,9 @@ export default function Tickets() {
   const channelFilter = searchParams.get("channel") || "all";
   const classifications = [...new Set(tickets.map((t) => t.classification))];
 
+  // Only show active tickets (not Resolvido)
   const filtered = tickets.filter((t) => {
+    if (t.status === "Resolvido") return false;
     const matchSearch = t.sender.toLowerCase().includes(search.toLowerCase()) || t.subject.toLowerCase().includes(search.toLowerCase()) || t.id.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "all" || t.status === statusFilter;
     const matchPriority = priorityFilter === "all" || t.priority === priorityFilter;
@@ -56,6 +59,12 @@ export default function Tickets() {
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
+  const handleArchive = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    archiveTicket(id);
+    toast.success("Ticket arquivado e movido para Histórico");
+  };
 
   return (
     <div className="p-6 space-y-5 animate-fade-in">
@@ -154,7 +163,7 @@ export default function Tickets() {
                   <TableCell className="text-sm">{t.responsible}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{t.updated}</TableCell>
                   <TableCell>
-                    <button className="text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); }}>
+                    <button className="text-muted-foreground hover:text-foreground" onClick={(e) => handleArchive(e, t.id)}>
                       <Archive className="w-4 h-4" />
                     </button>
                   </TableCell>
