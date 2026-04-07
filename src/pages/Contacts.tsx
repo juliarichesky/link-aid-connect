@@ -9,50 +9,86 @@ import {
 import {
   Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useState } from "react";
-
-interface Contact {
-  id: number;
-  name: string;
-  type: string;
-  location: string;
-  lastInteraction: string;
-  tickets: number;
-  phone: string;
-  email: string;
-  cpf: string;
-  healthHistory: string[];
-  linkedTickets: { id: string; subject: string; date: string; status: string }[];
-}
-
-const contacts: Contact[] = [
-  { id: 1, name: "Maria Oliveira", type: "Beneficiário", location: "São Paulo, SP", lastInteraction: "Hoje", tickets: 3, phone: "(11) 99999-0000", email: "maria@email.com", cpf: "123.456.789-00", healthHistory: ["Tratamento ortodôntico - Ago 2024", "Limpeza dental - Mar 2024", "Consulta inicial - Jan 2024"], linkedTickets: [{ id: "TKT-001", subject: "Dúvida sobre tratamento", date: "05/04/2025", status: "Aberto" }, { id: "TKT-098", subject: "Consulta finalizada", date: "15/08/2024", status: "Resolvido" }, { id: "TKT-050", subject: "Agendamento limpeza", date: "10/03/2024", status: "Resolvido" }] },
-  { id: 2, name: "Instituto Sorria", type: "Parceria", location: "Rio de Janeiro, RJ", lastInteraction: "Ontem", tickets: 5, phone: "(21) 3333-4444", email: "contato@sorria.org", cpf: "12.345.678/0001-00", healthHistory: [], linkedTickets: [{ id: "TKT-002", subject: "Proposta de parceria", date: "05/04/2025", status: "Aberto" }] },
-  { id: 3, name: "Pedro Almeida", type: "Doador", location: "Belo Horizonte, MG", lastInteraction: "Há 2 dias", tickets: 2, phone: "(31) 98888-7777", email: "pedro@email.com", cpf: "987.654.321-00", healthHistory: [], linkedTickets: [{ id: "TKT-004", subject: "Urgência odontológica", date: "05/04/2025", status: "Novo" }] },
-  { id: 4, name: "Dra. Fernanda Costa", type: "Voluntário", location: "Curitiba, PR", lastInteraction: "Há 1 semana", tickets: 8, phone: "(41) 97777-6666", email: "fernanda@dentist.com", cpf: "456.789.123-00", healthHistory: [], linkedTickets: [] },
-  { id: 5, name: "Fundação ABC", type: "Parceria", location: "Salvador, BA", lastInteraction: "Há 3 dias", tickets: 4, phone: "(71) 3222-1111", email: "contato@fundacaoabc.org", cpf: "98.765.432/0001-00", healthHistory: [], linkedTickets: [{ id: "TKT-005", subject: "Doação mensal", date: "05/04/2025", status: "Aberto" }] },
-  { id: 6, name: "Lucia Ferreira", type: "Beneficiário", location: "Fortaleza, CE", lastInteraction: "Hoje", tickets: 1, phone: "(85) 96666-5555", email: "lucia@email.com", cpf: "321.654.987-00", healthHistory: ["Extração dental - Jan 2025"], linkedTickets: [{ id: "TKT-006", subject: "Feedback pós-atendimento", date: "05/04/2025", status: "Aberto" }] },
-  { id: 7, name: "Roberto Dias", type: "Beneficiário", location: "Recife, PE", lastInteraction: "Há 5 dias", tickets: 2, phone: "(81) 95555-4444", email: "roberto@email.com", cpf: "654.321.987-00", healthHistory: ["Prótese dentária - Nov 2024"], linkedTickets: [{ id: "TKT-008", subject: "Agendar retorno", date: "05/04/2025", status: "Aguardando" }] },
-  { id: 8, name: "Carla Nunes", type: "Beneficiário", location: "Manaus, AM", lastInteraction: "Hoje", tickets: 1, phone: "(92) 94444-3333", email: "carla@email.com", cpf: "789.123.456-00", healthHistory: [], linkedTickets: [{ id: "TKT-010", subject: "Informação sobre voluntariado", date: "05/04/2025", status: "Novo" }] },
-];
+import { useState, useMemo } from "react";
+import { useTickets } from "@/contexts/TicketsContext";
+import { useNavigate } from "react-router-dom";
 
 const typeColors: Record<string, string> = {
   Beneficiário: "bg-warning/15 text-warning",
   Doador: "bg-primary/15 text-primary",
   Voluntário: "bg-success/15 text-success",
-  Parceria: "bg-info/15 text-info",
+  Parceiro: "bg-info/15 text-info",
 };
 
 const ITEMS_PER_PAGE = 10;
 
+interface DerivedContact {
+  name: string;
+  type: string;
+  location: string;
+  phone: string;
+  email: string;
+  cpf: string;
+  ticketCount: number;
+  lastInteraction: string;
+  linkedTickets: { id: string; subject: string; date: string; status: string }[];
+}
+
 export default function Contacts() {
+  const { tickets, contacts } = useTickets();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<Contact | null>(null);
+  const [selected, setSelected] = useState<DerivedContact | null>(null);
   const [page, setPage] = useState(1);
   const [detailSearch, setDetailSearch] = useState("");
 
-  const filtered = contacts.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase()) || c.type.toLowerCase().includes(search.toLowerCase())
+  // Build contacts from all tickets + manually added contacts
+  const allContacts = useMemo(() => {
+    const map = new Map<string, DerivedContact>();
+
+    tickets.forEach((t) => {
+      const key = t.cpf && t.cpf !== "-" ? t.cpf : t.sender;
+      if (!map.has(key)) {
+        map.set(key, {
+          name: t.sender,
+          type: t.type,
+          location: t.location,
+          phone: t.phone,
+          email: t.email,
+          cpf: t.cpf,
+          ticketCount: 0,
+          lastInteraction: t.openedAt,
+          linkedTickets: [],
+        });
+      }
+      const c = map.get(key)!;
+      c.ticketCount++;
+      c.linkedTickets.push({ id: t.id, subject: t.subject, date: t.openedAt, status: t.status });
+    });
+
+    // Add manually created contacts that may not have tickets yet
+    contacts.forEach((c) => {
+      const key = c.cpf && c.cpf !== "-" ? c.cpf : c.name;
+      if (!map.has(key)) {
+        map.set(key, {
+          name: c.name,
+          type: c.type,
+          location: c.location,
+          phone: c.phone,
+          email: c.email,
+          cpf: c.cpf,
+          ticketCount: 0,
+          lastInteraction: "-",
+          linkedTickets: [],
+        });
+      }
+    });
+
+    return Array.from(map.values());
+  }, [tickets, contacts]);
+
+  const filtered = allContacts.filter((c) =>
+    c.name.toLowerCase().includes(search.toLowerCase()) || c.type.toLowerCase().includes(search.toLowerCase()) || c.cpf.toLowerCase().includes(search.toLowerCase())
   );
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
@@ -65,12 +101,12 @@ export default function Contacts() {
 
     return (
       <div className="p-6 space-y-5 animate-fade-in">
-        <Button variant="ghost" size="sm" onClick={() => setSelected(null)}>
+        <Button variant="ghost" size="sm" onClick={() => { setSelected(null); setDetailSearch(""); }}>
           <ArrowLeft className="w-4 h-4 mr-1" /> Voltar para Contatos
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="lg:col-span-1">
+          <Card className="lg:col-span-1 shadow-sm">
             <CardHeader><CardTitle className="text-base">Informações Pessoais</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-3 mb-4">
@@ -87,26 +123,12 @@ export default function Contacts() {
                 <div><p className="text-xs text-muted-foreground">Telefone</p><p className="font-medium">{selected.phone}</p></div>
                 <div><p className="text-xs text-muted-foreground">E-mail</p><p className="font-medium">{selected.email}</p></div>
                 <div><p className="text-xs text-muted-foreground">Localização</p><p className="font-medium">{selected.location}</p></div>
-                <div><p className="text-xs text-muted-foreground">Última Interação</p><p className="font-medium">{selected.lastInteraction}</p></div>
               </div>
             </CardContent>
           </Card>
 
           <div className="lg:col-span-2 space-y-5">
-            {selected.healthHistory.length > 0 && (
-              <Card>
-                <CardHeader><CardTitle className="text-sm font-medium">Histórico de Saúde</CardTitle></CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {selected.healthHistory.map((h, i) => (
-                      <div key={i} className="text-sm px-3 py-2 bg-muted rounded-md">{h}</div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            <Card>
+            <Card className="shadow-sm">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium">Tickets Vinculados ({selected.linkedTickets.length})</CardTitle>
@@ -128,7 +150,7 @@ export default function Contacts() {
                   </TableHeader>
                   <TableBody>
                     {filteredTickets.map((t) => (
-                      <TableRow key={t.id} className="hover:bg-accent/50">
+                      <TableRow key={t.id} className="hover:bg-accent/50 cursor-pointer transition-colors" onClick={() => navigate(`/tickets/${t.id}`)}>
                         <TableCell className="font-mono text-xs">{t.id}</TableCell>
                         <TableCell className="text-sm">{t.subject}</TableCell>
                         <TableCell className="text-sm text-muted-foreground">{t.date}</TableCell>
@@ -160,25 +182,25 @@ export default function Contacts() {
         <Input placeholder="Buscar contatos..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
       </div>
 
-      <div className="border border-border rounded-lg overflow-hidden">
+      <div className="border border-border rounded-lg overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50">
               <TableHead>Nome</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Localização</TableHead>
-              <TableHead>Última Interação</TableHead>
+              <TableHead>CPF/CNPJ</TableHead>
               <TableHead className="text-right">Tickets</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginated.map((c) => (
-              <TableRow key={c.id} className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setSelected(c)}>
+            {paginated.map((c, i) => (
+              <TableRow key={i} className="cursor-pointer hover:bg-accent/60 transition-colors" onClick={() => setSelected(c)}>
                 <TableCell className="font-medium">{c.name}</TableCell>
                 <TableCell><Badge variant="secondary" className={typeColors[c.type]}>{c.type}</Badge></TableCell>
                 <TableCell className="text-sm">{c.location}</TableCell>
-                <TableCell className="text-sm text-muted-foreground">{c.lastInteraction}</TableCell>
-                <TableCell className="text-right font-medium">{c.tickets}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">{c.cpf}</TableCell>
+                <TableCell className="text-right font-medium">{c.ticketCount}</TableCell>
               </TableRow>
             ))}
           </TableBody>

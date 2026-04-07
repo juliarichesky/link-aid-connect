@@ -6,59 +6,59 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 25% 15%;
+    --background: 210 25% 97%;
+    --foreground: 215 28% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card-foreground: 215 28% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 215 28% 12%;
 
-    --primary: 214 80% 52%;
+    --primary: 217 91% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 25% 95%;
-    --secondary-foreground: 215 25% 25%;
+    --secondary: 214 32% 93%;
+    --secondary-foreground: 215 28% 20%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 15% 50%;
+    --muted: 214 25% 94%;
+    --muted-foreground: 215 16% 44%;
 
-    --accent: 210 30% 93%;
-    --accent-foreground: 215 25% 20%;
+    --accent: 214 35% 91%;
+    --accent-foreground: 215 28% 15%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 20% 90%;
-    --input: 214 20% 90%;
-    --ring: 214 80% 52%;
+    --border: 214 25% 88%;
+    --input: 214 25% 88%;
+    --ring: 217 91% 55%;
 
     --radius: 0.625rem;
 
-    /* Status colors */
-    --status-critical: 0 0% 15%;
+    /* Status colors — more vibrant */
+    --status-critical: 0 0% 12%;
     --status-critical-foreground: 0 0% 100%;
-    --status-high: 0 72% 51%;
+    --status-high: 0 84% 60%;
     --status-high-foreground: 0 0% 100%;
-    --status-medium: 40 96% 53%;
+    --status-medium: 38 100% 50%;
     --status-medium-foreground: 0 0% 100%;
-    --status-low: 142 71% 45%;
+    --status-low: 152 69% 42%;
     --status-low-foreground: 0 0% 100%;
 
-    /* Semantic */
-    --success: 142 71% 45%;
-    --warning: 40 96% 53%;
-    --info: 214 80% 52%;
+    /* Semantic — vibrant */
+    --success: 152 69% 42%;
+    --warning: 38 100% 50%;
+    --info: 217 91% 55%;
 
-    --sidebar-background: 215 25% 15%;
+    --sidebar-background: 220 26% 14%;
     --sidebar-foreground: 210 20% 85%;
-    --sidebar-primary: 214 80% 60%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 25% 20%;
-    --sidebar-accent-foreground: 210 20% 90%;
-    --sidebar-border: 215 20% 22%;
-    --sidebar-ring: 214 80% 52%;
+    --sidebar-accent: 220 24% 20%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 220 20% 22%;
+    --sidebar-ring: 217 91% 55%;
     --sidebar-muted: 215 15% 40%;
   }
 

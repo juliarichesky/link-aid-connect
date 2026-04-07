@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Paperclip, Send, Bot, User, CalendarDays } from "lucide-react";
+import { ArrowLeft, Paperclip, Send, Bot, User, CalendarDays, Stethoscope } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,17 +21,18 @@ const defaultMessages = [
   { from: "client", text: "Muito obrigada! Preciso para meu filho de 8 anos.", time: "14:37" },
 ];
 
-const patientHistory = [
-  { id: "TKT-098", date: "15/08/2024", subject: "Consulta odontológica", status: "Resolvido", dentist: "Dra. Fernanda Costa" },
-  { id: "TKT-045", date: "10/03/2024", subject: "Agendamento tratamento", status: "Resolvido", dentist: "Dr. Marcos Lima" },
-  { id: "TKT-012", date: "05/01/2024", subject: "Primeiro contato", status: "Fechado", dentist: "-" },
-];
+const typeColors: Record<string, string> = {
+  Beneficiário: "bg-warning/15 text-warning border-warning/30",
+  Doador: "bg-primary/15 text-primary border-primary/30",
+  Voluntário: "bg-success/15 text-success border-success/30",
+  Parceiro: "bg-info/15 text-info border-info/30",
+};
 
 export default function TicketDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { tickets, updateTicket, addChatMessage } = useTickets();
+  const { tickets, teamMembers, dentists, updateTicket, addChatMessage } = useTickets();
   const [reply, setReply] = useState("");
 
   const ticket = tickets.find((t) => t.id === id);
@@ -39,7 +40,8 @@ export default function TicketDetail() {
 
   const [priority, setPriority] = useState(ticket?.priority || "Alta");
   const [status, setStatus] = useState(ticket?.status || "Aberto");
-  const [responsible, setResponsible] = useState(ticket?.responsible || "Carlos Silva");
+  const [responsible, setResponsible] = useState(ticket?.responsible || "");
+  const [dentistResp, setDentistResp] = useState(ticket?.dentistResponsible || "");
   const [channel, setChannel] = useState(ticket?.channel || "WhatsApp");
 
   useEffect(() => {
@@ -47,6 +49,7 @@ export default function TicketDetail() {
       setPriority(ticket.priority);
       setStatus(ticket.status);
       setResponsible(ticket.responsible);
+      setDentistResp(ticket.dentistResponsible || "");
       setChannel(ticket.channel);
     }
   }, [ticket]);
@@ -54,7 +57,6 @@ export default function TicketDetail() {
   const handleSave = (field: string, value: string) => {
     if (!id) return;
     updateTicket(id, { [field]: value });
-    // If status changed to Resolvido, auto-move to history
     if (field === "status" && value === "Resolvido") {
       toast.success("Ticket resolvido e movido para Histórico");
       setTimeout(() => navigate(backUrl), 500);
@@ -71,6 +73,9 @@ export default function TicketDetail() {
     setReply("");
     toast.success("Mensagem enviada");
   };
+
+  // Related tickets by same CPF
+  const relatedTickets = ticket ? tickets.filter((t) => t.cpf === ticket.cpf && t.id !== ticket.id) : [];
 
   const allMessages = [...defaultMessages, ...(ticket?.chatMessages || [])];
 
@@ -107,7 +112,7 @@ export default function TicketDetail() {
         </div>
 
         {/* Sender Card */}
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader className="pb-2"><CardTitle className="text-sm">Remetente</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="flex items-center gap-3">
@@ -120,14 +125,17 @@ export default function TicketDetail() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs pt-2">
-              <div><p className="text-muted-foreground">Tipo</p><p className="font-medium">{ticket.type}</p></div>
+              <div>
+                <p className="text-muted-foreground">Tipo</p>
+                <Badge variant="outline" className={`text-[10px] mt-0.5 ${typeColors[ticket.type] || ""}`}>{ticket.type}</Badge>
+              </div>
               <div><p className="text-muted-foreground">Local</p><p className="font-medium">{ticket.location}</p></div>
             </div>
           </CardContent>
         </Card>
 
         {/* AI Panel */}
-        <Card className="border-primary/20 bg-primary/5">
+        <Card className="border-primary/20 bg-primary/5 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
               <Bot className="w-4 h-4 text-primary" /> Inteligência IA
@@ -139,8 +147,8 @@ export default function TicketDetail() {
           </CardContent>
         </Card>
 
-        {/* Editable Fields */}
-        <Card>
+        {/* Management Fields */}
+        <Card className="shadow-sm">
           <CardHeader className="pb-2"><CardTitle className="text-sm">Gerenciamento</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             <div>
@@ -168,15 +176,25 @@ export default function TicketDetail() {
               </Select>
             </div>
             <div>
-              <Label className="text-xs">Responsável</Label>
+              <Label className="text-xs">Responsável pelo Atendimento</Label>
               <Select value={responsible} onValueChange={(v) => { setResponsible(v); handleSave("responsible", v); }}>
                 <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Carlos Silva">Carlos Silva</SelectItem>
-                  <SelectItem value="Ana Costa">Ana Costa</SelectItem>
-                  <SelectItem value="Maria Santos">Maria Santos</SelectItem>
-                  <SelectItem value="João Lima">João Lima</SelectItem>
-                  <SelectItem value="Paula Rocha">Paula Rocha</SelectItem>
+                  {teamMembers.map((m) => (
+                    <SelectItem key={m.name} value={m.name}>{m.name} — {m.role}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs flex items-center gap-1"><Stethoscope className="w-3 h-3" /> Dentista Responsável</Label>
+              <Select value={dentistResp || "none"} onValueChange={(v) => { const val = v === "none" ? "" : v; setDentistResp(val); handleSave("dentistResponsible", val); }}>
+                <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Nenhum" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Nenhum</SelectItem>
+                  {dentists.filter((d) => d.status === "Ativo").map((d) => (
+                    <SelectItem key={d.id} value={d.name}>{d.name} — {d.specialty}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -204,15 +222,18 @@ export default function TicketDetail() {
           </TabsList>
           <TabsContent value="history">
             <div className="space-y-2 mt-2">
-              {patientHistory.map((h) => (
-                <div key={h.id} className="text-xs px-3 py-2 bg-muted rounded-md space-y-1">
+              {relatedTickets.length === 0 && (
+                <p className="text-xs text-muted-foreground text-center py-4">Nenhum ticket anterior para este CPF</p>
+              )}
+              {relatedTickets.map((h) => (
+                <div key={h.id} className="text-xs px-3 py-2 bg-muted rounded-md space-y-1 cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => navigate(`/tickets/${h.id}`, { state: { backUrl } })}>
                   <div className="flex justify-between">
                     <span className="font-mono font-medium">{h.id}</span>
-                    <span className="text-muted-foreground">{h.date}</span>
+                    <span className="text-muted-foreground">{h.openedAt}</span>
                   </div>
                   <p>{h.subject}</p>
                   <div className="flex justify-between text-muted-foreground">
-                    <span>{h.dentist}</span>
+                    <span>{h.dentistResponsible || "-"}</span>
                     <Badge variant="secondary" className="text-[10px] h-4">{h.status}</Badge>
                   </div>
                 </div>

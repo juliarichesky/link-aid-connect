@@ -31,6 +31,13 @@ const priorityClasses: Record<Priority, string> = {
   Baixa: "bg-status-low text-status-low-foreground",
 };
 
+const typeColors: Record<string, string> = {
+  Beneficiário: "bg-warning/15 text-warning",
+  Doador: "bg-primary/15 text-primary",
+  Voluntário: "bg-success/15 text-success",
+  Parceiro: "bg-info/15 text-info",
+};
+
 const ITEMS_PER_PAGE = 10;
 
 export default function Tickets() {
@@ -46,7 +53,6 @@ export default function Tickets() {
   const channelFilter = searchParams.get("channel") || "all";
   const classifications = [...new Set(tickets.map((t) => t.classification))];
 
-  // Only show active tickets (not Resolvido)
   const filtered = tickets.filter((t) => {
     if (t.status === "Resolvido") return false;
     const matchSearch = t.sender.toLowerCase().includes(search.toLowerCase()) || t.subject.toLowerCase().includes(search.toLowerCase()) || t.id.toLowerCase().includes(search.toLowerCase());
@@ -75,7 +81,7 @@ export default function Tickets() {
           </h1>
           <p className="text-sm text-muted-foreground">Visão geral de atendimentos</p>
         </div>
-        <Button onClick={() => navigate("/tickets/new")}>
+        <Button onClick={() => navigate("/tickets/new")} className="shadow-sm">
           <Plus className="w-4 h-4 mr-2" />
           Criar Ticket
         </Button>
@@ -121,7 +127,7 @@ export default function Tickets() {
         )}
       </div>
 
-      <div className="border border-border rounded-lg overflow-hidden">
+      <div className="border border-border rounded-lg overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50">
@@ -129,6 +135,7 @@ export default function Tickets() {
               <TableHead className="w-12">Canal</TableHead>
               <TableHead>Remetente</TableHead>
               <TableHead>Assunto (IA)</TableHead>
+              <TableHead>Tipo</TableHead>
               <TableHead>Classificação</TableHead>
               <TableHead className="w-24">Prioridade</TableHead>
               <TableHead>Status</TableHead>
@@ -143,7 +150,7 @@ export default function Tickets() {
               return (
                 <TableRow
                   key={t.id}
-                  className="cursor-pointer hover:bg-accent/50 transition-colors"
+                  className="cursor-pointer hover:bg-accent/60 transition-colors"
                   onClick={() => {
                     const backUrl = channelFilter !== "all" ? `/tickets?channel=${encodeURIComponent(channelFilter)}` : "/tickets";
                     navigate(`/tickets/${t.id}`, { state: { backUrl } });
@@ -153,6 +160,9 @@ export default function Tickets() {
                   <TableCell><ChIcon className="w-4 h-4 text-muted-foreground" /></TableCell>
                   <TableCell className="font-medium text-sm">{t.sender}</TableCell>
                   <TableCell className="text-sm">{t.subject}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className={`text-[10px] ${typeColors[t.type] || ""}`}>{t.type}</Badge>
+                  </TableCell>
                   <TableCell><Badge variant="secondary" className="text-xs">{t.classification}</Badge></TableCell>
                   <TableCell>
                     <span className={cn("inline-flex items-center justify-center text-xs font-medium px-2.5 py-0.5 rounded-full min-w-[72px]", priorityClasses[t.priority])}>
@@ -163,7 +173,7 @@ export default function Tickets() {
                   <TableCell className="text-sm">{t.responsible}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{t.updated}</TableCell>
                   <TableCell>
-                    <button className="text-muted-foreground hover:text-foreground" onClick={(e) => handleArchive(e, t.id)}>
+                    <button className="text-muted-foreground hover:text-foreground transition-colors" onClick={(e) => handleArchive(e, t.id)}>
                       <Archive className="w-4 h-4" />
                     </button>
                   </TableCell>
@@ -172,7 +182,7 @@ export default function Tickets() {
             })}
             {paginated.length === 0 && (
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">Nenhum ticket encontrado</TableCell>
+                <TableCell colSpan={11} className="text-center py-8 text-muted-foreground">Nenhum ticket encontrado</TableCell>
               </TableRow>
             )}
           </TableBody>

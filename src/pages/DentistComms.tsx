@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Phone, Mail, MessageCircle, MapPin, Send, ArrowLeft, Paperclip, Bot, User } from "lucide-react";
+import { Search, Phone, Mail, MessageCircle, MapPin, Send, ArrowLeft, Paperclip, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,27 +12,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-
-interface DentistContact {
-  id: number;
-  name: string;
-  specialty: string;
-  status: string;
-  phone: string;
-  email: string;
-  location: string;
-}
-
-const dentists: DentistContact[] = [
-  { id: 1, name: "Dra. Fernanda Costa", specialty: "Ortodontia", status: "Ativo", phone: "+5541977776666", email: "fernanda@dentist.com", location: "Curitiba, PR" },
-  { id: 2, name: "Dr. Ricardo Souza", specialty: "Endodontia", status: "Ativo", phone: "+5511966665555", email: "ricardo@dentist.com", location: "São Paulo, SP" },
-  { id: 3, name: "Dra. Julia Mendes", specialty: "Odontopediatria", status: "Inativo", phone: "+5521955554444", email: "julia@dentist.com", location: "Rio de Janeiro, RJ" },
-  { id: 4, name: "Dr. Marcos Lima", specialty: "Implantodontia", status: "Ativo", phone: "+5531944443333", email: "marcos@dentist.com", location: "Belo Horizonte, MG" },
-  { id: 5, name: "Dra. Ana Ribeiro", specialty: "Periodontia", status: "Ativo", phone: "+5585933332222", email: "ana.r@dentist.com", location: "Fortaleza, CE" },
-  { id: 6, name: "Dr. Paulo Nascimento", specialty: "Cirurgia", status: "Ativo", phone: "+5551922221111", email: "paulo.n@dentist.com", location: "Porto Alegre, RS" },
-  { id: 7, name: "Dra. Carla Dias", specialty: "Prótese", status: "Ativo", phone: "+5562911110000", email: "carla.d@dentist.com", location: "Goiânia, GO" },
-  { id: 8, name: "Dr. Fernando Tavares", specialty: "Ortodontia", status: "Inativo", phone: "+5571900009999", email: "fernando.t@dentist.com", location: "Salvador, BA" },
-];
+import { useTickets, type Dentist } from "@/contexts/TicketsContext";
 
 interface ChatMessage {
   from: string;
@@ -41,9 +21,10 @@ interface ChatMessage {
 }
 
 export default function DentistComms() {
+  const { dentists } = useTickets();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedDentist, setSelectedDentist] = useState<DentistContact | null>(null);
+  const [selectedDentist, setSelectedDentist] = useState<Dentist | null>(null);
   const [messages, setMessages] = useState<Record<number, ChatMessage[]>>({});
   const [reply, setReply] = useState("");
 
@@ -66,11 +47,12 @@ export default function DentistComms() {
     toast.success("Mensagem enviada");
   };
 
+  const formatPhone = (phone: string) => phone.replace(/\D/g, "");
+
   if (selectedDentist) {
     const dentistMessages = messages[selectedDentist.id] || [];
     return (
       <div className="h-[calc(100vh-3.5rem)] flex animate-fade-in">
-        {/* Left - Dentist Info */}
         <div className="w-80 border-r border-border p-5 space-y-4 overflow-y-auto bg-card">
           <Button variant="ghost" size="sm" onClick={() => setSelectedDentist(null)}>
             <ArrowLeft className="w-4 h-4 mr-1" /> Voltar
@@ -89,7 +71,7 @@ export default function DentistComms() {
           <div className="space-y-2 text-sm">
             <Badge variant={selectedDentist.status === "Ativo" ? "default" : "secondary"}>{selectedDentist.status}</Badge>
             <div className="flex items-center gap-2 text-muted-foreground">
-              <MapPin className="w-3 h-3" /> <span className="text-xs">{selectedDentist.location}</span>
+              <MapPin className="w-3 h-3" /> <span className="text-xs">{selectedDentist.location}{selectedDentist.uf ? `, ${selectedDentist.uf}` : ""}</span>
             </div>
             <div className="flex items-center gap-3 pt-2">
               <Tooltip>
@@ -110,7 +92,7 @@ export default function DentistComms() {
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <a href={`https://wa.me/${selectedDentist.phone}`} target="_blank" rel="noopener noreferrer">
+                  <a href={`https://wa.me/55${formatPhone(selectedDentist.phone)}`} target="_blank" rel="noopener noreferrer">
                     <Button variant="outline" size="icon" className="h-8 w-8"><MessageCircle className="w-4 h-4 text-success" /></Button>
                   </a>
                 </TooltipTrigger>
@@ -120,7 +102,6 @@ export default function DentistComms() {
           </div>
         </div>
 
-        {/* Right - Chat */}
         <div className="flex-1 flex flex-col">
           <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin">
             {dentistMessages.length === 0 && (
@@ -183,7 +164,7 @@ export default function DentistComms() {
         </Select>
       </div>
 
-      <div className="border border-border rounded-lg overflow-hidden">
+      <div className="border border-border rounded-lg overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50">
@@ -196,10 +177,10 @@ export default function DentistComms() {
           </TableHeader>
           <TableBody>
             {filtered.map((d) => (
-              <TableRow key={d.id} className="hover:bg-accent/50 transition-colors cursor-pointer" onClick={() => setSelectedDentist(d)}>
+              <TableRow key={d.id} className="hover:bg-accent/60 transition-colors cursor-pointer" onClick={() => setSelectedDentist(d)}>
                 <TableCell className="font-medium">{d.name}</TableCell>
                 <TableCell className="text-sm">{d.specialty}</TableCell>
-                <TableCell className="text-sm text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3" /> {d.location}</TableCell>
+                <TableCell className="text-sm text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3" /> {d.location}{d.uf ? `, ${d.uf}` : ""}</TableCell>
                 <TableCell><Badge variant={d.status === "Ativo" ? "default" : "secondary"}>{d.status}</Badge></TableCell>
                 <TableCell>
                   <div className="flex items-center justify-center gap-2" onClick={(e) => e.stopPropagation()}>
