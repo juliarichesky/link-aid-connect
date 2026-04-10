@@ -101,6 +101,7 @@ interface TicketsContextType {
   archiveTicket: (id: string) => void;
   addChatMessage: (id: string, message: { from: string; text: string; time: string }) => void;
   addDentist: (dentist: Dentist) => void;
+  updateDentist: (id: number, updates: Partial<Dentist>) => void;
 }
 
 const TicketsContext = createContext<TicketsContextType | undefined>(undefined);
