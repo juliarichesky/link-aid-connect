@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Search, ArrowLeft, Clock, User, FileText, ChevronRight, Stethoscope } from "lucide-react";
+import { Search, ArrowLeft, Clock, User, FileText, ChevronRight, Stethoscope, RotateCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -17,6 +16,7 @@ import {
   Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useTickets } from "@/contexts/TicketsContext";
+import { toast } from "sonner";
 
 interface HistoryTicket {
   id: string;
@@ -40,6 +40,7 @@ interface HistoryTicket {
   surgeryHistory?: string;
   timeline: { date: string; action: string; user: string }[];
   relatedTickets: { id: string; subject: string; date: string; status: string }[];
+  isFromGlobal?: boolean;
 }
 
 const staticHistoryTickets: HistoryTicket[] = [
@@ -56,14 +57,13 @@ const staticHistoryTickets: HistoryTicket[] = [
 const ITEMS_PER_PAGE = 10;
 
 export default function History() {
-  const { tickets: globalTickets } = useTickets();
+  const { tickets: globalTickets, updateTicket } = useTickets();
   const [search, setSearch] = useState("");
   const [channelFilter, setChannelFilter] = useState("all");
   const [dentistFilter, setDentistFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<HistoryTicket | null>(null);
 
-  // Merge resolved tickets from global state into history
   const resolvedFromGlobal: HistoryTicket[] = globalTickets
     .filter((t) => t.status === "Resolvido")
     .map((t) => ({
@@ -74,7 +74,7 @@ export default function History() {
       date: t.openedAt.split(" ")[0],
       openedAt: t.openedAt,
       channel: t.channel,
-      dentist: "-",
+      dentist: t.dentistResponsible || "-",
       status: "Resolvido",
       priority: t.priority,
       classification: t.classification,
@@ -91,13 +91,19 @@ export default function History() {
         { date: "Agora", action: "Ticket resolvido", user: t.responsible },
       ],
       relatedTickets: [],
+      isFromGlobal: true,
     }));
 
-  // Deduplicate by id
   const existingIds = new Set(staticHistoryTickets.map((t) => t.id));
   const merged = [...staticHistoryTickets, ...resolvedFromGlobal.filter((t) => !existingIds.has(t.id))];
 
-  const filtered = merged.filter((t) => {
+  // Sort: Resolvido first, then Fechado
+  const sorted = [...merged].sort((a, b) => {
+    const statusOrder: Record<string, number> = { "Resolvido": 0, "Fechado": 1 };
+    return (statusOrder[a.status] ?? 2) - (statusOrder[b.status] ?? 2);
+  });
+
+  const filtered = sorted.filter((t) => {
     const matchSearch = t.sender.toLowerCase().includes(search.toLowerCase()) || t.id.toLowerCase().includes(search.toLowerCase()) || t.subject.toLowerCase().includes(search.toLowerCase());
     const matchChannel = channelFilter === "all" || t.channel === channelFilter;
     const matchDentist = dentistFilter === "all" || t.dentist === dentistFilter;
@@ -108,12 +114,25 @@ export default function History() {
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
   const dentists = [...new Set(merged.map((t) => t.dentist).filter((d) => d !== "-"))];
 
+  const handleRevert = (ticketId: string) => {
+    updateTicket(ticketId, { status: "Aberto" });
+    toast.success("Ticket revertido para status Aberto");
+    setSelected(null);
+  };
+
   if (selected) {
     return (
       <div className="p-6 space-y-5 animate-fade-in">
-        <Button variant="ghost" size="sm" onClick={() => setSelected(null)}>
-          <ArrowLeft className="w-4 h-4 mr-1" /> Voltar para Histórico
-        </Button>
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" size="sm" onClick={() => setSelected(null)}>
+            <ArrowLeft className="w-4 h-4 mr-1" /> Voltar para Histórico
+          </Button>
+          {selected.isFromGlobal && (
+            <Button variant="outline" size="sm" onClick={() => handleRevert(selected.id)}>
+              <RotateCcw className="w-4 h-4 mr-1" /> Reverter para Ativo
+            </Button>
+          )}
+        </div>
 
         <div className="flex items-center gap-3 mb-2">
           <h1 className="text-xl font-display font-bold">{selected.id}</h1>
@@ -122,7 +141,6 @@ export default function History() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Dados do Formulário Original + Dados Pessoais */}
           <Card className="lg:col-span-1">
             <CardHeader><CardTitle className="text-base flex items-center gap-2"><User className="w-4 h-4" /> Dados do Remetente</CardTitle></CardHeader>
             <CardContent className="space-y-3">
@@ -155,7 +173,6 @@ export default function History() {
           </Card>
 
           <div className="lg:col-span-2 space-y-5">
-            {/* Clinical Details */}
             <Card>
               <CardHeader><CardTitle className="text-sm font-medium flex items-center gap-2"><Stethoscope className="w-4 h-4" /> Histórico Clínico</CardTitle></CardHeader>
               <CardContent className="space-y-3">
@@ -176,7 +193,6 @@ export default function History() {
               </CardContent>
             </Card>
 
-            {/* Timeline */}
             <Card>
               <CardHeader><CardTitle className="text-sm font-medium flex items-center gap-2"><Clock className="w-4 h-4" /> Linha do Tempo</CardTitle></CardHeader>
               <CardContent>
@@ -199,7 +215,6 @@ export default function History() {
               </CardContent>
             </Card>
 
-            {/* Visão 360° - Related Tickets */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -251,10 +266,10 @@ export default function History() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Buscar no histórico..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
+          <Input placeholder="Buscar por nome, ID ou assunto..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
         <Select value={channelFilter} onValueChange={(v) => { setChannelFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Canal" /></SelectTrigger>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Filtrar por canal" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos Canais</SelectItem>
             <SelectItem value="WhatsApp">WhatsApp</SelectItem>
@@ -264,7 +279,7 @@ export default function History() {
           </SelectContent>
         </Select>
         <Select value={dentistFilter} onValueChange={(v) => { setDentistFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-48"><SelectValue placeholder="Dentista" /></SelectTrigger>
+          <SelectTrigger className="w-48"><SelectValue placeholder="Filtrar por dentista" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos Dentistas</SelectItem>
             {dentists.map((d) => (
@@ -285,6 +300,7 @@ export default function History() {
               <TableHead>Dentista</TableHead>
               <TableHead>Data</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -297,11 +313,22 @@ export default function History() {
                 <TableCell className="text-sm text-muted-foreground">{t.dentist}</TableCell>
                 <TableCell className="text-sm text-muted-foreground">{t.date}</TableCell>
                 <TableCell><Badge variant="secondary">{t.status}</Badge></TableCell>
+                <TableCell>
+                  {t.isFromGlobal && (
+                    <button
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                      onClick={(e) => { e.stopPropagation(); handleRevert(t.id); }}
+                      title="Reverter para ativo"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                    </button>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
             {paginated.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Nenhum resultado encontrado</TableCell>
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Nenhum resultado encontrado</TableCell>
               </TableRow>
             )}
           </TableBody>

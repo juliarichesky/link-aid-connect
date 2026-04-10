@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Phone, Mail, Search, ArrowLeft, MapPin, Plus } from "lucide-react";
+import { Phone, Mail, Search, ArrowLeft, MapPin, Plus, MessageCircle, Save } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -15,17 +16,23 @@ import {
 } from "@/components/ui/pagination";
 import { useTickets, type Dentist } from "@/contexts/TicketsContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { maskPhone } from "@/lib/masks";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function Dentists() {
-  const { dentists, tickets } = useTickets();
+  const { dentists, tickets, updateDentist } = useTickets();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Dentist | null>(null);
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
   const [ufFilter, setUfFilter] = useState("all");
+
+  // Editable state
+  const [editing, setEditing] = useState(false);
+  const [editData, setEditData] = useState<Partial<Dentist>>({});
 
   const ufs = [...new Set(dentists.map((d) => d.uf).filter(Boolean))].sort();
 
@@ -39,18 +46,43 @@ export default function Dentists() {
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-  // Get tickets assigned to a dentist from global state
   const getDentistTickets = (dentistName: string) =>
     tickets.filter((t) => t.dentistResponsible === dentistName);
+
+  const startEdit = () => {
+    if (!selected) return;
+    setEditData({ name: selected.name, specialty: selected.specialty, phone: selected.phone, email: selected.email, crm: selected.crm, location: selected.location, uf: selected.uf, status: selected.status, totalSlots: selected.totalSlots, openSlots: selected.openSlots });
+    setEditing(true);
+  };
+
+  const saveEdit = () => {
+    if (!selected) return;
+    updateDentist(selected.id, editData);
+    setSelected({ ...selected, ...editData } as Dentist);
+    setEditing(false);
+    toast.success("Dados do dentista atualizados");
+  };
 
   if (selected) {
     const assignedTickets = getDentistTickets(selected.name);
 
     return (
       <div className="p-6 space-y-5 animate-fade-in">
-        <Button variant="ghost" size="sm" onClick={() => setSelected(null)}>
-          <ArrowLeft className="w-4 h-4 mr-1" /> Voltar para Dentistas
-        </Button>
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" size="sm" onClick={() => { setSelected(null); setEditing(false); }}>
+            <ArrowLeft className="w-4 h-4 mr-1" /> Voltar para Dentistas
+          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => navigate(`/dentist-comms?id=${selected.id}`)}>
+              <MessageCircle className="w-4 h-4 mr-1" /> Chat Direto
+            </Button>
+            {editing ? (
+              <Button size="sm" onClick={saveEdit}><Save className="w-4 h-4 mr-1" /> Salvar</Button>
+            ) : (
+              <Button variant="outline" size="sm" onClick={startEdit}>Editar</Button>
+            )}
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="lg:col-span-1 shadow-sm">
@@ -61,19 +93,65 @@ export default function Dentists() {
                   {selected.name.split(" ").filter((_, i) => i === 0 || i === selected.name.split(" ").length - 1).map((n) => n[0]).join("")}
                 </div>
                 <div>
-                  <p className="font-semibold">{selected.name}</p>
-                  <p className="text-sm text-muted-foreground">{selected.specialty}</p>
+                  {editing ? (
+                    <Input value={editData.name || ""} onChange={(e) => setEditData({ ...editData, name: e.target.value })} className="h-8 font-semibold" />
+                  ) : (
+                    <p className="font-semibold">{selected.name}</p>
+                  )}
+                  {editing ? (
+                    <Input value={editData.specialty || ""} onChange={(e) => setEditData({ ...editData, specialty: e.target.value })} className="h-7 text-sm mt-1" />
+                  ) : (
+                    <p className="text-sm text-muted-foreground">{selected.specialty}</p>
+                  )}
                 </div>
               </div>
               <div className="space-y-2 text-sm">
-                <div><p className="text-xs text-muted-foreground">CRO</p><p className="font-medium">{selected.crm}</p></div>
-                <div><p className="text-xs text-muted-foreground">Telefone</p><p className="font-medium">{selected.phone}</p></div>
-                <div><p className="text-xs text-muted-foreground">E-mail</p><p className="font-medium">{selected.email}</p></div>
-                <div><p className="text-xs text-muted-foreground">Localização</p><p className="font-medium flex items-center gap-1"><MapPin className="w-3 h-3" /> {selected.location}{selected.uf ? `, ${selected.uf}` : ""} - {selected.country}</p></div>
-                <div><p className="text-xs text-muted-foreground">Status</p><Badge variant={selected.status === "Ativo" ? "default" : "secondary"}>{selected.status}</Badge></div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">CRO</Label>
+                  {editing ? <Input value={editData.crm || ""} onChange={(e) => setEditData({ ...editData, crm: e.target.value })} className="h-8" /> : <p className="font-medium">{selected.crm}</p>}
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Telefone</Label>
+                  {editing ? <Input value={editData.phone || ""} onChange={(e) => setEditData({ ...editData, phone: maskPhone(e.target.value) })} className="h-8" /> : <p className="font-medium">{selected.phone}</p>}
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">E-mail</Label>
+                  {editing ? <Input value={editData.email || ""} onChange={(e) => setEditData({ ...editData, email: e.target.value })} className="h-8" /> : <p className="font-medium">{selected.email}</p>}
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Localização</Label>
+                  {editing ? (
+                    <div className="flex gap-2">
+                      <Input value={editData.location || ""} onChange={(e) => setEditData({ ...editData, location: e.target.value })} className="h-8" placeholder="Cidade" />
+                      <Input value={editData.uf || ""} onChange={(e) => setEditData({ ...editData, uf: e.target.value.toUpperCase().slice(0, 2) })} className="h-8 w-16" placeholder="UF" />
+                    </div>
+                  ) : (
+                    <p className="font-medium flex items-center gap-1"><MapPin className="w-3 h-3" /> {selected.location}{selected.uf ? `, ${selected.uf}` : ""} - {selected.country}</p>
+                  )}
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Status</Label>
+                  {editing ? (
+                    <Select value={editData.status} onValueChange={(v) => setEditData({ ...editData, status: v })}>
+                      <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Ativo">Ativo</SelectItem>
+                        <SelectItem value="Inativo">Inativo</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Badge variant={selected.status === "Ativo" ? "default" : "secondary"}>{selected.status}</Badge>
+                  )}
+                </div>
                 <div className="flex justify-between">
-                  <div><p className="text-xs text-muted-foreground">Vagas Totais</p><p className="font-medium">{selected.totalSlots}</p></div>
-                  <div><p className="text-xs text-muted-foreground">Vagas Abertas</p><p className={`font-medium ${selected.openSlots === 0 ? "text-destructive" : "text-success"}`}>{selected.openSlots}</p></div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Vagas Totais</Label>
+                    {editing ? <Input type="number" value={editData.totalSlots ?? 0} onChange={(e) => setEditData({ ...editData, totalSlots: Number(e.target.value) })} className="h-8 w-20" /> : <p className="font-medium">{selected.totalSlots}</p>}
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Vagas Abertas</Label>
+                    {editing ? <Input type="number" value={editData.openSlots ?? 0} onChange={(e) => setEditData({ ...editData, openSlots: Number(e.target.value) })} className="h-8 w-20" /> : <p className={`font-medium ${selected.openSlots === 0 ? "text-destructive" : "text-success"}`}>{selected.openSlots}</p>}
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -139,18 +217,18 @@ export default function Dentists() {
           <h1 className="text-2xl font-display font-bold">Dentistas</h1>
           <p className="text-sm text-muted-foreground">Gestão de voluntariado odontológico</p>
         </div>
-        <Button onClick={() => navigate("/tickets/new")} variant="outline" className="shadow-sm">
-          <Plus className="w-4 h-4 mr-2" /> Cadastrar via Ticket
+        <Button onClick={() => navigate("/tickets/new?tab=dentist")} variant="outline" className="shadow-sm">
+          <Plus className="w-4 h-4 mr-2" /> Adicionar Dentista
         </Button>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Buscar dentistas..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
+          <Input placeholder="Buscar por nome, especialidade ou cidade..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-32"><SelectValue placeholder="Status" /></SelectTrigger>
+          <SelectTrigger className="w-32"><SelectValue placeholder="Filtrar status" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="Ativo">Ativo</SelectItem>
@@ -158,7 +236,7 @@ export default function Dentists() {
           </SelectContent>
         </Select>
         <Select value={ufFilter} onValueChange={(v) => { setUfFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-28"><SelectValue placeholder="UF" /></SelectTrigger>
+          <SelectTrigger className="w-28"><SelectValue placeholder="Filtrar UF" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos UFs</SelectItem>
             {ufs.map((u) => (<SelectItem key={u} value={u}>{u}</SelectItem>))}
@@ -176,7 +254,7 @@ export default function Dentists() {
               <TableHead>Status</TableHead>
               <TableHead className="text-center">Tickets</TableHead>
               <TableHead className="text-center">Vagas</TableHead>
-              <TableHead className="w-24">Contato</TableHead>
+              <TableHead className="w-32">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -192,8 +270,11 @@ export default function Dentists() {
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                    <a href={`tel:${d.phone}`} className="text-muted-foreground hover:text-foreground transition-colors"><Phone className="w-4 h-4" /></a>
-                    <a href={`mailto:${d.email}`} className="text-muted-foreground hover:text-foreground transition-colors"><Mail className="w-4 h-4" /></a>
+                    <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => navigate(`/dentist-comms?id=${d.id}`)}>
+                      <MessageCircle className="w-3.5 h-3.5 text-green-500" />
+                    </Button>
+                    <a href={`tel:${d.phone}`} className="text-muted-foreground hover:text-foreground transition-colors inline-flex items-center"><Phone className="w-4 h-4" /></a>
+                    <a href={`mailto:${d.email}`} className="text-muted-foreground hover:text-foreground transition-colors inline-flex items-center"><Mail className="w-4 h-4" /></a>
                   </div>
                 </TableCell>
               </TableRow>

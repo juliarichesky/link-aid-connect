@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export default function Settings() {
   return (
     <div className="p-6 space-y-5 animate-fade-in">
-      <div>
+      <div className="text-left">
         <h1 className="text-2xl font-display font-bold">Configurações</h1>
         <p className="text-sm text-muted-foreground">Gerencie usuários, integrações e automações</p>
       </div>
@@ -22,8 +22,8 @@ export default function Settings() {
 
         <TabsContent value="users">
           <Card>
-            <CardHeader><CardTitle className="text-base">Gestão de Usuários</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
+            <CardHeader className="text-left"><CardTitle className="text-base">Gestão de Usuários</CardTitle></CardHeader>
+            <CardContent className="space-y-4 text-left">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div><Label>Nome</Label><Input placeholder="Nome do colaborador" /></div>
                 <div><Label>E-mail</Label><Input placeholder="email@ong.org" /></div>
@@ -36,8 +36,8 @@ export default function Settings() {
 
         <TabsContent value="integrations">
           <Card>
-            <CardHeader><CardTitle className="text-base">Integrações API</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
+            <CardHeader className="text-left"><CardTitle className="text-base">Integrações API</CardTitle></CardHeader>
+            <CardContent className="space-y-4 text-left">
               <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                 <div>
                   <p className="text-sm font-medium">WhatsApp Business API</p>
@@ -65,8 +65,8 @@ export default function Settings() {
 
         <TabsContent value="automation">
           <Card>
-            <CardHeader><CardTitle className="text-base">Regras de Automação</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
+            <CardHeader className="text-left"><CardTitle className="text-base">Regras de Automação</CardTitle></CardHeader>
+            <CardContent className="space-y-4 text-left">
               <div>
                 <Label>Palavra-chave</Label>
                 <Input placeholder="Ex: urgência, doação, voluntário" />

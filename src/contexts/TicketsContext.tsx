@@ -101,6 +101,7 @@ interface TicketsContextType {
   archiveTicket: (id: string) => void;
   addChatMessage: (id: string, message: { from: string; text: string; time: string }) => void;
   addDentist: (dentist: Dentist) => void;
+  updateDentist: (id: number, updates: Partial<Dentist>) => void;
 }
 
 const TicketsContext = createContext<TicketsContextType | undefined>(undefined);
@@ -161,8 +162,12 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
     setDentists((prev) => [...prev, dentist]);
   };
 
+  const updateDentist = (id: number, updates: Partial<Dentist>) => {
+    setDentists((prev) => prev.map((d) => d.id === id ? { ...d, ...updates } : d));
+  };
+
   return (
-    <TicketsContext.Provider value={{ tickets, contacts, teamMembers: initialTeam, dentists, updateTicket, addTicket, archiveTicket, addChatMessage, addDentist }}>
+    <TicketsContext.Provider value={{ tickets, contacts, teamMembers: initialTeam, dentists, updateTicket, addTicket, archiveTicket, addChatMessage, addDentist, updateDentist }}>
       {children}
     </TicketsContext.Provider>
   );

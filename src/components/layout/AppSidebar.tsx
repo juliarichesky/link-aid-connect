@@ -28,10 +28,10 @@ const mainMenu = [
 ];
 
 const channels = [
-  { title: "WhatsApp", icon: MessageCircle, count: 12, filter: "WhatsApp" },
-  { title: "Instagram", icon: Instagram, count: 5, filter: "Instagram" },
-  { title: "E-mail", icon: Mail, count: 8, filter: "E-mail" },
-  { title: "Outros", icon: MoreHorizontal, count: 2, filter: "Outro" },
+  { title: "WhatsApp", icon: MessageCircle, count: 12, filter: "WhatsApp", color: "text-green-500" },
+  { title: "Instagram", icon: Instagram, count: 5, filter: "Instagram", color: "text-pink-500" },
+  { title: "E-mail", icon: Mail, count: 8, filter: "E-mail", color: "text-blue-500" },
+  { title: "Outros", icon: MoreHorizontal, count: 2, filter: "Outro", color: "text-muted-foreground" },
 ];
 
 const extra = [
@@ -109,7 +109,7 @@ export function AppSidebar() {
                   : ""
               )}
             >
-              <ch.icon className="w-4 h-4 shrink-0" />
+              <ch.icon className={cn("w-4 h-4 shrink-0", ch.color)} />
               {!collapsed && (
                 <>
                   <span className="flex-1 text-left">{ch.title}</span>

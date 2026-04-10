@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Plus, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
+  Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTickets, type Priority } from "@/contexts/TicketsContext";
@@ -29,8 +29,15 @@ const typeOptions = [
 
 export default function CreateTicket() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { tickets, teamMembers, dentists, addTicket, addDentist } = useTickets();
-  const [tab, setTab] = useState("pf");
+  const [tab, setTab] = useState(searchParams.get("tab") || "pf");
+
+  useEffect(() => {
+    const t = searchParams.get("tab");
+    if (t) setTab(t);
+  }, [searchParams]);
+  
 
   const [name, setName] = useState("");
   const [doc, setDoc] = useState("");
@@ -100,7 +107,7 @@ export default function CreateTicket() {
       priority: priorityMap[priority] || "Média",
       status: "Novo",
       responsible: responsible || "Sem responsável",
-      dentistResponsible: dentistResp || undefined,
+      dentistResponsible: dentistResp && dentistResp !== "none" ? dentistResp : undefined,
       updated: "agora",
       openedAt,
       phone,
@@ -114,12 +121,37 @@ export default function CreateTicket() {
     navigate("/tickets");
   };
 
+  // Dentist tab: direct registration form
+  const renderDentistForm = () => (
+    <Card className="shadow-sm">
+      <CardHeader><CardTitle className="text-base">Cadastrar Novo Dentista / Voluntário</CardTitle></CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div><Label>Nome Completo *</Label><Input placeholder="Nome completo do profissional" value={ndName} onChange={(e) => setNdName(e.target.value)} /></div>
+          <div><Label>Especialidade *</Label><Input placeholder="Ex: Ortodontia, Endodontia" value={ndSpecialty} onChange={(e) => setNdSpecialty(e.target.value)} /></div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div><Label>Telefone</Label><Input placeholder="(00) 00000-0000" value={ndPhone} onChange={(e) => setNdPhone(maskPhone(e.target.value))} /></div>
+          <div><Label>E-mail</Label><Input placeholder="email@exemplo.com" value={ndEmail} onChange={(e) => setNdEmail(e.target.value)} /></div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div><Label>CRO</Label><Input placeholder="CRO-XX 00000" value={ndCrm} onChange={(e) => setNdCrm(e.target.value)} /></div>
+          <div><Label>Cidade</Label><Input placeholder="Cidade" value={ndCity} onChange={(e) => setNdCity(e.target.value)} /></div>
+          <div><Label>UF</Label><Input placeholder="UF" value={ndUf} onChange={(e) => setNdUf(e.target.value.toUpperCase().slice(0, 2))} /></div>
+        </div>
+        <Button className="w-full" onClick={handleCreateDentist}>
+          <Plus className="w-4 h-4 mr-1" /> Cadastrar Dentista
+        </Button>
+      </CardContent>
+    </Card>
+  );
+
   const renderForm = () => (
     <Card className="shadow-sm">
       <CardHeader><CardTitle className="text-base">Dados do {tab === "pf" ? "Paciente" : "Empresa"}</CardTitle></CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div><Label>{tab === "pf" ? "Nome Completo" : "Razão Social"}</Label><Input placeholder={tab === "pf" ? "Nome completo" : "Razão social"} value={name} onChange={(e) => setName(e.target.value)} /></div>
+          <div><Label>{tab === "pf" ? "Nome Completo" : "Razão Social"}</Label><Input placeholder={tab === "pf" ? "Nome completo do paciente" : "Razão social da empresa"} value={name} onChange={(e) => setName(e.target.value)} /></div>
           <div>
             <Label>{tab === "pf" ? "CPF" : "CNPJ"}</Label>
             <Input placeholder={tab === "pf" ? "000.000.000-00" : "00.000.000/0000-00"} value={doc} onChange={(e) => setDoc(tab === "pf" ? maskCPF(e.target.value) : maskCNPJ(e.target.value))} />
@@ -130,7 +162,7 @@ export default function CreateTicket() {
           <div>
             <Label>Canal *</Label>
             <Select value={channel} onValueChange={setChannel}>
-              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Selecione o canal de entrada" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="whatsapp">WhatsApp</SelectItem>
                 <SelectItem value="instagram">Instagram</SelectItem>
@@ -141,25 +173,25 @@ export default function CreateTicket() {
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div><Label>Cidade</Label><Input placeholder="Cidade" value={city} onChange={(e) => setCity(e.target.value)} /></div>
+          <div><Label>Cidade</Label><Input placeholder="Cidade do remetente" value={city} onChange={(e) => setCity(e.target.value)} /></div>
           <div><Label>Estado</Label><Input placeholder="UF" value={state} onChange={(e) => setState(e.target.value.toUpperCase().slice(0, 2))} /></div>
           <div>
             <Label>Tipo / Etiqueta</Label>
             <Select value={ticketType} onValueChange={setTicketType}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Selecione o tipo" /></SelectTrigger>
               <SelectContent>
                 {typeOptions.map((t) => (<SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>))}
               </SelectContent>
             </Select>
           </div>
         </div>
-        <div><Label>Assunto *</Label><Input placeholder="Assunto do ticket" value={subject} onChange={(e) => setSubject(e.target.value)} /></div>
-        <div><Label>Descrição</Label><Textarea placeholder="Descreva o atendimento..." rows={3} value={desc} onChange={(e) => setDesc(e.target.value)} /></div>
+        <div><Label>Assunto *</Label><Input placeholder="Assunto principal do ticket" value={subject} onChange={(e) => setSubject(e.target.value)} /></div>
+        <div><Label>Descrição</Label><Textarea placeholder="Descreva detalhadamente o atendimento..." rows={3} value={desc} onChange={(e) => setDesc(e.target.value)} /></div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <Label>Prioridade *</Label>
             <Select value={priority} onValueChange={setPriority}>
-              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Selecione a prioridade" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="critical">Crítica</SelectItem>
                 <SelectItem value="high">Alta</SelectItem>
@@ -171,7 +203,7 @@ export default function CreateTicket() {
           <div>
             <Label>Responsável (Atendimento)</Label>
             <Select value={responsible} onValueChange={setResponsible}>
-              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Selecione o responsável" /></SelectTrigger>
               <SelectContent>
                 {teamMembers.map((m) => (
                   <SelectItem key={m.name} value={m.name}>{m.name} — {m.role}</SelectItem>
@@ -184,7 +216,7 @@ export default function CreateTicket() {
           <div>
             <Label>Dentista Responsável (Clínico)</Label>
             <Select value={dentistResp} onValueChange={setDentistResp}>
-              <SelectTrigger><SelectValue placeholder="Selecione (opcional)" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Selecione o dentista (opcional)" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">Nenhum</SelectItem>
                 {dentists.filter((d) => d.status === "Ativo").map((d) => (
@@ -193,28 +225,9 @@ export default function CreateTicket() {
               </SelectContent>
             </Select>
           </div>
-          <Dialog open={newDentistOpen} onOpenChange={setNewDentistOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2"><UserPlus className="w-4 h-4" /> Novo Dentista</Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader><DialogTitle>Cadastrar Novo Dentista/Voluntário</DialogTitle></DialogHeader>
-              <div className="space-y-3">
-                <div><Label>Nome</Label><Input value={ndName} onChange={(e) => setNdName(e.target.value)} placeholder="Nome completo" /></div>
-                <div><Label>Especialidade</Label><Input value={ndSpecialty} onChange={(e) => setNdSpecialty(e.target.value)} placeholder="Ex: Ortodontia" /></div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div><Label>Telefone</Label><Input value={ndPhone} onChange={(e) => setNdPhone(maskPhone(e.target.value))} placeholder="(00) 00000-0000" /></div>
-                  <div><Label>E-mail</Label><Input value={ndEmail} onChange={(e) => setNdEmail(e.target.value)} placeholder="email@..." /></div>
-                </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <div><Label>CRO</Label><Input value={ndCrm} onChange={(e) => setNdCrm(e.target.value)} placeholder="CRO-XX 0000" /></div>
-                  <div><Label>Cidade</Label><Input value={ndCity} onChange={(e) => setNdCity(e.target.value)} /></div>
-                  <div><Label>UF</Label><Input value={ndUf} onChange={(e) => setNdUf(e.target.value.toUpperCase().slice(0, 2))} /></div>
-                </div>
-                <Button className="w-full" onClick={handleCreateDentist}><Plus className="w-4 h-4 mr-1" /> Cadastrar</Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button variant="outline" className="gap-2" onClick={() => setNewDentistOpen(true)}>
+            <UserPlus className="w-4 h-4" /> Adicionar Dentista
+          </Button>
         </div>
         <Button className="w-full mt-2" onClick={handleCreate}>Criar Ticket</Button>
       </CardContent>
@@ -236,10 +249,33 @@ export default function CreateTicket() {
         <TabsList>
           <TabsTrigger value="pf">Pessoa Física</TabsTrigger>
           <TabsTrigger value="pj">Pessoa Jurídica</TabsTrigger>
+          <TabsTrigger value="dentist">Dentista</TabsTrigger>
         </TabsList>
         <TabsContent value="pf">{renderForm()}</TabsContent>
         <TabsContent value="pj">{renderForm()}</TabsContent>
+        <TabsContent value="dentist">{renderDentistForm()}</TabsContent>
       </Tabs>
+
+      {/* Dentist modal triggered from PF/PJ tabs */}
+      <Dialog open={newDentistOpen} onOpenChange={setNewDentistOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Cadastrar Novo Dentista/Voluntário</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div><Label>Nome</Label><Input value={ndName} onChange={(e) => setNdName(e.target.value)} placeholder="Nome completo" /></div>
+            <div><Label>Especialidade</Label><Input value={ndSpecialty} onChange={(e) => setNdSpecialty(e.target.value)} placeholder="Ex: Ortodontia" /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label>Telefone</Label><Input value={ndPhone} onChange={(e) => setNdPhone(maskPhone(e.target.value))} placeholder="(00) 00000-0000" /></div>
+              <div><Label>E-mail</Label><Input value={ndEmail} onChange={(e) => setNdEmail(e.target.value)} placeholder="email@exemplo.com" /></div>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <div><Label>CRO</Label><Input value={ndCrm} onChange={(e) => setNdCrm(e.target.value)} placeholder="CRO-XX 0000" /></div>
+              <div><Label>Cidade</Label><Input value={ndCity} onChange={(e) => setNdCity(e.target.value)} placeholder="Cidade" /></div>
+              <div><Label>UF</Label><Input value={ndUf} onChange={(e) => setNdUf(e.target.value.toUpperCase().slice(0, 2))} placeholder="UF" /></div>
+            </div>
+            <Button className="w-full" onClick={handleCreateDentist}><Plus className="w-4 h-4 mr-1" /> Cadastrar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

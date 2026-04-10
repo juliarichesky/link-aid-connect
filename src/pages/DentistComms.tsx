@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Search, Phone, Mail, MessageCircle, MapPin, Send, ArrowLeft, Paperclip, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -22,11 +23,21 @@ interface ChatMessage {
 
 export default function DentistComms() {
   const { dentists } = useTickets();
+  const [searchParams] = useSearchParams();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedDentist, setSelectedDentist] = useState<Dentist | null>(null);
   const [messages, setMessages] = useState<Record<number, ChatMessage[]>>({});
   const [reply, setReply] = useState("");
+
+  // Auto-select dentist from URL param
+  useEffect(() => {
+    const id = searchParams.get("id");
+    if (id) {
+      const d = dentists.find((dt) => dt.id === Number(id));
+      if (d) setSelectedDentist(d);
+    }
+  }, [searchParams, dentists]);
 
   const filtered = dentists.filter((d) => {
     const matchSearch = d.name.toLowerCase().includes(search.toLowerCase()) || d.specialty.toLowerCase().includes(search.toLowerCase());
@@ -77,7 +88,7 @@ export default function DentistComms() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <a href={`mailto:${selectedDentist.email}`}>
-                    <Button variant="outline" size="icon" className="h-8 w-8"><Mail className="w-4 h-4 text-primary" /></Button>
+                    <Button variant="outline" size="icon" className="h-8 w-8"><Mail className="w-4 h-4 text-blue-500" /></Button>
                   </a>
                 </TooltipTrigger>
                 <TooltipContent>{selectedDentist.email}</TooltipContent>
@@ -93,7 +104,7 @@ export default function DentistComms() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <a href={`https://wa.me/55${formatPhone(selectedDentist.phone)}`} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline" size="icon" className="h-8 w-8"><MessageCircle className="w-4 h-4 text-success" /></Button>
+                    <Button variant="outline" size="icon" className="h-8 w-8"><MessageCircle className="w-4 h-4 text-green-500" /></Button>
                   </a>
                 </TooltipTrigger>
                 <TooltipContent>WhatsApp Direto</TooltipContent>
@@ -152,10 +163,10 @@ export default function DentistComms() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Buscar dentistas..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          <Input placeholder="Buscar por nome ou especialidade..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-32"><SelectValue placeholder="Status" /></SelectTrigger>
+          <SelectTrigger className="w-32"><SelectValue placeholder="Filtrar status" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="Ativo">Ativo</SelectItem>
@@ -187,7 +198,7 @@ export default function DentistComms() {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setSelectedDentist(d)}>
-                          <MessageCircle className="w-4 h-4 text-success" />
+                          <MessageCircle className="w-4 h-4 text-green-500" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>Chat Direto</TooltipContent>
@@ -196,7 +207,7 @@ export default function DentistComms() {
                       <TooltipTrigger asChild>
                         <a href={`mailto:${d.email}`}>
                           <Button variant="outline" size="icon" className="h-8 w-8">
-                            <Mail className="w-4 h-4 text-primary" />
+                            <Mail className="w-4 h-4 text-blue-500" />
                           </Button>
                         </a>
                       </TooltipTrigger>

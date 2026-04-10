@@ -24,6 +24,13 @@ const channelIcon: Record<string, React.ElementType> = {
   Outro: MoreHorizontal,
 };
 
+const channelColors: Record<string, string> = {
+  WhatsApp: "text-green-500",
+  Instagram: "text-pink-500",
+  "E-mail": "text-blue-500",
+  Outro: "text-muted-foreground",
+};
+
 const priorityClasses: Record<Priority, string> = {
   Crítica: "bg-status-critical text-status-critical-foreground",
   Alta: "bg-status-high text-status-high-foreground",
@@ -90,21 +97,21 @@ export default function Tickets() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Buscar tickets..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
+          <Input placeholder="Buscar por nome, assunto ou ID..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Filtrar por status" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="all">Todos Status</SelectItem>
             <SelectItem value="Novo">Novo</SelectItem>
             <SelectItem value="Aberto">Aberto</SelectItem>
             <SelectItem value="Aguardando">Aguardando</SelectItem>
           </SelectContent>
         </Select>
         <Select value={priorityFilter} onValueChange={(v) => { setPriorityFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Prioridade" /></SelectTrigger>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Filtrar por prioridade" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas</SelectItem>
+            <SelectItem value="all">Todas Prioridades</SelectItem>
             <SelectItem value="Crítica">Crítica</SelectItem>
             <SelectItem value="Alta">Alta</SelectItem>
             <SelectItem value="Média">Média</SelectItem>
@@ -112,9 +119,9 @@ export default function Tickets() {
           </SelectContent>
         </Select>
         <Select value={classificationFilter} onValueChange={(v) => { setClassificationFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-40"><SelectValue placeholder="Classificação" /></SelectTrigger>
+          <SelectTrigger className="w-40"><SelectValue placeholder="Filtrar por classificação" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas</SelectItem>
+            <SelectItem value="all">Todas Classificações</SelectItem>
             {classifications.map((c) => (
               <SelectItem key={c} value={c}>{c}</SelectItem>
             ))}
@@ -147,6 +154,7 @@ export default function Tickets() {
           <TableBody>
             {paginated.map((t) => {
               const ChIcon = channelIcon[t.channel] || MoreHorizontal;
+              const chColor = channelColors[t.channel] || "text-muted-foreground";
               return (
                 <TableRow
                   key={t.id}
@@ -157,13 +165,15 @@ export default function Tickets() {
                   }}
                 >
                   <TableCell className="font-mono text-xs">{t.id}</TableCell>
-                  <TableCell><ChIcon className="w-4 h-4 text-muted-foreground" /></TableCell>
+                  <TableCell><ChIcon className={cn("w-4 h-4", chColor)} /></TableCell>
                   <TableCell className="font-medium text-sm">{t.sender}</TableCell>
                   <TableCell className="text-sm">{t.subject}</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={`text-[10px] ${typeColors[t.type] || ""}`}>{t.type}</Badge>
+                    <Badge variant="outline" className={cn("text-[10px] min-w-[80px] flex items-center justify-center text-center", typeColors[t.type] || "")}>{t.type}</Badge>
                   </TableCell>
-                  <TableCell><Badge variant="secondary" className="text-xs">{t.classification}</Badge></TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" className="text-xs min-w-[80px] flex items-center justify-center text-center">{t.classification}</Badge>
+                  </TableCell>
                   <TableCell>
                     <span className={cn("inline-flex items-center justify-center text-xs font-medium px-2.5 py-0.5 rounded-full min-w-[72px]", priorityClasses[t.priority])}>
                       {t.priority}
