@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Plus, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,7 +29,14 @@ const typeOptions = [
 
 export default function CreateTicket() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { tickets, teamMembers, dentists, addTicket, addDentist } = useTickets();
+  const [tab, setTab] = useState(searchParams.get("tab") || "pf");
+
+  useEffect(() => {
+    const t = searchParams.get("tab");
+    if (t) setTab(t);
+  }, [searchParams]);
   const [tab, setTab] = useState("pf");
 
   const [name, setName] = useState("");
