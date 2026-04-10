@@ -162,8 +162,12 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
     setDentists((prev) => [...prev, dentist]);
   };
 
+  const updateDentist = (id: number, updates: Partial<Dentist>) => {
+    setDentists((prev) => prev.map((d) => d.id === id ? { ...d, ...updates } : d));
+  };
+
   return (
-    <TicketsContext.Provider value={{ tickets, contacts, teamMembers: initialTeam, dentists, updateTicket, addTicket, archiveTicket, addChatMessage, addDentist }}>
+    <TicketsContext.Provider value={{ tickets, contacts, teamMembers: initialTeam, dentists, updateTicket, addTicket, archiveTicket, addChatMessage, addDentist, updateDentist }}>
       {children}
     </TicketsContext.Provider>
   );
