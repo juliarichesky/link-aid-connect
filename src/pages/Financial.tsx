@@ -80,6 +80,7 @@ export default function Financial() {
   const [period, setPeriod] = useState<Period>("monthly");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
   const [dentistFilter, setDentistFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -87,7 +88,6 @@ export default function Financial() {
   const [transactions, setTransactions] = useState<Transaction[]>(allTransactions);
   const [showNewTx, setShowNewTx] = useState(false);
 
-  // New transaction form
   const [newType, setNewType] = useState("Receita");
   const [newValue, setNewValue] = useState("");
   const [newDate, setNewDate] = useState("");
@@ -105,8 +105,9 @@ export default function Financial() {
     const matchSearch = t.entity.toLowerCase().includes(search.toLowerCase()) || t.description.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "all" || t.status === statusFilter;
     const matchCategory = categoryFilter === "all" || t.category === categoryFilter;
+    const matchType = typeFilter === "all" || t.type === typeFilter;
     const matchDentist = dentistFilter === "all" || t.dentist === dentistFilter;
-    return matchSearch && matchStatus && matchCategory && matchDentist;
+    return matchSearch && matchStatus && matchCategory && matchType && matchDentist;
   });
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
@@ -179,28 +180,36 @@ export default function Financial() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Buscar transações..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
+          <Input placeholder="Buscar por entidade ou descrição..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
-        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
+        <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setPage(1); }}>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Filtrar por tipo" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="all">Todos Tipos</SelectItem>
+            <SelectItem value="Receita">Receita</SelectItem>
+            <SelectItem value="Despesa">Despesa</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Filtrar por status" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos Status</SelectItem>
             <SelectItem value="Confirmado">Confirmado</SelectItem>
             <SelectItem value="Pago">Pago</SelectItem>
             <SelectItem value="Pendente">Pendente</SelectItem>
           </SelectContent>
         </Select>
         <Select value={categoryFilter} onValueChange={(v) => { setCategoryFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Categoria" /></SelectTrigger>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Filtrar categoria" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas</SelectItem>
+            <SelectItem value="all">Todas Categorias</SelectItem>
             {categories.map((c) => (<SelectItem key={c} value={c}>{c}</SelectItem>))}
           </SelectContent>
         </Select>
         <Select value={dentistFilter} onValueChange={(v) => { setDentistFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-48"><SelectValue placeholder="Dentista" /></SelectTrigger>
+          <SelectTrigger className="w-48"><SelectValue placeholder="Filtrar dentista" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="all">Todos Dentistas</SelectItem>
             {dentistsList.map((d) => (<SelectItem key={d} value={d}>{d}</SelectItem>))}
           </SelectContent>
         </Select>
@@ -225,10 +234,10 @@ export default function Financial() {
                 <TableCell className="text-sm">{t.date}</TableCell>
                 <TableCell className="font-medium text-sm">{t.entity}</TableCell>
                 <TableCell className="text-sm">{t.description}</TableCell>
-                <TableCell><Badge variant="outline" className="text-xs">{t.category}</Badge></TableCell>
+                <TableCell><Badge variant="outline" className="text-xs min-w-[80px] flex items-center justify-center">{t.category}</Badge></TableCell>
                 <TableCell className={`font-medium text-sm ${t.type === "Receita" ? "text-success" : "text-destructive"}`}>{t.type === "Despesa" ? `- ${t.value}` : t.value}</TableCell>
-                <TableCell><Badge variant={t.type === "Receita" ? "default" : "secondary"}>{t.type}</Badge></TableCell>
-                <TableCell><Badge variant="outline" className={`text-xs ${t.status === "Pendente" ? "border-warning text-warning" : ""}`}>{t.status}</Badge></TableCell>
+                <TableCell><Badge variant={t.type === "Receita" ? "default" : "secondary"} className="min-w-[72px] flex items-center justify-center">{t.type}</Badge></TableCell>
+                <TableCell><Badge variant="outline" className={`text-xs min-w-[80px] flex items-center justify-center ${t.status === "Pendente" ? "border-warning text-warning" : ""}`}>{t.status}</Badge></TableCell>
               </TableRow>
             ))}
             {paginated.length === 0 && (
@@ -327,7 +336,7 @@ export default function Financial() {
               <div>
                 <Label className="text-xs">Categoria *</Label>
                 <Select value={newCategory} onValueChange={setNewCategory}>
-                  <SelectTrigger className="h-9"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectTrigger className="h-9"><SelectValue placeholder="Selecione a categoria" /></SelectTrigger>
                   <SelectContent>
                     {categoryOptions.map((c) => (<SelectItem key={c} value={c}>{c}</SelectItem>))}
                   </SelectContent>
@@ -336,17 +345,17 @@ export default function Financial() {
             </div>
             <div>
               <Label className="text-xs">Doador / Fornecedor *</Label>
-              <Input className="h-9" placeholder="Nome da entidade" value={newEntity} onChange={(e) => setNewEntity(e.target.value)} />
+              <Input className="h-9" placeholder="Nome da entidade ou pessoa" value={newEntity} onChange={(e) => setNewEntity(e.target.value)} />
             </div>
             <div>
               <Label className="text-xs">Descrição detalhada</Label>
-              <Textarea placeholder="Descreva a transação..." value={newDescription} onChange={(e) => setNewDescription(e.target.value)} rows={2} />
+              <Textarea placeholder="Descreva a transação em detalhes..." value={newDescription} onChange={(e) => setNewDescription(e.target.value)} rows={2} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs">Responsável</Label>
                 <Select value={newResponsible} onValueChange={setNewResponsible}>
-                  <SelectTrigger className="h-9"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectTrigger className="h-9"><SelectValue placeholder="Selecione o responsável" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Ana Costa">Ana Costa</SelectItem>
                     <SelectItem value="Paula Rocha">Paula Rocha</SelectItem>
@@ -357,7 +366,7 @@ export default function Financial() {
               <div>
                 <Label className="text-xs">Método de Pagamento</Label>
                 <Select value={newPaymentMethod} onValueChange={setNewPaymentMethod}>
-                  <SelectTrigger className="h-9"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectTrigger className="h-9"><SelectValue placeholder="Selecione o método" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Pix">Pix</SelectItem>
                     <SelectItem value="Boleto">Boleto</SelectItem>
