@@ -37,7 +37,7 @@ export default function CreateTicket() {
     const t = searchParams.get("tab");
     if (t) setTab(t);
   }, [searchParams]);
-  const [tab, setTab] = useState("pf");
+  
 
   const [name, setName] = useState("");
   const [doc, setDoc] = useState("");
