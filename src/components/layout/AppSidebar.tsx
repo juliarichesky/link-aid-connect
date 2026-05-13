@@ -17,14 +17,17 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useAuth, Role } from "@/contexts/AuthContext";
 
-const mainMenu = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+type MenuItem = { title: string; url: string; icon: any; roles?: Role[] };
+
+const mainMenu: MenuItem[] = [
+  { title: "Dashboard", url: "/", icon: LayoutDashboard, roles: ["admin"] },
   { title: "Tickets", url: "/tickets", icon: Inbox },
   { title: "Histórico", url: "/history", icon: History },
   { title: "Contatos", url: "/contacts", icon: Users },
-  { title: "Relatórios", url: "/reports", icon: BarChart3 },
-  { title: "Configurações", url: "/settings", icon: Settings },
+  { title: "Relatórios", url: "/reports", icon: BarChart3, roles: ["admin"] },
+  { title: "Configurações", url: "/settings", icon: Settings, roles: ["admin"] },
 ];
 
 const channels = [
@@ -34,18 +37,24 @@ const channels = [
   { title: "Outros", icon: MoreHorizontal, count: 2, filter: "Outro", color: "text-muted-foreground" },
 ];
 
-const extra = [
+const extra: MenuItem[] = [
   { title: "Dentistas", url: "/dentists", icon: Stethoscope },
   { title: "Comunicação Dentistas", url: "/dentist-comms", icon: MessageCircle },
-  { title: "Financeiro", url: "/financial", icon: DollarSign },
+  { title: "Financeiro", url: "/financial", icon: DollarSign, roles: ["admin"] },
 ];
 
 export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const { user } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
+  const canSee = (item: MenuItem) =>
+    !item.roles || (user && item.roles.includes(user.role));
+
+  const visibleMain = mainMenu.filter(canSee);
+  const visibleExtra = extra.filter(canSee);
 
   return (
     <aside
@@ -74,7 +83,7 @@ export function AppSidebar() {
               Menu Principal
             </p>
           )}
-          {mainMenu.map((item) => (
+          {visibleMain.map((item) => (
             <Link
               key={item.url}
               to={item.url}
@@ -123,28 +132,30 @@ export function AppSidebar() {
         </div>
 
         {/* Extra */}
-        <div className="space-y-1 px-2">
-          {!collapsed && (
-            <p className="text-[11px] uppercase tracking-wider text-sidebar-muted px-2 mb-2 font-medium">
-              Seções
-            </p>
-          )}
-          {extra.map((item) => (
-            <Link
-              key={item.url}
-              to={item.url}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
-                isActive(item.url)
-                  ? "bg-sidebar-accent text-sidebar-primary-foreground font-medium"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent/60"
-              )}
-            >
-              <item.icon className="w-4 h-4 shrink-0" />
-              {!collapsed && <span>{item.title}</span>}
-            </Link>
-          ))}
-        </div>
+        {visibleExtra.length > 0 && (
+          <div className="space-y-1 px-2">
+            {!collapsed && (
+              <p className="text-[11px] uppercase tracking-wider text-sidebar-muted px-2 mb-2 font-medium">
+                Seções
+              </p>
+            )}
+            {visibleExtra.map((item) => (
+              <Link
+                key={item.url}
+                to={item.url}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                  isActive(item.url)
+                    ? "bg-sidebar-accent text-sidebar-primary-foreground font-medium"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent/60"
+                )}
+              >
+                <item.icon className="w-4 h-4 shrink-0" />
+                {!collapsed && <span>{item.title}</span>}
+              </Link>
+            ))}
+          </div>
+        )}
       </nav>
 
       {/* Collapse toggle */}
