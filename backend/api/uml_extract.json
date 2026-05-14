@@ -1,0 +1,4850 @@
+[
+  {
+    "file": "src/main/java/com/turmadobem/dto/DashboardFinanceiroResumoResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "DashboardFinanceiroResumoResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "BigDecimal",
+        "name": "receitas"
+      },
+      {
+        "type": "BigDecimal",
+        "name": "despesas"
+      },
+      {
+        "type": "BigDecimal",
+        "name": "saldo"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "java.math.BigDecimal"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/DashboardResumoResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "DashboardResumoResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "int",
+        "name": "totalContatos"
+      },
+      {
+        "type": "int",
+        "name": "totalTickets"
+      },
+      {
+        "type": "int",
+        "name": "ticketsAbertos"
+      },
+      {
+        "type": "int",
+        "name": "ticketsEmAtendimento"
+      },
+      {
+        "type": "int",
+        "name": "ticketsAguardandoCliente"
+      },
+      {
+        "type": "int",
+        "name": "ticketsResolvidos"
+      },
+      {
+        "type": "int",
+        "name": "ticketsCancelados"
+      },
+      {
+        "type": "int",
+        "name": "ticketsArquivados"
+      },
+      {
+        "type": "int",
+        "name": "totalDentistas"
+      },
+      {
+        "type": "int",
+        "name": "dentistasAtivos"
+      },
+      {
+        "type": "BigDecimal",
+        "name": "totalReceitas"
+      },
+      {
+        "type": "BigDecimal",
+        "name": "totalDespesas"
+      },
+      {
+        "type": "BigDecimal",
+        "name": "saldoFinanceiro"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "java.math.BigDecimal"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/DashboardTicketsPorCanalResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "DashboardTicketsPorCanalResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "String",
+        "name": "canalOrigem"
+      },
+      {
+        "type": "int",
+        "name": "quantidade"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/DashboardTicketsPorStatusResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "DashboardTicketsPorStatusResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "String",
+        "name": "status"
+      },
+      {
+        "type": "int",
+        "name": "quantidade"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/HistoricoContatoResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "HistoricoContatoResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "int",
+        "name": "idContato"
+      },
+      {
+        "type": "String",
+        "name": "nome"
+      },
+      {
+        "type": "String",
+        "name": "documento"
+      },
+      {
+        "type": "String",
+        "name": "email"
+      },
+      {
+        "type": "String",
+        "name": "telefone"
+      },
+      {
+        "type": "String",
+        "name": "canalOrigem"
+      },
+      {
+        "type": "int",
+        "name": "totalTickets"
+      },
+      {
+        "type": "LocalDateTime",
+        "name": "ultimoAtendimento"
+      },
+      {
+        "type": "List<HistoricoContatoTicketResponse>",
+        "name": "tickets"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "java.time.LocalDateTime",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/HistoricoContatoTicketResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "HistoricoContatoTicketResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "int",
+        "name": "idTicket"
+      },
+      {
+        "type": "String",
+        "name": "protocolo"
+      },
+      {
+        "type": "String",
+        "name": "assunto"
+      },
+      {
+        "type": "String",
+        "name": "descricao"
+      },
+      {
+        "type": "String",
+        "name": "status"
+      },
+      {
+        "type": "String",
+        "name": "prioridade"
+      },
+      {
+        "type": "String",
+        "name": "canalOrigem"
+      },
+      {
+        "type": "LocalDateTime",
+        "name": "dataAbertura"
+      },
+      {
+        "type": "LocalDateTime",
+        "name": "dataAtualizacao"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "java.time.LocalDateTime"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/RelatorioContatosResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "RelatorioContatosResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "int",
+        "name": "totalContatos"
+      },
+      {
+        "type": "List<RelatorioQuantidadeAgrupadaResponse>",
+        "name": "porCanalOrigem"
+      },
+      {
+        "type": "int",
+        "name": "contatosComTickets"
+      },
+      {
+        "type": "int",
+        "name": "contatosSemTickets"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/RelatorioDentistasResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "RelatorioDentistasResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "int",
+        "name": "totalDentistas"
+      },
+      {
+        "type": "int",
+        "name": "ativos"
+      },
+      {
+        "type": "int",
+        "name": "inativos"
+      },
+      {
+        "type": "int",
+        "name": "ferias"
+      },
+      {
+        "type": "List<RelatorioQuantidadeAgrupadaResponse>",
+        "name": "porEstado"
+      },
+      {
+        "type": "List<RelatorioQuantidadeAgrupadaResponse>",
+        "name": "porEspecialidade"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/RelatorioFinanceiroResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "RelatorioFinanceiroResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "String",
+        "name": "periodo"
+      },
+      {
+        "type": "BigDecimal",
+        "name": "totalReceitas"
+      },
+      {
+        "type": "BigDecimal",
+        "name": "totalDespesas"
+      },
+      {
+        "type": "BigDecimal",
+        "name": "saldo"
+      },
+      {
+        "type": "int",
+        "name": "quantidadeTransacoes"
+      },
+      {
+        "type": "List<RelatorioValorAgrupadoResponse>",
+        "name": "porCategoria"
+      },
+      {
+        "type": "List<RelatorioValorAgrupadoResponse>",
+        "name": "porStatus"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "java.math.BigDecimal",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/RelatorioQuantidadeAgrupadaResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "RelatorioQuantidadeAgrupadaResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "String",
+        "name": "chave"
+      },
+      {
+        "type": "int",
+        "name": "quantidade"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/RelatorioTicketsResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "RelatorioTicketsResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "String",
+        "name": "periodo"
+      },
+      {
+        "type": "int",
+        "name": "totalTickets"
+      },
+      {
+        "type": "int",
+        "name": "abertos"
+      },
+      {
+        "type": "int",
+        "name": "emAtendimento"
+      },
+      {
+        "type": "int",
+        "name": "aguardandoCliente"
+      },
+      {
+        "type": "int",
+        "name": "resolvidos"
+      },
+      {
+        "type": "int",
+        "name": "cancelados"
+      },
+      {
+        "type": "int",
+        "name": "arquivados"
+      },
+      {
+        "type": "List<RelatorioQuantidadeAgrupadaResponse>",
+        "name": "porStatus"
+      },
+      {
+        "type": "List<RelatorioQuantidadeAgrupadaResponse>",
+        "name": "porCanal"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/RelatorioValorAgrupadoResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "RelatorioValorAgrupadoResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "String",
+        "name": "chave"
+      },
+      {
+        "type": "BigDecimal",
+        "name": "valor"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "java.math.BigDecimal"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/TicketTimelineContatoResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "TicketTimelineContatoResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "int",
+        "name": "idContato"
+      },
+      {
+        "type": "String",
+        "name": "nome"
+      },
+      {
+        "type": "String",
+        "name": "documento"
+      },
+      {
+        "type": "String",
+        "name": "email"
+      },
+      {
+        "type": "String",
+        "name": "telefone"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/TicketTimelineDentistaResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "TicketTimelineDentistaResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "Integer",
+        "name": "idDentista"
+      },
+      {
+        "type": "String",
+        "name": "nome"
+      },
+      {
+        "type": "String",
+        "name": "cro"
+      },
+      {
+        "type": "String",
+        "name": "especialidade"
+      },
+      {
+        "type": "String",
+        "name": "estado"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/TicketTimelineMensagemResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "TicketTimelineMensagemResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "int",
+        "name": "idMensagem"
+      },
+      {
+        "type": "String",
+        "name": "remetente"
+      },
+      {
+        "type": "String",
+        "name": "conteudo"
+      },
+      {
+        "type": "LocalDateTime",
+        "name": "dataHora"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "java.time.LocalDateTime"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/TicketTimelineResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "TicketTimelineResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "int",
+        "name": "idTicket"
+      },
+      {
+        "type": "String",
+        "name": "protocolo"
+      },
+      {
+        "type": "String",
+        "name": "assunto"
+      },
+      {
+        "type": "String",
+        "name": "descricao"
+      },
+      {
+        "type": "String",
+        "name": "status"
+      },
+      {
+        "type": "String",
+        "name": "prioridade"
+      },
+      {
+        "type": "String",
+        "name": "canalOrigem"
+      },
+      {
+        "type": "LocalDateTime",
+        "name": "dataAbertura"
+      },
+      {
+        "type": "LocalDateTime",
+        "name": "dataAtualizacao"
+      },
+      {
+        "type": "TicketTimelineContatoResponse",
+        "name": "contato"
+      },
+      {
+        "type": "TicketTimelineDentistaResponse",
+        "name": "dentistaResponsavel"
+      },
+      {
+        "type": "List<TicketTimelineMensagemResponse>",
+        "name": "mensagens"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "java.time.LocalDateTime",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/dto/UltimoTicketDashboardResponse.java",
+    "package": "com.turmadobem.dto",
+    "name": "UltimoTicketDashboardResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "int",
+        "name": "idTicket"
+      },
+      {
+        "type": "String",
+        "name": "protocolo"
+      },
+      {
+        "type": "String",
+        "name": "assunto"
+      },
+      {
+        "type": "String",
+        "name": "status"
+      },
+      {
+        "type": "String",
+        "name": "prioridade"
+      },
+      {
+        "type": "String",
+        "name": "canalOrigem"
+      },
+      {
+        "type": "LocalDateTime",
+        "name": "dataAbertura"
+      },
+      {
+        "type": "String",
+        "name": "nomeContato"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "java.time.LocalDateTime"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/entity/AgendaDentista.java",
+    "package": "com.turmadobem.entity",
+    "name": "AgendaDentista",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "Integer",
+        "name": "idAgendaDentista",
+        "signature": "private Integer idAgendaDentista"
+      },
+      {
+        "type": "Integer",
+        "name": "idDentista",
+        "signature": "private Integer idDentista"
+      },
+      {
+        "type": "LocalDateTime",
+        "name": "dataHoraInicio",
+        "signature": "private LocalDateTime dataHoraInicio"
+      },
+      {
+        "type": "LocalDateTime",
+        "name": "dataHoraFim",
+        "signature": "private LocalDateTime dataHoraFim"
+      },
+      {
+        "type": "String",
+        "name": "status",
+        "signature": "private String status"
+      },
+      {
+        "type": "String",
+        "name": "observacao",
+        "signature": "private String observacao"
+      },
+      {
+        "type": "Dentista",
+        "name": "dentista",
+        "signature": "private Dentista dentista"
+      }
+    ],
+    "constructors": [
+      {
+        "signature": "public AgendaDentista()",
+        "params": ""
+      },
+      {
+        "signature": "public AgendaDentista(Integer idAgendaDentista, Integer idDentista, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, String observacao)",
+        "params": "Integer idAgendaDentista, Integer idDentista, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String status, String observacao"
+      }
+    ],
+    "methods": [
+      {
+        "name": "getIdAgendaDentista",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdAgendaDentista()"
+      },
+      {
+        "name": "setIdAgendaDentista",
+        "return": "public void",
+        "params": "Integer idAgendaDentista",
+        "signature": "public void setIdAgendaDentista(Integer idAgendaDentista)"
+      },
+      {
+        "name": "getIdDentista",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdDentista()"
+      },
+      {
+        "name": "setIdDentista",
+        "return": "public void",
+        "params": "Integer idDentista",
+        "signature": "public void setIdDentista(Integer idDentista)"
+      },
+      {
+        "name": "getDataHoraInicio",
+        "return": "public LocalDateTime",
+        "params": "",
+        "signature": "public LocalDateTime getDataHoraInicio()"
+      },
+      {
+        "name": "setDataHoraInicio",
+        "return": "public void",
+        "params": "LocalDateTime dataHoraInicio",
+        "signature": "public void setDataHoraInicio(LocalDateTime dataHoraInicio)"
+      },
+      {
+        "name": "getDataHoraFim",
+        "return": "public LocalDateTime",
+        "params": "",
+        "signature": "public LocalDateTime getDataHoraFim()"
+      },
+      {
+        "name": "setDataHoraFim",
+        "return": "public void",
+        "params": "LocalDateTime dataHoraFim",
+        "signature": "public void setDataHoraFim(LocalDateTime dataHoraFim)"
+      },
+      {
+        "name": "getStatus",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getStatus()"
+      },
+      {
+        "name": "setStatus",
+        "return": "public void",
+        "params": "String status",
+        "signature": "public void setStatus(String status)"
+      },
+      {
+        "name": "getObservacao",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getObservacao()"
+      },
+      {
+        "name": "setObservacao",
+        "return": "public void",
+        "params": "String observacao",
+        "signature": "public void setObservacao(String observacao)"
+      },
+      {
+        "name": "getDentista",
+        "return": "public Dentista",
+        "params": "",
+        "signature": "public Dentista getDentista()"
+      },
+      {
+        "name": "setDentista",
+        "return": "public void",
+        "params": "Dentista dentista",
+        "signature": "public void setDentista(Dentista dentista)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.fasterxml.jackson.annotation.JsonIgnoreProperties",
+      "java.time.LocalDateTime"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/entity/Contato.java",
+    "package": "com.turmadobem.entity",
+    "name": "Contato",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "Integer",
+        "name": "idContato",
+        "signature": "private Integer idContato"
+      },
+      {
+        "type": "String",
+        "name": "nome",
+        "signature": "private String nome"
+      },
+      {
+        "type": "String",
+        "name": "documento",
+        "signature": "private String documento"
+      },
+      {
+        "type": "String",
+        "name": "email",
+        "signature": "private String email"
+      },
+      {
+        "type": "String",
+        "name": "telefone",
+        "signature": "private String telefone"
+      },
+      {
+        "type": "String",
+        "name": "canalOrigem",
+        "signature": "private String canalOrigem"
+      }
+    ],
+    "constructors": [
+      {
+        "signature": "public Contato()",
+        "params": ""
+      },
+      {
+        "signature": "public Contato(Integer idContato, String nome, String documento, String email, String telefone, String canalOrigem)",
+        "params": "Integer idContato, String nome, String documento, String email, String telefone, String canalOrigem"
+      }
+    ],
+    "methods": [
+      {
+        "name": "getIdContato",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdContato()"
+      },
+      {
+        "name": "setIdContato",
+        "return": "public void",
+        "params": "Integer idContato",
+        "signature": "public void setIdContato(Integer idContato)"
+      },
+      {
+        "name": "getNome",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getNome()"
+      },
+      {
+        "name": "setNome",
+        "return": "public void",
+        "params": "String nome",
+        "signature": "public void setNome(String nome)"
+      },
+      {
+        "name": "getDocumento",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getDocumento()"
+      },
+      {
+        "name": "setDocumento",
+        "return": "public void",
+        "params": "String documento",
+        "signature": "public void setDocumento(String documento)"
+      },
+      {
+        "name": "getEmail",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getEmail()"
+      },
+      {
+        "name": "setEmail",
+        "return": "public void",
+        "params": "String email",
+        "signature": "public void setEmail(String email)"
+      },
+      {
+        "name": "getTelefone",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getTelefone()"
+      },
+      {
+        "name": "setTelefone",
+        "return": "public void",
+        "params": "String telefone",
+        "signature": "public void setTelefone(String telefone)"
+      },
+      {
+        "name": "getCanalOrigem",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getCanalOrigem()"
+      },
+      {
+        "name": "setCanalOrigem",
+        "return": "public void",
+        "params": "String canalOrigem",
+        "signature": "public void setCanalOrigem(String canalOrigem)"
+      },
+      {
+        "name": "getTickets",
+        "return": "public List<Ticket>",
+        "params": "",
+        "signature": "public List<Ticket> getTickets()"
+      },
+      {
+        "name": "setTickets",
+        "return": "public void",
+        "params": "List<Ticket> tickets",
+        "signature": "public void setTickets(List<Ticket> tickets)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.fasterxml.jackson.annotation.JsonIgnoreProperties",
+      "java.util.ArrayList",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/entity/Dentista.java",
+    "package": "com.turmadobem.entity",
+    "name": "Dentista",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "Integer",
+        "name": "idDentista",
+        "signature": "private Integer idDentista"
+      },
+      {
+        "type": "String",
+        "name": "nome",
+        "signature": "private String nome"
+      },
+      {
+        "type": "String",
+        "name": "cro",
+        "signature": "private String cro"
+      },
+      {
+        "type": "String",
+        "name": "especialidade",
+        "signature": "private String especialidade"
+      },
+      {
+        "type": "String",
+        "name": "estado",
+        "signature": "private String estado"
+      },
+      {
+        "type": "String",
+        "name": "status",
+        "signature": "private String status"
+      }
+    ],
+    "constructors": [
+      {
+        "signature": "public Dentista()",
+        "params": ""
+      },
+      {
+        "signature": "public Dentista(Integer idDentista, String nome, String cro, String especialidade, String estado, String status)",
+        "params": "Integer idDentista, String nome, String cro, String especialidade, String estado, String status"
+      }
+    ],
+    "methods": [
+      {
+        "name": "getIdDentista",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdDentista()"
+      },
+      {
+        "name": "setIdDentista",
+        "return": "public void",
+        "params": "Integer idDentista",
+        "signature": "public void setIdDentista(Integer idDentista)"
+      },
+      {
+        "name": "getNome",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getNome()"
+      },
+      {
+        "name": "setNome",
+        "return": "public void",
+        "params": "String nome",
+        "signature": "public void setNome(String nome)"
+      },
+      {
+        "name": "getCro",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getCro()"
+      },
+      {
+        "name": "setCro",
+        "return": "public void",
+        "params": "String cro",
+        "signature": "public void setCro(String cro)"
+      },
+      {
+        "name": "getEspecialidade",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getEspecialidade()"
+      },
+      {
+        "name": "setEspecialidade",
+        "return": "public void",
+        "params": "String especialidade",
+        "signature": "public void setEspecialidade(String especialidade)"
+      },
+      {
+        "name": "getEstado",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getEstado()"
+      },
+      {
+        "name": "setEstado",
+        "return": "public void",
+        "params": "String estado",
+        "signature": "public void setEstado(String estado)"
+      },
+      {
+        "name": "getStatus",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getStatus()"
+      },
+      {
+        "name": "setStatus",
+        "return": "public void",
+        "params": "String status",
+        "signature": "public void setStatus(String status)"
+      },
+      {
+        "name": "getAgenda",
+        "return": "public List<AgendaDentista>",
+        "params": "",
+        "signature": "public List<AgendaDentista> getAgenda()"
+      },
+      {
+        "name": "setAgenda",
+        "return": "public void",
+        "params": "List<AgendaDentista> agenda",
+        "signature": "public void setAgenda(List<AgendaDentista> agenda)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.fasterxml.jackson.annotation.JsonIgnoreProperties",
+      "java.util.ArrayList",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/entity/Mensagem.java",
+    "package": "com.turmadobem.entity",
+    "name": "Mensagem",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "Integer",
+        "name": "idMensagem",
+        "signature": "private Integer idMensagem"
+      },
+      {
+        "type": "Integer",
+        "name": "idTicket",
+        "signature": "private Integer idTicket"
+      },
+      {
+        "type": "String",
+        "name": "remetente",
+        "signature": "private String remetente"
+      },
+      {
+        "type": "String",
+        "name": "conteudo",
+        "signature": "private String conteudo"
+      },
+      {
+        "type": "LocalDateTime",
+        "name": "dataHora",
+        "signature": "private LocalDateTime dataHora"
+      },
+      {
+        "type": "Ticket",
+        "name": "ticket",
+        "signature": "private Ticket ticket"
+      }
+    ],
+    "constructors": [
+      {
+        "signature": "public Mensagem()",
+        "params": ""
+      },
+      {
+        "signature": "public Mensagem(Integer idMensagem, Integer idTicket, String remetente, String conteudo, LocalDateTime dataHora)",
+        "params": "Integer idMensagem, Integer idTicket, String remetente, String conteudo, LocalDateTime dataHora"
+      }
+    ],
+    "methods": [
+      {
+        "name": "getIdMensagem",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdMensagem()"
+      },
+      {
+        "name": "setIdMensagem",
+        "return": "public void",
+        "params": "Integer idMensagem",
+        "signature": "public void setIdMensagem(Integer idMensagem)"
+      },
+      {
+        "name": "getIdTicket",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdTicket()"
+      },
+      {
+        "name": "setIdTicket",
+        "return": "public void",
+        "params": "Integer idTicket",
+        "signature": "public void setIdTicket(Integer idTicket)"
+      },
+      {
+        "name": "getRemetente",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getRemetente()"
+      },
+      {
+        "name": "setRemetente",
+        "return": "public void",
+        "params": "String remetente",
+        "signature": "public void setRemetente(String remetente)"
+      },
+      {
+        "name": "getConteudo",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getConteudo()"
+      },
+      {
+        "name": "setConteudo",
+        "return": "public void",
+        "params": "String conteudo",
+        "signature": "public void setConteudo(String conteudo)"
+      },
+      {
+        "name": "getDataHora",
+        "return": "public LocalDateTime",
+        "params": "",
+        "signature": "public LocalDateTime getDataHora()"
+      },
+      {
+        "name": "setDataHora",
+        "return": "public void",
+        "params": "LocalDateTime dataHora",
+        "signature": "public void setDataHora(LocalDateTime dataHora)"
+      },
+      {
+        "name": "getTicket",
+        "return": "public Ticket",
+        "params": "",
+        "signature": "public Ticket getTicket()"
+      },
+      {
+        "name": "setTicket",
+        "return": "public void",
+        "params": "Ticket ticket",
+        "signature": "public void setTicket(Ticket ticket)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.fasterxml.jackson.annotation.JsonIgnoreProperties",
+      "java.time.LocalDateTime"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/entity/Ticket.java",
+    "package": "com.turmadobem.entity",
+    "name": "Ticket",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "Integer",
+        "name": "idTicket",
+        "signature": "private Integer idTicket"
+      },
+      {
+        "type": "String",
+        "name": "protocolo",
+        "signature": "private String protocolo"
+      },
+      {
+        "type": "Integer",
+        "name": "idContato",
+        "signature": "private Integer idContato"
+      },
+      {
+        "type": "String",
+        "name": "canalOrigem",
+        "signature": "private String canalOrigem"
+      },
+      {
+        "type": "String",
+        "name": "assunto",
+        "signature": "private String assunto"
+      },
+      {
+        "type": "String",
+        "name": "descricao",
+        "signature": "private String descricao"
+      },
+      {
+        "type": "String",
+        "name": "status",
+        "signature": "private String status"
+      },
+      {
+        "type": "String",
+        "name": "prioridade",
+        "signature": "private String prioridade"
+      },
+      {
+        "type": "Integer",
+        "name": "idDentistaResponsavel",
+        "signature": "private Integer idDentistaResponsavel"
+      },
+      {
+        "type": "LocalDateTime",
+        "name": "dataAbertura",
+        "signature": "private LocalDateTime dataAbertura"
+      },
+      {
+        "type": "LocalDateTime",
+        "name": "dataAtualizacao",
+        "signature": "private LocalDateTime dataAtualizacao"
+      },
+      {
+        "type": "Contato",
+        "name": "contato",
+        "signature": "private Contato contato"
+      },
+      {
+        "type": "Dentista",
+        "name": "dentistaResponsavel",
+        "signature": "private Dentista dentistaResponsavel"
+      }
+    ],
+    "constructors": [
+      {
+        "signature": "public Ticket()",
+        "params": ""
+      },
+      {
+        "signature": "public Ticket(Integer idTicket, String protocolo, Integer idContato, String canalOrigem, String assunto, String descricao, String status, String prioridade, LocalDateTime dataAbertura, LocalDateTime dataAtualizacao)",
+        "params": "Integer idTicket, String protocolo, Integer idContato, String canalOrigem, String assunto, String descricao, String status, String prioridade, LocalDateTime dataAbertura, LocalDateTime dataAtualizacao"
+      }
+    ],
+    "methods": [
+      {
+        "name": "getIdTicket",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdTicket()"
+      },
+      {
+        "name": "setIdTicket",
+        "return": "public void",
+        "params": "Integer idTicket",
+        "signature": "public void setIdTicket(Integer idTicket)"
+      },
+      {
+        "name": "getProtocolo",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getProtocolo()"
+      },
+      {
+        "name": "setProtocolo",
+        "return": "public void",
+        "params": "String protocolo",
+        "signature": "public void setProtocolo(String protocolo)"
+      },
+      {
+        "name": "getIdContato",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdContato()"
+      },
+      {
+        "name": "setIdContato",
+        "return": "public void",
+        "params": "Integer idContato",
+        "signature": "public void setIdContato(Integer idContato)"
+      },
+      {
+        "name": "getCanalOrigem",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getCanalOrigem()"
+      },
+      {
+        "name": "setCanalOrigem",
+        "return": "public void",
+        "params": "String canalOrigem",
+        "signature": "public void setCanalOrigem(String canalOrigem)"
+      },
+      {
+        "name": "getAssunto",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getAssunto()"
+      },
+      {
+        "name": "setAssunto",
+        "return": "public void",
+        "params": "String assunto",
+        "signature": "public void setAssunto(String assunto)"
+      },
+      {
+        "name": "getDescricao",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getDescricao()"
+      },
+      {
+        "name": "setDescricao",
+        "return": "public void",
+        "params": "String descricao",
+        "signature": "public void setDescricao(String descricao)"
+      },
+      {
+        "name": "getStatus",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getStatus()"
+      },
+      {
+        "name": "setStatus",
+        "return": "public void",
+        "params": "String status",
+        "signature": "public void setStatus(String status)"
+      },
+      {
+        "name": "getPrioridade",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getPrioridade()"
+      },
+      {
+        "name": "setPrioridade",
+        "return": "public void",
+        "params": "String prioridade",
+        "signature": "public void setPrioridade(String prioridade)"
+      },
+      {
+        "name": "getIdDentistaResponsavel",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdDentistaResponsavel()"
+      },
+      {
+        "name": "setIdDentistaResponsavel",
+        "return": "public void",
+        "params": "Integer idDentistaResponsavel",
+        "signature": "public void setIdDentistaResponsavel(Integer idDentistaResponsavel)"
+      },
+      {
+        "name": "getDataAbertura",
+        "return": "public LocalDateTime",
+        "params": "",
+        "signature": "public LocalDateTime getDataAbertura()"
+      },
+      {
+        "name": "setDataAbertura",
+        "return": "public void",
+        "params": "LocalDateTime dataAbertura",
+        "signature": "public void setDataAbertura(LocalDateTime dataAbertura)"
+      },
+      {
+        "name": "getDataAtualizacao",
+        "return": "public LocalDateTime",
+        "params": "",
+        "signature": "public LocalDateTime getDataAtualizacao()"
+      },
+      {
+        "name": "setDataAtualizacao",
+        "return": "public void",
+        "params": "LocalDateTime dataAtualizacao",
+        "signature": "public void setDataAtualizacao(LocalDateTime dataAtualizacao)"
+      },
+      {
+        "name": "getContato",
+        "return": "public Contato",
+        "params": "",
+        "signature": "public Contato getContato()"
+      },
+      {
+        "name": "setContato",
+        "return": "public void",
+        "params": "Contato contato",
+        "signature": "public void setContato(Contato contato)"
+      },
+      {
+        "name": "getDentistaResponsavel",
+        "return": "public Dentista",
+        "params": "",
+        "signature": "public Dentista getDentistaResponsavel()"
+      },
+      {
+        "name": "setDentistaResponsavel",
+        "return": "public void",
+        "params": "Dentista dentistaResponsavel",
+        "signature": "public void setDentistaResponsavel(Dentista dentistaResponsavel)"
+      },
+      {
+        "name": "getMensagens",
+        "return": "public List<Mensagem>",
+        "params": "",
+        "signature": "public List<Mensagem> getMensagens()"
+      },
+      {
+        "name": "setMensagens",
+        "return": "public void",
+        "params": "List<Mensagem> mensagens",
+        "signature": "public void setMensagens(List<Mensagem> mensagens)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.fasterxml.jackson.annotation.JsonIgnoreProperties",
+      "java.time.LocalDateTime",
+      "java.util.ArrayList",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/entity/TransacaoFinanceira.java",
+    "package": "com.turmadobem.entity",
+    "name": "TransacaoFinanceira",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "Integer",
+        "name": "idTransacaoFinanceira",
+        "signature": "private Integer idTransacaoFinanceira"
+      },
+      {
+        "type": "String",
+        "name": "tipo",
+        "signature": "private String tipo"
+      },
+      {
+        "type": "BigDecimal",
+        "name": "valor",
+        "signature": "private BigDecimal valor"
+      },
+      {
+        "type": "String",
+        "name": "status",
+        "signature": "private String status"
+      },
+      {
+        "type": "String",
+        "name": "categoria",
+        "signature": "private String categoria"
+      },
+      {
+        "type": "String",
+        "name": "descricao",
+        "signature": "private String descricao"
+      },
+      {
+        "type": "LocalDate",
+        "name": "data",
+        "signature": "private LocalDate data"
+      },
+      {
+        "type": "Integer",
+        "name": "idUsuario",
+        "signature": "private Integer idUsuario"
+      },
+      {
+        "type": "Integer",
+        "name": "idContato",
+        "signature": "private Integer idContato"
+      },
+      {
+        "type": "Contato",
+        "name": "contato",
+        "signature": "private Contato contato"
+      },
+      {
+        "type": "Usuario",
+        "name": "usuario",
+        "signature": "private Usuario usuario"
+      }
+    ],
+    "constructors": [
+      {
+        "signature": "public TransacaoFinanceira()",
+        "params": ""
+      },
+      {
+        "signature": "public TransacaoFinanceira(Integer idTransacaoFinanceira, String tipo, BigDecimal valor, String status, String categoria, String descricao, LocalDate data, Integer idUsuario, Integer idContato)",
+        "params": "Integer idTransacaoFinanceira, String tipo, BigDecimal valor, String status, String categoria, String descricao, LocalDate data, Integer idUsuario, Integer idContato"
+      }
+    ],
+    "methods": [
+      {
+        "name": "getIdTransacaoFinanceira",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdTransacaoFinanceira()"
+      },
+      {
+        "name": "setIdTransacaoFinanceira",
+        "return": "public void",
+        "params": "Integer idTransacaoFinanceira",
+        "signature": "public void setIdTransacaoFinanceira(Integer idTransacaoFinanceira)"
+      },
+      {
+        "name": "getTipo",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getTipo()"
+      },
+      {
+        "name": "setTipo",
+        "return": "public void",
+        "params": "String tipo",
+        "signature": "public void setTipo(String tipo)"
+      },
+      {
+        "name": "getValor",
+        "return": "public BigDecimal",
+        "params": "",
+        "signature": "public BigDecimal getValor()"
+      },
+      {
+        "name": "setValor",
+        "return": "public void",
+        "params": "BigDecimal valor",
+        "signature": "public void setValor(BigDecimal valor)"
+      },
+      {
+        "name": "getStatus",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getStatus()"
+      },
+      {
+        "name": "setStatus",
+        "return": "public void",
+        "params": "String status",
+        "signature": "public void setStatus(String status)"
+      },
+      {
+        "name": "getCategoria",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getCategoria()"
+      },
+      {
+        "name": "setCategoria",
+        "return": "public void",
+        "params": "String categoria",
+        "signature": "public void setCategoria(String categoria)"
+      },
+      {
+        "name": "getDescricao",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getDescricao()"
+      },
+      {
+        "name": "setDescricao",
+        "return": "public void",
+        "params": "String descricao",
+        "signature": "public void setDescricao(String descricao)"
+      },
+      {
+        "name": "getData",
+        "return": "public LocalDate",
+        "params": "",
+        "signature": "public LocalDate getData()"
+      },
+      {
+        "name": "setData",
+        "return": "public void",
+        "params": "LocalDate data",
+        "signature": "public void setData(LocalDate data)"
+      },
+      {
+        "name": "getIdUsuario",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdUsuario()"
+      },
+      {
+        "name": "setIdUsuario",
+        "return": "public void",
+        "params": "Integer idUsuario",
+        "signature": "public void setIdUsuario(Integer idUsuario)"
+      },
+      {
+        "name": "getIdContato",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdContato()"
+      },
+      {
+        "name": "setIdContato",
+        "return": "public void",
+        "params": "Integer idContato",
+        "signature": "public void setIdContato(Integer idContato)"
+      },
+      {
+        "name": "getContato",
+        "return": "public Contato",
+        "params": "",
+        "signature": "public Contato getContato()"
+      },
+      {
+        "name": "setContato",
+        "return": "public void",
+        "params": "Contato contato",
+        "signature": "public void setContato(Contato contato)"
+      },
+      {
+        "name": "getUsuario",
+        "return": "public Usuario",
+        "params": "",
+        "signature": "public Usuario getUsuario()"
+      },
+      {
+        "name": "setUsuario",
+        "return": "public void",
+        "params": "Usuario usuario",
+        "signature": "public void setUsuario(Usuario usuario)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.fasterxml.jackson.annotation.JsonIgnoreProperties",
+      "java.math.BigDecimal",
+      "java.time.LocalDate"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/entity/Usuario.java",
+    "package": "com.turmadobem.entity",
+    "name": "Usuario",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "Integer",
+        "name": "idUsuario",
+        "signature": "private Integer idUsuario"
+      },
+      {
+        "type": "String",
+        "name": "nome",
+        "signature": "private String nome"
+      },
+      {
+        "type": "String",
+        "name": "email",
+        "signature": "private String email"
+      },
+      {
+        "type": "String",
+        "name": "senha",
+        "signature": "private String senha"
+      },
+      {
+        "type": "String",
+        "name": "role",
+        "signature": "private String role"
+      },
+      {
+        "type": "String",
+        "name": "status",
+        "signature": "private String status"
+      }
+    ],
+    "constructors": [
+      {
+        "signature": "public Usuario()",
+        "params": ""
+      },
+      {
+        "signature": "public Usuario(Integer idUsuario, String nome, String email, String senha, String role, String status)",
+        "params": "Integer idUsuario, String nome, String email, String senha, String role, String status"
+      }
+    ],
+    "methods": [
+      {
+        "name": "getIdUsuario",
+        "return": "public Integer",
+        "params": "",
+        "signature": "public Integer getIdUsuario()"
+      },
+      {
+        "name": "setIdUsuario",
+        "return": "public void",
+        "params": "Integer idUsuario",
+        "signature": "public void setIdUsuario(Integer idUsuario)"
+      },
+      {
+        "name": "getNome",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getNome()"
+      },
+      {
+        "name": "setNome",
+        "return": "public void",
+        "params": "String nome",
+        "signature": "public void setNome(String nome)"
+      },
+      {
+        "name": "getEmail",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getEmail()"
+      },
+      {
+        "name": "setEmail",
+        "return": "public void",
+        "params": "String email",
+        "signature": "public void setEmail(String email)"
+      },
+      {
+        "name": "getSenha",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getSenha()"
+      },
+      {
+        "name": "setSenha",
+        "return": "public void",
+        "params": "String senha",
+        "signature": "public void setSenha(String senha)"
+      },
+      {
+        "name": "getRole",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getRole()"
+      },
+      {
+        "name": "setRole",
+        "return": "public void",
+        "params": "String role",
+        "signature": "public void setRole(String role)"
+      },
+      {
+        "name": "getStatus",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getStatus()"
+      },
+      {
+        "name": "setStatus",
+        "return": "public void",
+        "params": "String status",
+        "signature": "public void setStatus(String status)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.fasterxml.jackson.annotation.JsonProperty"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/repository/AgendaDentistaRepository.java",
+    "package": "com.turmadobem.repository",
+    "name": "AgendaDentistaRepository",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ConexaoBD",
+        "name": "conexaoBD",
+        "signature": "ConexaoBD conexaoBD"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "create",
+        "return": "public AgendaDentista",
+        "params": "AgendaDentista agenda",
+        "signature": "public AgendaDentista create(AgendaDentista agenda) throws SQLException"
+      },
+      {
+        "name": "findByDentista",
+        "return": "public List<AgendaDentista>",
+        "params": "int idDentista, String status",
+        "signature": "public List<AgendaDentista> findByDentista(int idDentista, String status) throws SQLException"
+      },
+      {
+        "name": "deleteByDentista",
+        "return": "public void",
+        "params": "int idDentista",
+        "signature": "public void deleteByDentista(int idDentista) throws SQLException"
+      },
+      {
+        "name": "nextId",
+        "return": "public int",
+        "params": "",
+        "signature": "public int nextId() throws SQLException"
+      },
+      {
+        "name": "mapAgenda",
+        "return": "private AgendaDentista",
+        "params": "ResultSet rs",
+        "signature": "private AgendaDentista mapAgenda(ResultSet rs) throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.AgendaDentista",
+      "com.turmadobem.support.ConexaoBD",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.Connection",
+      "java.sql.PreparedStatement",
+      "java.sql.ResultSet",
+      "java.sql.SQLException",
+      "java.sql.Timestamp",
+      "java.util.ArrayList",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/repository/ContatoRepository.java",
+    "package": "com.turmadobem.repository",
+    "name": "ContatoRepository",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ConexaoBD",
+        "name": "conexaoBD",
+        "signature": "ConexaoBD conexaoBD"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "create",
+        "return": "public Contato",
+        "params": "Contato contato",
+        "signature": "public Contato create(Contato contato) throws SQLException"
+      },
+      {
+        "name": "findById",
+        "return": "public Contato",
+        "params": "int idContato",
+        "signature": "public Contato findById(int idContato) throws SQLException"
+      },
+      {
+        "name": "findByDocumento",
+        "return": "public Contato",
+        "params": "String documento",
+        "signature": "public Contato findByDocumento(String documento) throws SQLException"
+      },
+      {
+        "name": "findAll",
+        "return": "public List<Contato>",
+        "params": "",
+        "signature": "public List<Contato> findAll() throws SQLException"
+      },
+      {
+        "name": "findAll",
+        "return": "public List<Contato>",
+        "params": "int page, int size, String sortColumn, String sortOrder",
+        "signature": "public List<Contato> findAll(int page, int size, String sortColumn, String sortOrder) throws SQLException"
+      },
+      {
+        "name": "update",
+        "return": "public Contato",
+        "params": "Contato contato",
+        "signature": "public Contato update(Contato contato) throws SQLException"
+      },
+      {
+        "name": "delete",
+        "return": "public void",
+        "params": "int idContato",
+        "signature": "public void delete(int idContato) throws SQLException"
+      },
+      {
+        "name": "nextId",
+        "return": "public int",
+        "params": "",
+        "signature": "public int nextId() throws SQLException"
+      },
+      {
+        "name": "mapContato",
+        "return": "private Contato",
+        "params": "ResultSet rs",
+        "signature": "private Contato mapContato(ResultSet rs) throws SQLException"
+      },
+      {
+        "name": "validarPage",
+        "return": "private int",
+        "params": "int page",
+        "signature": "private int validarPage(int page)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Contato",
+      "com.turmadobem.support.ConexaoBD",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.Connection",
+      "java.sql.PreparedStatement",
+      "java.sql.ResultSet",
+      "java.sql.SQLException",
+      "java.util.ArrayList",
+      "java.util.List",
+      "java.util.Map",
+      "java.util.Set"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/repository/DashboardRepository.java",
+    "package": "com.turmadobem.repository",
+    "name": "DashboardRepository",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ConexaoBD",
+        "name": "conexaoBD",
+        "signature": "ConexaoBD conexaoBD"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "buscarResumo",
+        "return": "public DashboardResumoResponse",
+        "params": "",
+        "signature": "public DashboardResumoResponse buscarResumo() throws SQLException"
+      },
+      {
+        "name": "buscarTicketsPorStatus",
+        "return": "public List<DashboardTicketsPorStatusResponse>",
+        "params": "",
+        "signature": "public List<DashboardTicketsPorStatusResponse> buscarTicketsPorStatus() throws SQLException"
+      },
+      {
+        "name": "buscarTicketsPorCanal",
+        "return": "public List<DashboardTicketsPorCanalResponse>",
+        "params": "",
+        "signature": "public List<DashboardTicketsPorCanalResponse> buscarTicketsPorCanal() throws SQLException"
+      },
+      {
+        "name": "buscarFinanceiroResumo",
+        "return": "public DashboardFinanceiroResumoResponse",
+        "params": "",
+        "signature": "public DashboardFinanceiroResumoResponse buscarFinanceiroResumo() throws SQLException"
+      },
+      {
+        "name": "buscarUltimosTickets",
+        "return": "public List<UltimoTicketDashboardResponse>",
+        "params": "",
+        "signature": "public List<UltimoTicketDashboardResponse> buscarUltimosTickets() throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.dto.DashboardFinanceiroResumoResponse",
+      "com.turmadobem.dto.DashboardResumoResponse",
+      "com.turmadobem.dto.DashboardTicketsPorCanalResponse",
+      "com.turmadobem.dto.DashboardTicketsPorStatusResponse",
+      "com.turmadobem.dto.UltimoTicketDashboardResponse",
+      "com.turmadobem.support.ConexaoBD",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.math.BigDecimal",
+      "java.sql.Connection",
+      "java.sql.PreparedStatement",
+      "java.sql.ResultSet",
+      "java.sql.SQLException",
+      "java.util.ArrayList",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/repository/DentistaRepository.java",
+    "package": "com.turmadobem.repository",
+    "name": "DentistaRepository",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ConexaoBD",
+        "name": "conexaoBD",
+        "signature": "ConexaoBD conexaoBD"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "create",
+        "return": "public Dentista",
+        "params": "Dentista dentista",
+        "signature": "public Dentista create(Dentista dentista) throws SQLException"
+      },
+      {
+        "name": "findById",
+        "return": "public Dentista",
+        "params": "int idDentista",
+        "signature": "public Dentista findById(int idDentista) throws SQLException"
+      },
+      {
+        "name": "findByCro",
+        "return": "public Dentista",
+        "params": "String cro",
+        "signature": "public Dentista findByCro(String cro) throws SQLException"
+      },
+      {
+        "name": "findAll",
+        "return": "public List<Dentista>",
+        "params": "String especialidade, String estado, String status",
+        "signature": "public List<Dentista> findAll(String especialidade, String estado, String status) throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Dentista",
+      "com.turmadobem.support.ConexaoBD",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.Connection",
+      "java.sql.PreparedStatement",
+      "java.sql.ResultSet",
+      "java.sql.SQLException",
+      "java.util.ArrayList",
+      "java.util.List",
+      "java.util.Map",
+      "java.util.Set"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/repository/HistoricoContatoRepository.java",
+    "package": "com.turmadobem.repository",
+    "name": "HistoricoContatoRepository",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ConexaoBD",
+        "name": "conexaoBD",
+        "signature": "ConexaoBD conexaoBD"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "buscarHistoricoPorContato",
+        "return": "public HistoricoContatoResponse",
+        "params": "int idContato",
+        "signature": "public HistoricoContatoResponse buscarHistoricoPorContato(int idContato) throws SQLException"
+      },
+      {
+        "name": "buscarTicketsPorContatoId",
+        "return": "public List<HistoricoContatoTicketResponse>",
+        "params": "int idContato",
+        "signature": "public List<HistoricoContatoTicketResponse> buscarTicketsPorContatoId(int idContato) throws SQLException"
+      },
+      {
+        "name": "buscarTicketsPorDocumento",
+        "return": "public List<HistoricoContatoTicketResponse>",
+        "params": "String documento",
+        "signature": "public List<HistoricoContatoTicketResponse> buscarTicketsPorDocumento(String documento) throws SQLException"
+      },
+      {
+        "name": "buscarTicketsPorContato",
+        "return": "private List<HistoricoContatoTicketResponse>",
+        "params": "Connection connection, int idContato",
+        "signature": "private List<HistoricoContatoTicketResponse> buscarTicketsPorContato(Connection connection, int idContato) throws SQLException"
+      },
+      {
+        "name": "toLocalDateTime",
+        "return": "private LocalDateTime",
+        "params": "Timestamp timestamp",
+        "signature": "private LocalDateTime toLocalDateTime(Timestamp timestamp)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.dto.HistoricoContatoResponse",
+      "com.turmadobem.dto.HistoricoContatoTicketResponse",
+      "com.turmadobem.support.ConexaoBD",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.Connection",
+      "java.sql.PreparedStatement",
+      "java.sql.ResultSet",
+      "java.sql.SQLException",
+      "java.sql.Timestamp",
+      "java.time.LocalDateTime",
+      "java.util.ArrayList",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/repository/MensagemRepository.java",
+    "package": "com.turmadobem.repository",
+    "name": "MensagemRepository",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ConexaoBD",
+        "name": "conexaoBD",
+        "signature": "ConexaoBD conexaoBD"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "create",
+        "return": "public Mensagem",
+        "params": "Mensagem mensagem",
+        "signature": "public Mensagem create(Mensagem mensagem) throws SQLException"
+      },
+      {
+        "name": "findByTicket",
+        "return": "public List<Mensagem>",
+        "params": "int idTicket",
+        "signature": "public List<Mensagem> findByTicket(int idTicket) throws SQLException"
+      },
+      {
+        "name": "deleteByTicket",
+        "return": "public void",
+        "params": "int idTicket",
+        "signature": "public void deleteByTicket(int idTicket) throws SQLException"
+      },
+      {
+        "name": "nextId",
+        "return": "public int",
+        "params": "",
+        "signature": "public int nextId() throws SQLException"
+      },
+      {
+        "name": "mapMensagem",
+        "return": "private Mensagem",
+        "params": "ResultSet rs",
+        "signature": "private Mensagem mapMensagem(ResultSet rs) throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Mensagem",
+      "com.turmadobem.support.ConexaoBD",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.Connection",
+      "java.sql.PreparedStatement",
+      "java.sql.ResultSet",
+      "java.sql.SQLException",
+      "java.sql.Timestamp",
+      "java.util.ArrayList",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/repository/RelatorioRepository.java",
+    "package": "com.turmadobem.repository",
+    "name": "RelatorioRepository",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ConexaoBD",
+        "name": "conexaoBD",
+        "signature": "ConexaoBD conexaoBD"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "buscarRelatorioTickets",
+        "return": "public RelatorioTicketsResponse",
+        "params": "String periodo, LocalDateTime inicio, LocalDateTime fim",
+        "signature": "public RelatorioTicketsResponse buscarRelatorioTickets(String periodo, LocalDateTime inicio, LocalDateTime fim) throws SQLException"
+      },
+      {
+        "name": "buscarRelatorioFinanceiro",
+        "return": "public RelatorioFinanceiroResponse",
+        "params": "String periodo, LocalDate inicio, LocalDate fim",
+        "signature": "public RelatorioFinanceiroResponse buscarRelatorioFinanceiro(String periodo, LocalDate inicio, LocalDate fim) throws SQLException"
+      },
+      {
+        "name": "buscarRelatorioDentistas",
+        "return": "public RelatorioDentistasResponse",
+        "params": "",
+        "signature": "public RelatorioDentistasResponse buscarRelatorioDentistas() throws SQLException"
+      },
+      {
+        "name": "buscarRelatorioContatos",
+        "return": "public RelatorioContatosResponse",
+        "params": "",
+        "signature": "public RelatorioContatosResponse buscarRelatorioContatos() throws SQLException"
+      },
+      {
+        "name": "buscarAgrupamentoTickets",
+        "return": "private List<RelatorioQuantidadeAgrupadaResponse>",
+        "params": "Connection connection, String coluna, LocalDateTime inicio, LocalDateTime fim",
+        "signature": "private List<RelatorioQuantidadeAgrupadaResponse> buscarAgrupamentoTickets(Connection connection, String coluna, LocalDateTime inicio, LocalDateTime fim) throws SQLException"
+      },
+      {
+        "name": "buscarAgrupamentoFinanceiro",
+        "return": "private List<RelatorioValorAgrupadoResponse>",
+        "params": "Connection connection, String coluna, LocalDate inicio, LocalDate fim",
+        "signature": "private List<RelatorioValorAgrupadoResponse> buscarAgrupamentoFinanceiro(Connection connection, String coluna, LocalDate inicio, LocalDate fim) throws SQLException"
+      },
+      {
+        "name": "buscarAgrupamentoDentistas",
+        "return": "private List<RelatorioQuantidadeAgrupadaResponse>",
+        "params": "Connection connection, String coluna",
+        "signature": "private List<RelatorioQuantidadeAgrupadaResponse> buscarAgrupamentoDentistas(Connection connection, String coluna) throws SQLException"
+      },
+      {
+        "name": "buscarAgrupamentoContatos",
+        "return": "private List<RelatorioQuantidadeAgrupadaResponse>",
+        "params": "Connection connection",
+        "signature": "private List<RelatorioQuantidadeAgrupadaResponse> buscarAgrupamentoContatos(Connection connection) throws SQLException"
+      },
+      {
+        "name": "normalizarColunaAgrupamento",
+        "return": "private String",
+        "params": "String coluna, Set<String> colunasPermitidas, String colunaPadrao",
+        "signature": "private String normalizarColunaAgrupamento(String coluna, Set<String> colunasPermitidas, String colunaPadrao)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.dto.RelatorioContatosResponse",
+      "com.turmadobem.dto.RelatorioDentistasResponse",
+      "com.turmadobem.dto.RelatorioFinanceiroResponse",
+      "com.turmadobem.dto.RelatorioQuantidadeAgrupadaResponse",
+      "com.turmadobem.dto.RelatorioTicketsResponse",
+      "com.turmadobem.dto.RelatorioValorAgrupadoResponse",
+      "com.turmadobem.support.ConexaoBD",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.math.BigDecimal",
+      "java.sql.Connection",
+      "java.sql.Date",
+      "java.sql.PreparedStatement",
+      "java.sql.ResultSet",
+      "java.sql.SQLException",
+      "java.sql.Timestamp",
+      "java.time.LocalDate",
+      "java.time.LocalDateTime",
+      "java.util.ArrayList",
+      "java.util.List",
+      "java.util.Set"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/repository/TicketRepository.java",
+    "package": "com.turmadobem.repository",
+    "name": "TicketRepository",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ConexaoBD",
+        "name": "conexaoBD",
+        "signature": "ConexaoBD conexaoBD"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "create",
+        "return": "public Ticket",
+        "params": "Ticket ticket",
+        "signature": "public Ticket create(Ticket ticket) throws SQLException"
+      },
+      {
+        "name": "findById",
+        "return": "public Ticket",
+        "params": "int idTicket",
+        "signature": "public Ticket findById(int idTicket) throws SQLException"
+      },
+      {
+        "name": "findAll",
+        "return": "public List<Ticket>",
+        "params": "Integer idContato, String canalOrigem",
+        "signature": "public List<Ticket> findAll(Integer idContato, String canalOrigem) throws SQLException"
+      },
+      {
+        "name": "findAll",
+        "return": "public List<Ticket>",
+        "params": "Integer idContato, String canalOrigem, int page, int size, String sortColumn, String sortOrder",
+        "signature": "public List<Ticket> findAll(Integer idContato, String canalOrigem, int page, int size, String sortColumn, String sortOrder) throws SQLException"
+      },
+      {
+        "name": "findByDentistaResponsavel",
+        "return": "public List<Ticket>",
+        "params": "int idDentista",
+        "signature": "public List<Ticket> findByDentistaResponsavel(int idDentista) throws SQLException"
+      },
+      {
+        "name": "update",
+        "return": "public Ticket",
+        "params": "Ticket ticket",
+        "signature": "public Ticket update(Ticket ticket) throws SQLException"
+      },
+      {
+        "name": "nextId",
+        "return": "public int",
+        "params": "",
+        "signature": "public int nextId() throws SQLException"
+      },
+      {
+        "name": "executarConsulta",
+        "return": "private List<Ticket>",
+        "params": "String sql, List<Object> parametros",
+        "signature": "private List<Ticket> executarConsulta(String sql, List<Object> parametros) throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Contato",
+      "com.turmadobem.entity.Dentista",
+      "com.turmadobem.entity.Ticket",
+      "com.turmadobem.support.ConexaoBD",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.Connection",
+      "java.sql.PreparedStatement",
+      "java.sql.ResultSet",
+      "java.sql.SQLException",
+      "java.sql.Timestamp",
+      "java.util.ArrayList",
+      "java.util.List",
+      "java.util.Map",
+      "java.util.Set"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/repository/TicketTimelineRepository.java",
+    "package": "com.turmadobem.repository",
+    "name": "TicketTimelineRepository",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ConexaoBD",
+        "name": "conexaoBD",
+        "signature": "ConexaoBD conexaoBD"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "buscarTimeline",
+        "return": "public TicketTimelineResponse",
+        "params": "int idTicket",
+        "signature": "public TicketTimelineResponse buscarTimeline(int idTicket) throws SQLException"
+      },
+      {
+        "name": "buscarMensagens",
+        "return": "private List<TicketTimelineMensagemResponse>",
+        "params": "Connection connection, int idTicket",
+        "signature": "private List<TicketTimelineMensagemResponse> buscarMensagens(Connection connection, int idTicket) throws SQLException"
+      },
+      {
+        "name": "toLocalDateTime",
+        "return": "private LocalDateTime",
+        "params": "Timestamp timestamp",
+        "signature": "private LocalDateTime toLocalDateTime(Timestamp timestamp)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.dto.TicketTimelineContatoResponse",
+      "com.turmadobem.dto.TicketTimelineDentistaResponse",
+      "com.turmadobem.dto.TicketTimelineMensagemResponse",
+      "com.turmadobem.dto.TicketTimelineResponse",
+      "com.turmadobem.support.ConexaoBD",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.Connection",
+      "java.sql.PreparedStatement",
+      "java.sql.ResultSet",
+      "java.sql.SQLException",
+      "java.sql.Timestamp",
+      "java.time.LocalDateTime",
+      "java.util.ArrayList",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/repository/TransacaoFinanceiraRepository.java",
+    "package": "com.turmadobem.repository",
+    "name": "TransacaoFinanceiraRepository",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ConexaoBD",
+        "name": "conexaoBD",
+        "signature": "ConexaoBD conexaoBD"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "create",
+        "return": "public TransacaoFinanceira",
+        "params": "TransacaoFinanceira transacao",
+        "signature": "public TransacaoFinanceira create(TransacaoFinanceira transacao) throws SQLException"
+      },
+      {
+        "name": "findAll",
+        "return": "public List<TransacaoFinanceira>",
+        "params": "",
+        "signature": "public List<TransacaoFinanceira> findAll() throws SQLException"
+      },
+      {
+        "name": "findById",
+        "return": "public TransacaoFinanceira",
+        "params": "int idTransacao",
+        "signature": "public TransacaoFinanceira findById(int idTransacao) throws SQLException"
+      },
+      {
+        "name": "update",
+        "return": "public TransacaoFinanceira",
+        "params": "TransacaoFinanceira transacao",
+        "signature": "public TransacaoFinanceira update(TransacaoFinanceira transacao) throws SQLException"
+      },
+      {
+        "name": "delete",
+        "return": "public void",
+        "params": "int idTransacao",
+        "signature": "public void delete(int idTransacao) throws SQLException"
+      },
+      {
+        "name": "nextId",
+        "return": "public int",
+        "params": "",
+        "signature": "public int nextId() throws SQLException"
+      },
+      {
+        "name": "somarPorTipo",
+        "return": "public BigDecimal",
+        "params": "String tipo",
+        "signature": "public BigDecimal somarPorTipo(String tipo) throws SQLException"
+      },
+      {
+        "name": "preencherStatement",
+        "return": "private void",
+        "params": "PreparedStatement stmt, TransacaoFinanceira transacao",
+        "signature": "private void preencherStatement(PreparedStatement stmt, TransacaoFinanceira transacao) throws SQLException"
+      },
+      {
+        "name": "baseSelect",
+        "return": "private String",
+        "params": "",
+        "signature": "private String baseSelect()"
+      },
+      {
+        "name": "mapTransacao",
+        "return": "private TransacaoFinanceira",
+        "params": "ResultSet rs",
+        "signature": "private TransacaoFinanceira mapTransacao(ResultSet rs) throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Contato",
+      "com.turmadobem.entity.TransacaoFinanceira",
+      "com.turmadobem.entity.Usuario",
+      "com.turmadobem.support.ConexaoBD",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.math.BigDecimal",
+      "java.sql.Connection",
+      "java.sql.Date",
+      "java.sql.PreparedStatement",
+      "java.sql.ResultSet",
+      "java.sql.SQLException",
+      "java.util.ArrayList",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/repository/UsuarioRepository.java",
+    "package": "com.turmadobem.repository",
+    "name": "UsuarioRepository",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ConexaoBD",
+        "name": "conexaoBD",
+        "signature": "ConexaoBD conexaoBD"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "findById",
+        "return": "public Usuario",
+        "params": "int idUsuario",
+        "signature": "public Usuario findById(int idUsuario) throws SQLException"
+      },
+      {
+        "name": "findByEmail",
+        "return": "public Usuario",
+        "params": "String email",
+        "signature": "public Usuario findByEmail(String email) throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Usuario",
+      "com.turmadobem.support.ConexaoBD",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.Connection",
+      "java.sql.PreparedStatement",
+      "java.sql.ResultSet",
+      "java.sql.SQLException"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/ApiErrorResponse.java",
+    "package": "com.turmadobem.resource",
+    "name": "ApiErrorResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "String",
+        "name": "message"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/ApiExceptionMapper.java",
+    "package": "com.turmadobem.resource",
+    "name": "ApiExceptionMapper",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "toResponse",
+        "return": "public Response",
+        "params": "Throwable exception",
+        "signature": "public Response toResponse(Throwable exception)"
+      }
+    ],
+    "nested_types": [
+      {
+        "declaration": "private static final Logger LOG = Logger.getLogger(ApiExceptionMapper.class);",
+        "name": null,
+        "type_kind": null,
+        "record_components": []
+      }
+    ],
+    "imports": [
+      "jakarta.ws.rs.WebApplicationException",
+      "jakarta.ws.rs.core.Response",
+      "jakarta.ws.rs.ext.ExceptionMapper",
+      "jakarta.ws.rs.ext.Provider",
+      "org.jboss.logging.Logger",
+      "java.sql.SQLException"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/AuthResource.java",
+    "package": "com.turmadobem.resource",
+    "name": "AuthResource",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "AuthService",
+        "name": "authService",
+        "signature": "AuthService authService"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "login",
+        "return": "public LoginResponse",
+        "params": "LoginRequest request",
+        "signature": "public LoginResponse login(LoginRequest request) throws SQLException"
+      },
+      {
+        "name": "me",
+        "return": "public Usuario",
+        "params": "",
+        "signature": "public Usuario me()"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Usuario",
+      "com.turmadobem.security.AuthenticatedAccess",
+      "com.turmadobem.service.AuthService",
+      "jakarta.inject.Inject",
+      "jakarta.ws.rs.Consumes",
+      "jakarta.ws.rs.GET",
+      "jakarta.ws.rs.POST",
+      "jakarta.ws.rs.Path",
+      "jakarta.ws.rs.Produces",
+      "jakarta.ws.rs.core.MediaType",
+      "java.sql.SQLException"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/ContatoResource.java",
+    "package": "com.turmadobem.resource",
+    "name": "ContatoResource",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ContatoService",
+        "name": "contatoService",
+        "signature": "ContatoService contatoService"
+      },
+      {
+        "type": "HistoricoContatoService",
+        "name": "historicoContatoService",
+        "signature": "HistoricoContatoService historicoContatoService"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "listar",
+        "return": "public List<Contato>",
+        "params": "int page, int size, String sortBy, String sortOrder",
+        "signature": "public List<Contato> listar(int page, int size, String sortBy, String sortOrder) throws SQLException"
+      },
+      {
+        "name": "buscarPorId",
+        "return": "public Contato",
+        "params": "int id",
+        "signature": "public Contato buscarPorId(int id) throws SQLException"
+      },
+      {
+        "name": "criar",
+        "return": "public Response",
+        "params": "Contato contato",
+        "signature": "public Response criar(Contato contato) throws SQLException"
+      },
+      {
+        "name": "atualizar",
+        "return": "public Contato",
+        "params": "int id, Contato contato",
+        "signature": "public Contato atualizar(int id, Contato contato) throws SQLException"
+      },
+      {
+        "name": "remover",
+        "return": "public MensagemResponse",
+        "params": "int id",
+        "signature": "public MensagemResponse remover(int id) throws SQLException"
+      },
+      {
+        "name": "historico",
+        "return": "public HistoricoContatoResponse",
+        "params": "int id",
+        "signature": "public HistoricoContatoResponse historico(int id) throws SQLException"
+      },
+      {
+        "name": "ticketsPorDocumento",
+        "return": "public List<HistoricoContatoTicketResponse>",
+        "params": "String documento",
+        "signature": "public List<HistoricoContatoTicketResponse> ticketsPorDocumento(String documento) throws SQLException"
+      },
+      {
+        "name": "ticketsPorContato",
+        "return": "public List<HistoricoContatoTicketResponse>",
+        "params": "int id",
+        "signature": "public List<HistoricoContatoTicketResponse> ticketsPorContato(int id) throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.dto.HistoricoContatoResponse",
+      "com.turmadobem.dto.HistoricoContatoTicketResponse",
+      "com.turmadobem.entity.Contato",
+      "com.turmadobem.security.AuthenticatedAccess",
+      "com.turmadobem.security.RoleRequired",
+      "com.turmadobem.service.ContatoService",
+      "com.turmadobem.service.HistoricoContatoService",
+      "jakarta.inject.Inject",
+      "jakarta.ws.rs.Consumes",
+      "jakarta.ws.rs.DELETE",
+      "jakarta.ws.rs.DefaultValue",
+      "jakarta.ws.rs.GET",
+      "jakarta.ws.rs.POST",
+      "jakarta.ws.rs.PUT",
+      "jakarta.ws.rs.Path",
+      "jakarta.ws.rs.PathParam",
+      "jakarta.ws.rs.Produces",
+      "jakarta.ws.rs.QueryParam",
+      "jakarta.ws.rs.WebApplicationException",
+      "jakarta.ws.rs.core.MediaType",
+      "jakarta.ws.rs.core.Response",
+      "java.sql.SQLException",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/DashboardResource.java",
+    "package": "com.turmadobem.resource",
+    "name": "DashboardResource",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "DashboardService",
+        "name": "dashboardService",
+        "signature": "DashboardService dashboardService"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "resumo",
+        "return": "public DashboardResumoResponse",
+        "params": "",
+        "signature": "public DashboardResumoResponse resumo() throws SQLException"
+      },
+      {
+        "name": "ticketsPorStatus",
+        "return": "public List<DashboardTicketsPorStatusResponse>",
+        "params": "",
+        "signature": "public List<DashboardTicketsPorStatusResponse> ticketsPorStatus() throws SQLException"
+      },
+      {
+        "name": "ticketsPorCanal",
+        "return": "public List<DashboardTicketsPorCanalResponse>",
+        "params": "",
+        "signature": "public List<DashboardTicketsPorCanalResponse> ticketsPorCanal() throws SQLException"
+      },
+      {
+        "name": "financeiroResumo",
+        "return": "public DashboardFinanceiroResumoResponse",
+        "params": "",
+        "signature": "public DashboardFinanceiroResumoResponse financeiroResumo() throws SQLException"
+      },
+      {
+        "name": "ultimosTickets",
+        "return": "public List<UltimoTicketDashboardResponse>",
+        "params": "",
+        "signature": "public List<UltimoTicketDashboardResponse> ultimosTickets() throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.dto.DashboardFinanceiroResumoResponse",
+      "com.turmadobem.dto.DashboardResumoResponse",
+      "com.turmadobem.dto.DashboardTicketsPorCanalResponse",
+      "com.turmadobem.dto.DashboardTicketsPorStatusResponse",
+      "com.turmadobem.dto.UltimoTicketDashboardResponse",
+      "com.turmadobem.security.AuthenticatedAccess",
+      "com.turmadobem.security.RoleRequired",
+      "com.turmadobem.service.DashboardService",
+      "jakarta.inject.Inject",
+      "jakarta.ws.rs.GET",
+      "jakarta.ws.rs.Path",
+      "jakarta.ws.rs.Produces",
+      "jakarta.ws.rs.core.MediaType",
+      "java.sql.SQLException",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/DentistaResource.java",
+    "package": "com.turmadobem.resource",
+    "name": "DentistaResource",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "DentistaService",
+        "name": "dentistaService",
+        "signature": "DentistaService dentistaService"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "listar",
+        "return": "public List<Dentista>",
+        "params": "String especialidade, String estado, String status, int page, int size, String sortBy, String sortOrder",
+        "signature": "public List<Dentista> listar(String especialidade, String estado, String status, int page, int size, String sortBy, String sortOrder) throws SQLException"
+      },
+      {
+        "name": "buscarPorId",
+        "return": "public Dentista",
+        "params": "int id",
+        "signature": "public Dentista buscarPorId(int id) throws SQLException"
+      },
+      {
+        "name": "criar",
+        "return": "public Response",
+        "params": "Dentista dentista",
+        "signature": "public Response criar(Dentista dentista) throws SQLException"
+      },
+      {
+        "name": "atualizar",
+        "return": "public Dentista",
+        "params": "int id, Dentista dentista",
+        "signature": "public Dentista atualizar(int id, Dentista dentista) throws SQLException"
+      },
+      {
+        "name": "remover",
+        "return": "public MensagemResponse",
+        "params": "int id",
+        "signature": "public MensagemResponse remover(int id) throws SQLException"
+      },
+      {
+        "name": "listarAgenda",
+        "return": "public List<AgendaDentista>",
+        "params": "int id, String status",
+        "signature": "public List<AgendaDentista> listarAgenda(int id, String status) throws SQLException"
+      },
+      {
+        "name": "criarAgenda",
+        "return": "public Response",
+        "params": "int id, AgendaDentista agenda",
+        "signature": "public Response criarAgenda(int id, AgendaDentista agenda) throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.AgendaDentista",
+      "com.turmadobem.entity.Dentista",
+      "com.turmadobem.security.AuthenticatedAccess",
+      "com.turmadobem.security.RoleRequired",
+      "com.turmadobem.service.DentistaService",
+      "jakarta.inject.Inject",
+      "jakarta.ws.rs.Consumes",
+      "jakarta.ws.rs.DELETE",
+      "jakarta.ws.rs.DefaultValue",
+      "jakarta.ws.rs.GET",
+      "jakarta.ws.rs.POST",
+      "jakarta.ws.rs.PUT",
+      "jakarta.ws.rs.Path",
+      "jakarta.ws.rs.PathParam",
+      "jakarta.ws.rs.Produces",
+      "jakarta.ws.rs.QueryParam",
+      "jakarta.ws.rs.WebApplicationException",
+      "jakarta.ws.rs.core.MediaType",
+      "jakarta.ws.rs.core.Response",
+      "java.sql.SQLException",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/FinanceiroResource.java",
+    "package": "com.turmadobem.resource",
+    "name": "FinanceiroResource",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "TransacaoFinanceiraService",
+        "name": "transacaoService",
+        "signature": "TransacaoFinanceiraService transacaoService"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "listar",
+        "return": "public List<TransacaoFinanceira>",
+        "params": "",
+        "signature": "public List<TransacaoFinanceira> listar() throws SQLException"
+      },
+      {
+        "name": "buscarPorId",
+        "return": "public TransacaoFinanceira",
+        "params": "int id",
+        "signature": "public TransacaoFinanceira buscarPorId(int id) throws SQLException"
+      },
+      {
+        "name": "criar",
+        "return": "public Response",
+        "params": "TransacaoFinanceira transacao",
+        "signature": "public Response criar(TransacaoFinanceira transacao) throws SQLException"
+      },
+      {
+        "name": "atualizar",
+        "return": "public TransacaoFinanceira",
+        "params": "int id, TransacaoFinanceira transacao",
+        "signature": "public TransacaoFinanceira atualizar(int id, TransacaoFinanceira transacao) throws SQLException"
+      },
+      {
+        "name": "remover",
+        "return": "public MensagemResponse",
+        "params": "int id",
+        "signature": "public MensagemResponse remover(int id) throws SQLException"
+      },
+      {
+        "name": "resumo",
+        "return": "public TransacaoFinanceiraService.ResumoFinanceiro",
+        "params": "",
+        "signature": "public TransacaoFinanceiraService.ResumoFinanceiro resumo() throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.TransacaoFinanceira",
+      "com.turmadobem.security.AuthenticatedAccess",
+      "com.turmadobem.security.RoleRequired",
+      "com.turmadobem.service.TransacaoFinanceiraService",
+      "jakarta.inject.Inject",
+      "jakarta.ws.rs.Consumes",
+      "jakarta.ws.rs.DELETE",
+      "jakarta.ws.rs.GET",
+      "jakarta.ws.rs.POST",
+      "jakarta.ws.rs.PUT",
+      "jakarta.ws.rs.Path",
+      "jakarta.ws.rs.PathParam",
+      "jakarta.ws.rs.Produces",
+      "jakarta.ws.rs.WebApplicationException",
+      "jakarta.ws.rs.core.MediaType",
+      "jakarta.ws.rs.core.Response",
+      "java.sql.SQLException",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/LoginRequest.java",
+    "package": "com.turmadobem.resource",
+    "name": "LoginRequest",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "String",
+        "name": "email",
+        "signature": "private String email"
+      },
+      {
+        "type": "String",
+        "name": "senha",
+        "signature": "private String senha"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "getEmail",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getEmail()"
+      },
+      {
+        "name": "setEmail",
+        "return": "public void",
+        "params": "String email",
+        "signature": "public void setEmail(String email)"
+      },
+      {
+        "name": "getSenha",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getSenha()"
+      },
+      {
+        "name": "setSenha",
+        "return": "public void",
+        "params": "String senha",
+        "signature": "public void setSenha(String senha)"
+      }
+    ],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/LoginResponse.java",
+    "package": "com.turmadobem.resource",
+    "name": "LoginResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "String",
+        "name": "token"
+      },
+      {
+        "type": "Integer",
+        "name": "idUsuario"
+      },
+      {
+        "type": "String",
+        "name": "nome"
+      },
+      {
+        "type": "String",
+        "name": "email"
+      },
+      {
+        "type": "String",
+        "name": "role"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/MensagemResponse.java",
+    "package": "com.turmadobem.resource",
+    "name": "MensagemResponse",
+    "kind": "record",
+    "record_components": [
+      {
+        "type": "String",
+        "name": "message"
+      }
+    ],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/RelatorioResource.java",
+    "package": "com.turmadobem.resource",
+    "name": "RelatorioResource",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "RelatorioService",
+        "name": "relatorioService",
+        "signature": "RelatorioService relatorioService"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "tickets",
+        "return": "public RelatorioTicketsResponse",
+        "params": "String periodo",
+        "signature": "public RelatorioTicketsResponse tickets(String periodo) throws SQLException"
+      },
+      {
+        "name": "financeiro",
+        "return": "public RelatorioFinanceiroResponse",
+        "params": "String periodo",
+        "signature": "public RelatorioFinanceiroResponse financeiro(String periodo) throws SQLException"
+      },
+      {
+        "name": "dentistas",
+        "return": "public RelatorioDentistasResponse",
+        "params": "",
+        "signature": "public RelatorioDentistasResponse dentistas() throws SQLException"
+      },
+      {
+        "name": "contatos",
+        "return": "public RelatorioContatosResponse",
+        "params": "",
+        "signature": "public RelatorioContatosResponse contatos() throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.dto.RelatorioContatosResponse",
+      "com.turmadobem.dto.RelatorioDentistasResponse",
+      "com.turmadobem.dto.RelatorioFinanceiroResponse",
+      "com.turmadobem.dto.RelatorioTicketsResponse",
+      "com.turmadobem.security.AuthenticatedAccess",
+      "com.turmadobem.security.RoleRequired",
+      "com.turmadobem.service.RelatorioService",
+      "jakarta.inject.Inject",
+      "jakarta.ws.rs.GET",
+      "jakarta.ws.rs.Path",
+      "jakarta.ws.rs.Produces",
+      "jakarta.ws.rs.QueryParam",
+      "jakarta.ws.rs.core.MediaType",
+      "java.sql.SQLException"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/TicketResource.java",
+    "package": "com.turmadobem.resource",
+    "name": "TicketResource",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "TicketService",
+        "name": "ticketService",
+        "signature": "TicketService ticketService"
+      },
+      {
+        "type": "TicketTimelineService",
+        "name": "ticketTimelineService",
+        "signature": "TicketTimelineService ticketTimelineService"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "listar",
+        "return": "public List<Ticket>",
+        "params": "Integer contatoId, String canalOrigem, int page, int size, String sortBy, String sortOrder",
+        "signature": "public List<Ticket> listar(Integer contatoId, String canalOrigem, int page, int size, String sortBy, String sortOrder) throws SQLException"
+      },
+      {
+        "name": "buscarPorId",
+        "return": "public Ticket",
+        "params": "int id",
+        "signature": "public Ticket buscarPorId(int id) throws SQLException"
+      },
+      {
+        "name": "timeline",
+        "return": "public TicketTimelineResponse",
+        "params": "int id",
+        "signature": "public TicketTimelineResponse timeline(int id) throws SQLException"
+      },
+      {
+        "name": "criar",
+        "return": "public Response",
+        "params": "Ticket ticket",
+        "signature": "public Response criar(Ticket ticket) throws SQLException"
+      },
+      {
+        "name": "atualizar",
+        "return": "public Ticket",
+        "params": "int id, Ticket ticket",
+        "signature": "public Ticket atualizar(int id, Ticket ticket) throws SQLException"
+      },
+      {
+        "name": "atualizarStatus",
+        "return": "public Ticket",
+        "params": "int id, TicketStatusRequest request",
+        "signature": "public Ticket atualizarStatus(int id, TicketStatusRequest request) throws SQLException"
+      },
+      {
+        "name": "remover",
+        "return": "public MensagemResponse",
+        "params": "int id",
+        "signature": "public MensagemResponse remover(int id) throws SQLException"
+      },
+      {
+        "name": "arquivar",
+        "return": "public Ticket",
+        "params": "int id",
+        "signature": "public Ticket arquivar(int id) throws SQLException"
+      },
+      {
+        "name": "desarquivar",
+        "return": "public Ticket",
+        "params": "int id",
+        "signature": "public Ticket desarquivar(int id) throws SQLException"
+      },
+      {
+        "name": "listarMensagens",
+        "return": "public List<Mensagem>",
+        "params": "int id",
+        "signature": "public List<Mensagem> listarMensagens(int id) throws SQLException"
+      },
+      {
+        "name": "adicionarMensagem",
+        "return": "public Response",
+        "params": "int id, Mensagem mensagem",
+        "signature": "public Response adicionarMensagem(int id, Mensagem mensagem) throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.dto.TicketTimelineResponse",
+      "com.turmadobem.entity.Mensagem",
+      "com.turmadobem.entity.Ticket",
+      "com.turmadobem.security.AuthenticatedAccess",
+      "com.turmadobem.security.RoleRequired",
+      "com.turmadobem.service.TicketService",
+      "com.turmadobem.service.TicketTimelineService",
+      "jakarta.inject.Inject",
+      "jakarta.ws.rs.Consumes",
+      "jakarta.ws.rs.DELETE",
+      "jakarta.ws.rs.DefaultValue",
+      "jakarta.ws.rs.GET",
+      "jakarta.ws.rs.POST",
+      "jakarta.ws.rs.PUT",
+      "jakarta.ws.rs.Path",
+      "jakarta.ws.rs.PathParam",
+      "jakarta.ws.rs.Produces",
+      "jakarta.ws.rs.QueryParam",
+      "jakarta.ws.rs.WebApplicationException",
+      "jakarta.ws.rs.core.MediaType",
+      "jakarta.ws.rs.core.Response",
+      "java.sql.SQLException",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/resource/TicketStatusRequest.java",
+    "package": "com.turmadobem.resource",
+    "name": "TicketStatusRequest",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "String",
+        "name": "status",
+        "signature": "private String status"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "getStatus",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getStatus()"
+      },
+      {
+        "name": "setStatus",
+        "return": "public void",
+        "params": "String status",
+        "signature": "public void setStatus(String status)"
+      }
+    ],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/security/AuthenticatedAccess.java",
+    "package": "com.turmadobem.security",
+    "name": "AuthenticatedAccess",
+    "kind": "interface",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "jakarta.ws.rs.NameBinding",
+      "java.lang.annotation.ElementType",
+      "java.lang.annotation.Retention",
+      "java.lang.annotation.RetentionPolicy",
+      "java.lang.annotation.Target"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/security/AuthFilter.java",
+    "package": "com.turmadobem.security",
+    "name": "AuthFilter",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "AuthSessionService",
+        "name": "authSessionService",
+        "signature": "AuthSessionService authSessionService"
+      },
+      {
+        "type": "CurrentUser",
+        "name": "currentUser",
+        "signature": "CurrentUser currentUser"
+      },
+      {
+        "type": "ResourceInfo",
+        "name": "resourceInfo",
+        "signature": "ResourceInfo resourceInfo"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "filter",
+        "return": "public void",
+        "params": "ContainerRequestContext requestContext",
+        "signature": "public void filter(ContainerRequestContext requestContext) throws IOException"
+      },
+      {
+        "name": "hasAuthenticatedAccess",
+        "return": "private boolean",
+        "params": "Method method, Class<?> resourceClass",
+        "signature": "private boolean hasAuthenticatedAccess(Method method, Class<?> resourceClass)"
+      },
+      {
+        "name": "getRoleRequired",
+        "return": "private RoleRequired",
+        "params": "Method method, Class<?> resourceClass",
+        "signature": "private RoleRequired getRoleRequired(Method method, Class<?> resourceClass)"
+      },
+      {
+        "name": "abort",
+        "return": "private void",
+        "params": "ContainerRequestContext requestContext, Response.Status status, String message",
+        "signature": "private void abort(ContainerRequestContext requestContext, Response.Status status, String message)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Usuario",
+      "com.turmadobem.resource.ApiErrorResponse",
+      "jakarta.annotation.Priority",
+      "jakarta.inject.Inject",
+      "jakarta.ws.rs.Priorities",
+      "jakarta.ws.rs.container.ContainerRequestContext",
+      "jakarta.ws.rs.container.ContainerRequestFilter",
+      "jakarta.ws.rs.container.ResourceInfo",
+      "jakarta.ws.rs.core.Context",
+      "jakarta.ws.rs.core.HttpHeaders",
+      "jakarta.ws.rs.core.MediaType",
+      "jakarta.ws.rs.core.Response",
+      "jakarta.ws.rs.ext.Provider",
+      "java.io.IOException",
+      "java.lang.reflect.Method",
+      "java.util.Arrays",
+      "java.util.HashSet",
+      "java.util.Set"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/security/AuthSessionService.java",
+    "package": "com.turmadobem.security",
+    "name": "AuthSessionService",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "createSession",
+        "return": "public String",
+        "params": "Usuario usuario",
+        "signature": "public String createSession(Usuario usuario)"
+      },
+      {
+        "name": "findByToken",
+        "return": "public Usuario",
+        "params": "String token",
+        "signature": "public Usuario findByToken(String token)"
+      },
+      {
+        "name": "sanitize",
+        "return": "private Usuario",
+        "params": "Usuario usuario",
+        "signature": "private Usuario sanitize(Usuario usuario)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Usuario",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "java.util.Map",
+      "java.util.UUID",
+      "java.util.concurrent.ConcurrentHashMap"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/security/CurrentUser.java",
+    "package": "com.turmadobem.security",
+    "name": "CurrentUser",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "Usuario",
+        "name": "usuario",
+        "signature": "private Usuario usuario"
+      },
+      {
+        "type": "String",
+        "name": "token",
+        "signature": "private String token"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "getUsuario",
+        "return": "public Usuario",
+        "params": "",
+        "signature": "public Usuario getUsuario()"
+      },
+      {
+        "name": "setUsuario",
+        "return": "public void",
+        "params": "Usuario usuario",
+        "signature": "public void setUsuario(Usuario usuario)"
+      },
+      {
+        "name": "getToken",
+        "return": "public String",
+        "params": "",
+        "signature": "public String getToken()"
+      },
+      {
+        "name": "setToken",
+        "return": "public void",
+        "params": "String token",
+        "signature": "public void setToken(String token)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Usuario",
+      "jakarta.enterprise.context.RequestScoped"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/security/RoleRequired.java",
+    "package": "com.turmadobem.security",
+    "name": "RoleRequired",
+    "kind": "interface",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [],
+    "nested_types": [],
+    "imports": [
+      "jakarta.ws.rs.NameBinding",
+      "java.lang.annotation.ElementType",
+      "java.lang.annotation.Retention",
+      "java.lang.annotation.RetentionPolicy",
+      "java.lang.annotation.Target"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/service/AuthService.java",
+    "package": "com.turmadobem.service",
+    "name": "AuthService",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "UsuarioRepository",
+        "name": "usuarioRepository",
+        "signature": "UsuarioRepository usuarioRepository"
+      },
+      {
+        "type": "AuthSessionService",
+        "name": "authSessionService",
+        "signature": "AuthSessionService authSessionService"
+      },
+      {
+        "type": "CurrentUser",
+        "name": "currentUser",
+        "signature": "CurrentUser currentUser"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "login",
+        "return": "public LoginResponse",
+        "params": "LoginRequest request",
+        "signature": "public LoginResponse login(LoginRequest request) throws SQLException"
+      },
+      {
+        "name": "me",
+        "return": "public Usuario",
+        "params": "",
+        "signature": "public Usuario me()"
+      }
+    ],
+    "nested_types": [
+      {
+        "declaration": "private static final Logger LOG = Logger.getLogger(AuthService.class);",
+        "name": null,
+        "type_kind": null,
+        "record_components": []
+      }
+    ],
+    "imports": [
+      "com.turmadobem.entity.Usuario",
+      "com.turmadobem.repository.UsuarioRepository",
+      "com.turmadobem.resource.LoginRequest",
+      "com.turmadobem.resource.LoginResponse",
+      "com.turmadobem.security.AuthSessionService",
+      "com.turmadobem.security.CurrentUser",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "org.jboss.logging.Logger",
+      "java.sql.SQLException"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/service/ContatoService.java",
+    "package": "com.turmadobem.service",
+    "name": "ContatoService",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "ContatoRepository",
+        "name": "contatoRepository",
+        "signature": "ContatoRepository contatoRepository"
+      },
+      {
+        "type": "TicketRepository",
+        "name": "ticketRepository",
+        "signature": "TicketRepository ticketRepository"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "criarContato",
+        "return": "public Contato",
+        "params": "Contato contato",
+        "signature": "public Contato criarContato(Contato contato) throws SQLException"
+      },
+      {
+        "name": "listarContatos",
+        "return": "public List<Contato>",
+        "params": "",
+        "signature": "public List<Contato> listarContatos() throws SQLException"
+      },
+      {
+        "name": "listarContatos",
+        "return": "public List<Contato>",
+        "params": "int page, int size, String sortBy, String sortOrder",
+        "signature": "public List<Contato> listarContatos(int page, int size, String sortBy, String sortOrder) throws SQLException"
+      },
+      {
+        "name": "buscarContatoPorId",
+        "return": "public Contato",
+        "params": "int idContato",
+        "signature": "public Contato buscarContatoPorId(int idContato) throws SQLException"
+      },
+      {
+        "name": "atualizarContato",
+        "return": "public Contato",
+        "params": "int idContato, Contato contato",
+        "signature": "public Contato atualizarContato(int idContato, Contato contato) throws SQLException"
+      },
+      {
+        "name": "removerContato",
+        "return": "public void",
+        "params": "int idContato",
+        "signature": "public void removerContato(int idContato) throws SQLException"
+      },
+      {
+        "name": "preencherTickets",
+        "return": "private void",
+        "params": "List<Contato> contatos",
+        "signature": "private void preencherTickets(List<Contato> contatos) throws SQLException"
+      },
+      {
+        "name": "validarContato",
+        "return": "private void",
+        "params": "Contato contato",
+        "signature": "private void validarContato(Contato contato)"
+      },
+      {
+        "name": "normalizarContato",
+        "return": "private void",
+        "params": "Contato contato",
+        "signature": "private void normalizarContato(Contato contato)"
+      },
+      {
+        "name": "normalizarTextoObrigatorio",
+        "return": "private String",
+        "params": "String valor, String mensagemErro",
+        "signature": "private String normalizarTextoObrigatorio(String valor, String mensagemErro)"
+      },
+      {
+        "name": "normalizarEmail",
+        "return": "private String",
+        "params": "String email",
+        "signature": "private String normalizarEmail(String email)"
+      },
+      {
+        "name": "normalizarCanal",
+        "return": "private String",
+        "params": "String canal",
+        "signature": "private String normalizarCanal(String canal)"
+      },
+      {
+        "name": "validarPage",
+        "return": "private int",
+        "params": "int page",
+        "signature": "private int validarPage(int page)"
+      }
+    ],
+    "nested_types": [
+      {
+        "declaration": "private static final Logger LOG = Logger.getLogger(ContatoService.class);",
+        "name": null,
+        "type_kind": null,
+        "record_components": []
+      }
+    ],
+    "imports": [
+      "com.turmadobem.entity.Contato",
+      "com.turmadobem.repository.ContatoRepository",
+      "com.turmadobem.repository.TicketRepository",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "org.jboss.logging.Logger",
+      "java.sql.SQLException",
+      "java.util.List",
+      "java.util.Locale",
+      "java.util.Map",
+      "java.util.Set"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/service/DashboardService.java",
+    "package": "com.turmadobem.service",
+    "name": "DashboardService",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "DashboardRepository",
+        "name": "dashboardRepository",
+        "signature": "DashboardRepository dashboardRepository"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "resumo",
+        "return": "public DashboardResumoResponse",
+        "params": "",
+        "signature": "public DashboardResumoResponse resumo() throws SQLException"
+      },
+      {
+        "name": "ticketsPorStatus",
+        "return": "public List<DashboardTicketsPorStatusResponse>",
+        "params": "",
+        "signature": "public List<DashboardTicketsPorStatusResponse> ticketsPorStatus() throws SQLException"
+      },
+      {
+        "name": "ticketsPorCanal",
+        "return": "public List<DashboardTicketsPorCanalResponse>",
+        "params": "",
+        "signature": "public List<DashboardTicketsPorCanalResponse> ticketsPorCanal() throws SQLException"
+      },
+      {
+        "name": "financeiroResumo",
+        "return": "public DashboardFinanceiroResumoResponse",
+        "params": "",
+        "signature": "public DashboardFinanceiroResumoResponse financeiroResumo() throws SQLException"
+      },
+      {
+        "name": "ultimosTickets",
+        "return": "public List<UltimoTicketDashboardResponse>",
+        "params": "",
+        "signature": "public List<UltimoTicketDashboardResponse> ultimosTickets() throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.dto.DashboardFinanceiroResumoResponse",
+      "com.turmadobem.dto.DashboardResumoResponse",
+      "com.turmadobem.dto.DashboardTicketsPorCanalResponse",
+      "com.turmadobem.dto.DashboardTicketsPorStatusResponse",
+      "com.turmadobem.dto.UltimoTicketDashboardResponse",
+      "com.turmadobem.repository.DashboardRepository",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.SQLException",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/service/DentistaService.java",
+    "package": "com.turmadobem.service",
+    "name": "DentistaService",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "DentistaRepository",
+        "name": "dentistaRepository",
+        "signature": "DentistaRepository dentistaRepository"
+      },
+      {
+        "type": "AgendaDentistaRepository",
+        "name": "agendaDentistaRepository",
+        "signature": "AgendaDentistaRepository agendaDentistaRepository"
+      },
+      {
+        "type": "TicketRepository",
+        "name": "ticketRepository",
+        "signature": "TicketRepository ticketRepository"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "criarDentista",
+        "return": "public Dentista",
+        "params": "Dentista dentista",
+        "signature": "public Dentista criarDentista(Dentista dentista) throws SQLException"
+      },
+      {
+        "name": "listarDentistas",
+        "return": "public List<Dentista>",
+        "params": "String especialidade, String estado, String status",
+        "signature": "public List<Dentista> listarDentistas(String especialidade, String estado, String status) throws SQLException"
+      },
+      {
+        "name": "listarDentistas",
+        "return": "public List<Dentista>",
+        "params": "String especialidade, String estado, String status, int page, int size, String sortBy, String sortOrder",
+        "signature": "public List<Dentista> listarDentistas(String especialidade, String estado, String status, int page, int size, String sortBy, String sortOrder) throws SQLException"
+      },
+      {
+        "name": "buscarDentistaPorId",
+        "return": "public Dentista",
+        "params": "int idDentista",
+        "signature": "public Dentista buscarDentistaPorId(int idDentista) throws SQLException"
+      },
+      {
+        "name": "atualizarDentista",
+        "return": "public Dentista",
+        "params": "int idDentista, Dentista dentista",
+        "signature": "public Dentista atualizarDentista(int idDentista, Dentista dentista) throws SQLException"
+      },
+      {
+        "name": "removerDentista",
+        "return": "public void",
+        "params": "int idDentista",
+        "signature": "public void removerDentista(int idDentista) throws SQLException"
+      },
+      {
+        "name": "listarAgenda",
+        "return": "public List<AgendaDentista>",
+        "params": "int idDentista, String status",
+        "signature": "public List<AgendaDentista> listarAgenda(int idDentista, String status) throws SQLException"
+      },
+      {
+        "name": "criarAgenda",
+        "return": "public AgendaDentista",
+        "params": "int idDentista, AgendaDentista agenda",
+        "signature": "public AgendaDentista criarAgenda(int idDentista, AgendaDentista agenda) throws SQLException"
+      },
+      {
+        "name": "preencherAgenda",
+        "return": "private void",
+        "params": "List<Dentista> dentistas",
+        "signature": "private void preencherAgenda(List<Dentista> dentistas) throws SQLException"
+      },
+      {
+        "name": "validarDentista",
+        "return": "private void",
+        "params": "Dentista dentista",
+        "signature": "private void validarDentista(Dentista dentista)"
+      },
+      {
+        "name": "validarAgenda",
+        "return": "private void",
+        "params": "AgendaDentista agenda",
+        "signature": "private void validarAgenda(AgendaDentista agenda)"
+      },
+      {
+        "name": "normalizarDentista",
+        "return": "private void",
+        "params": "Dentista dentista",
+        "signature": "private void normalizarDentista(Dentista dentista)"
+      },
+      {
+        "name": "normalizarTextoObrigatorio",
+        "return": "private String",
+        "params": "String valor, String mensagemErro",
+        "signature": "private String normalizarTextoObrigatorio(String valor, String mensagemErro)"
+      },
+      {
+        "name": "normalizarEstado",
+        "return": "private String",
+        "params": "String estado",
+        "signature": "private String normalizarEstado(String estado)"
+      },
+      {
+        "name": "normalizarStatusDentista",
+        "return": "private String",
+        "params": "String status",
+        "signature": "private String normalizarStatusDentista(String status)"
+      },
+      {
+        "name": "normalizarStatusAgenda",
+        "return": "private String",
+        "params": "String status",
+        "signature": "private String normalizarStatusAgenda(String status)"
+      },
+      {
+        "name": "validarPage",
+        "return": "private int",
+        "params": "int page",
+        "signature": "private int validarPage(int page)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.AgendaDentista",
+      "com.turmadobem.entity.Dentista",
+      "com.turmadobem.repository.AgendaDentistaRepository",
+      "com.turmadobem.repository.DentistaRepository",
+      "com.turmadobem.repository.TicketRepository",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.SQLException",
+      "java.util.List",
+      "java.util.Locale",
+      "java.util.Map",
+      "java.util.Set"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/service/HistoricoContatoService.java",
+    "package": "com.turmadobem.service",
+    "name": "HistoricoContatoService",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "HistoricoContatoRepository",
+        "name": "historicoContatoRepository",
+        "signature": "HistoricoContatoRepository historicoContatoRepository"
+      },
+      {
+        "type": "ContatoRepository",
+        "name": "contatoRepository",
+        "signature": "ContatoRepository contatoRepository"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "buscarHistorico",
+        "return": "public HistoricoContatoResponse",
+        "params": "int idContato",
+        "signature": "public HistoricoContatoResponse buscarHistorico(int idContato) throws SQLException"
+      },
+      {
+        "name": "buscarTicketsPorDocumento",
+        "return": "public List<HistoricoContatoTicketResponse>",
+        "params": "String documento",
+        "signature": "public List<HistoricoContatoTicketResponse> buscarTicketsPorDocumento(String documento) throws SQLException"
+      },
+      {
+        "name": "buscarTicketsPorContato",
+        "return": "public List<HistoricoContatoTicketResponse>",
+        "params": "int idContato",
+        "signature": "public List<HistoricoContatoTicketResponse> buscarTicketsPorContato(int idContato) throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.dto.HistoricoContatoResponse",
+      "com.turmadobem.dto.HistoricoContatoTicketResponse",
+      "com.turmadobem.repository.ContatoRepository",
+      "com.turmadobem.repository.HistoricoContatoRepository",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.SQLException",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/service/RelatorioService.java",
+    "package": "com.turmadobem.service",
+    "name": "RelatorioService",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "RelatorioRepository",
+        "name": "relatorioRepository",
+        "signature": "RelatorioRepository relatorioRepository"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "relatorioTickets",
+        "return": "public RelatorioTicketsResponse",
+        "params": "String periodo",
+        "signature": "public RelatorioTicketsResponse relatorioTickets(String periodo) throws SQLException"
+      },
+      {
+        "name": "relatorioFinanceiro",
+        "return": "public RelatorioFinanceiroResponse",
+        "params": "String periodo",
+        "signature": "public RelatorioFinanceiroResponse relatorioFinanceiro(String periodo) throws SQLException"
+      },
+      {
+        "name": "relatorioDentistas",
+        "return": "public RelatorioDentistasResponse",
+        "params": "",
+        "signature": "public RelatorioDentistasResponse relatorioDentistas() throws SQLException"
+      },
+      {
+        "name": "relatorioContatos",
+        "return": "public RelatorioContatosResponse",
+        "params": "",
+        "signature": "public RelatorioContatosResponse relatorioContatos() throws SQLException"
+      }
+    ],
+    "nested_types": [
+      {
+        "declaration": "private record PeriodoFiltro(String nome, LocalDateTime inicioDataHora, LocalDateTime fimDataHora, LocalDate inicioData, LocalDate fimData)",
+        "name": "PeriodoFiltro",
+        "type_kind": "record",
+        "record_components": [
+          {
+            "type": "String",
+            "name": "nome"
+          },
+          {
+            "type": "LocalDateTime",
+            "name": "inicioDataHora"
+          },
+          {
+            "type": "LocalDateTime",
+            "name": "fimDataHora"
+          },
+          {
+            "type": "LocalDate",
+            "name": "inicioData"
+          },
+          {
+            "type": "LocalDate",
+            "name": "fimData"
+          }
+        ]
+      }
+    ],
+    "imports": [
+      "com.turmadobem.dto.RelatorioContatosResponse",
+      "com.turmadobem.dto.RelatorioDentistasResponse",
+      "com.turmadobem.dto.RelatorioFinanceiroResponse",
+      "com.turmadobem.dto.RelatorioTicketsResponse",
+      "com.turmadobem.repository.RelatorioRepository",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.SQLException",
+      "java.time.LocalDate",
+      "java.time.LocalDateTime"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/service/TicketService.java",
+    "package": "com.turmadobem.service",
+    "name": "TicketService",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "TicketRepository",
+        "name": "ticketRepository",
+        "signature": "TicketRepository ticketRepository"
+      },
+      {
+        "type": "ContatoRepository",
+        "name": "contatoRepository",
+        "signature": "ContatoRepository contatoRepository"
+      },
+      {
+        "type": "DentistaRepository",
+        "name": "dentistaRepository",
+        "signature": "DentistaRepository dentistaRepository"
+      },
+      {
+        "type": "MensagemRepository",
+        "name": "mensagemRepository",
+        "signature": "MensagemRepository mensagemRepository"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "criarTicket",
+        "return": "public Ticket",
+        "params": "Ticket ticket",
+        "signature": "public Ticket criarTicket(Ticket ticket) throws SQLException"
+      },
+      {
+        "name": "listarTickets",
+        "return": "public List<Ticket>",
+        "params": "",
+        "signature": "public List<Ticket> listarTickets() throws SQLException"
+      },
+      {
+        "name": "listarTickets",
+        "return": "public List<Ticket>",
+        "params": "Integer contatoId, String canalOrigem",
+        "signature": "public List<Ticket> listarTickets(Integer contatoId, String canalOrigem) throws SQLException"
+      },
+      {
+        "name": "listarTickets",
+        "return": "public List<Ticket>",
+        "params": "Integer contatoId, String canalOrigem, int page, int size, String sortBy, String sortOrder",
+        "signature": "public List<Ticket> listarTickets(Integer contatoId, String canalOrigem, int page, int size, String sortBy, String sortOrder) throws SQLException"
+      },
+      {
+        "name": "buscarTicketPorId",
+        "return": "public Ticket",
+        "params": "int idTicket",
+        "signature": "public Ticket buscarTicketPorId(int idTicket) throws SQLException"
+      },
+      {
+        "name": "listarTicketsPorContato",
+        "return": "public List<Ticket>",
+        "params": "int idContato",
+        "signature": "public List<Ticket> listarTicketsPorContato(int idContato) throws SQLException"
+      },
+      {
+        "name": "atualizarTicket",
+        "return": "public Ticket",
+        "params": "int idTicket, Ticket ticket",
+        "signature": "public Ticket atualizarTicket(int idTicket, Ticket ticket) throws SQLException"
+      },
+      {
+        "name": "atualizarStatus",
+        "return": "public Ticket",
+        "params": "int idTicket, String status",
+        "signature": "public Ticket atualizarStatus(int idTicket, String status) throws SQLException"
+      },
+      {
+        "name": "listarMensagens",
+        "return": "public List<Mensagem>",
+        "params": "int idTicket",
+        "signature": "public List<Mensagem> listarMensagens(int idTicket) throws SQLException"
+      },
+      {
+        "name": "adicionarMensagem",
+        "return": "public Mensagem",
+        "params": "int idTicket, Mensagem mensagem",
+        "signature": "public Mensagem adicionarMensagem(int idTicket, Mensagem mensagem) throws SQLException"
+      },
+      {
+        "name": "removerTicket",
+        "return": "public void",
+        "params": "int idTicket",
+        "signature": "public void removerTicket(int idTicket) throws SQLException"
+      },
+      {
+        "name": "arquivarTicket",
+        "return": "public Ticket",
+        "params": "int idTicket",
+        "signature": "public Ticket arquivarTicket(int idTicket) throws SQLException"
+      },
+      {
+        "name": "desarquivarTicket",
+        "return": "public Ticket",
+        "params": "int idTicket",
+        "signature": "public Ticket desarquivarTicket(int idTicket) throws SQLException"
+      },
+      {
+        "name": "preencherMensagens",
+        "return": "private void",
+        "params": "List<Ticket> tickets",
+        "signature": "private void preencherMensagens(List<Ticket> tickets) throws SQLException"
+      },
+      {
+        "name": "validarTicket",
+        "return": "private void",
+        "params": "Ticket ticket",
+        "signature": "private void validarTicket(Ticket ticket)"
+      },
+      {
+        "name": "normalizarTicket",
+        "return": "private void",
+        "params": "Ticket ticket",
+        "signature": "private void normalizarTicket(Ticket ticket)"
+      },
+      {
+        "name": "associarDentistaResponsavel",
+        "return": "private void",
+        "params": "Ticket ticket",
+        "signature": "private void associarDentistaResponsavel(Ticket ticket) throws SQLException"
+      },
+      {
+        "name": "validarMensagem",
+        "return": "private void",
+        "params": "Mensagem mensagem",
+        "signature": "private void validarMensagem(Mensagem mensagem)"
+      },
+      {
+        "name": "garantirTicketExistente",
+        "return": "private Ticket",
+        "params": "int idTicket",
+        "signature": "private Ticket garantirTicketExistente(int idTicket) throws SQLException"
+      },
+      {
+        "name": "gerarProtocolo",
+        "return": "private String",
+        "params": "int idTicket, LocalDateTime dataHora",
+        "signature": "private String gerarProtocolo(int idTicket, LocalDateTime dataHora)"
+      },
+      {
+        "name": "normalizarTextoObrigatorio",
+        "return": "private String",
+        "params": "String valor, String mensagemErro",
+        "signature": "private String normalizarTextoObrigatorio(String valor, String mensagemErro)"
+      },
+      {
+        "name": "normalizarCanal",
+        "return": "private String",
+        "params": "String canal",
+        "signature": "private String normalizarCanal(String canal)"
+      },
+      {
+        "name": "normalizarStatus",
+        "return": "private String",
+        "params": "String status",
+        "signature": "private String normalizarStatus(String status)"
+      },
+      {
+        "name": "normalizarPrioridade",
+        "return": "private String",
+        "params": "String prioridade",
+        "signature": "private String normalizarPrioridade(String prioridade)"
+      },
+      {
+        "name": "normalizarRemetente",
+        "return": "private String",
+        "params": "String remetente",
+        "signature": "private String normalizarRemetente(String remetente)"
+      },
+      {
+        "name": "validarPage",
+        "return": "private int",
+        "params": "int page",
+        "signature": "private int validarPage(int page)"
+      }
+    ],
+    "nested_types": [
+      {
+        "declaration": "private static final Logger LOG = Logger.getLogger(TicketService.class);",
+        "name": null,
+        "type_kind": null,
+        "record_components": []
+      }
+    ],
+    "imports": [
+      "com.turmadobem.entity.Contato",
+      "com.turmadobem.entity.Dentista",
+      "com.turmadobem.entity.Mensagem",
+      "com.turmadobem.entity.Ticket",
+      "com.turmadobem.repository.ContatoRepository",
+      "com.turmadobem.repository.DentistaRepository",
+      "com.turmadobem.repository.MensagemRepository",
+      "com.turmadobem.repository.TicketRepository",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "org.jboss.logging.Logger",
+      "java.sql.SQLException",
+      "java.time.LocalDateTime",
+      "java.time.format.DateTimeFormatter",
+      "java.util.List",
+      "java.util.Locale",
+      "java.util.Map",
+      "java.util.Set"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/service/TicketTimelineService.java",
+    "package": "com.turmadobem.service",
+    "name": "TicketTimelineService",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "TicketTimelineRepository",
+        "name": "ticketTimelineRepository",
+        "signature": "TicketTimelineRepository ticketTimelineRepository"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "buscarTimeline",
+        "return": "public TicketTimelineResponse",
+        "params": "int idTicket",
+        "signature": "public TicketTimelineResponse buscarTimeline(int idTicket) throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.dto.TicketTimelineResponse",
+      "com.turmadobem.repository.TicketTimelineRepository",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "java.sql.SQLException"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/service/TransacaoFinanceiraService.java",
+    "package": "com.turmadobem.service",
+    "name": "TransacaoFinanceiraService",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "TransacaoFinanceiraRepository",
+        "name": "transacaoRepository",
+        "signature": "TransacaoFinanceiraRepository transacaoRepository"
+      },
+      {
+        "type": "UsuarioRepository",
+        "name": "usuarioRepository",
+        "signature": "UsuarioRepository usuarioRepository"
+      },
+      {
+        "type": "ContatoRepository",
+        "name": "contatoRepository",
+        "signature": "ContatoRepository contatoRepository"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "criar",
+        "return": "public TransacaoFinanceira",
+        "params": "TransacaoFinanceira transacao",
+        "signature": "public TransacaoFinanceira criar(TransacaoFinanceira transacao) throws SQLException"
+      },
+      {
+        "name": "listar",
+        "return": "public List<TransacaoFinanceira>",
+        "params": "",
+        "signature": "public List<TransacaoFinanceira> listar() throws SQLException"
+      },
+      {
+        "name": "buscarPorId",
+        "return": "public TransacaoFinanceira",
+        "params": "int id",
+        "signature": "public TransacaoFinanceira buscarPorId(int id) throws SQLException"
+      },
+      {
+        "name": "atualizar",
+        "return": "public TransacaoFinanceira",
+        "params": "int id, TransacaoFinanceira transacao",
+        "signature": "public TransacaoFinanceira atualizar(int id, TransacaoFinanceira transacao) throws SQLException"
+      },
+      {
+        "name": "remover",
+        "return": "public void",
+        "params": "int id",
+        "signature": "public void remover(int id) throws SQLException"
+      },
+      {
+        "name": "resumo",
+        "return": "public ResumoFinanceiro",
+        "params": "",
+        "signature": "public ResumoFinanceiro resumo() throws SQLException"
+      },
+      {
+        "name": "validar",
+        "return": "private void",
+        "params": "TransacaoFinanceira transacao",
+        "signature": "private void validar(TransacaoFinanceira transacao)"
+      }
+    ],
+    "nested_types": [
+      {
+        "declaration": "private static final Logger LOG = Logger.getLogger(TransacaoFinanceiraService.class);",
+        "name": null,
+        "type_kind": null,
+        "record_components": []
+      }
+    ],
+    "imports": [
+      "com.turmadobem.entity.Contato",
+      "com.turmadobem.entity.TransacaoFinanceira",
+      "com.turmadobem.entity.Usuario",
+      "com.turmadobem.repository.ContatoRepository",
+      "com.turmadobem.repository.TransacaoFinanceiraRepository",
+      "com.turmadobem.repository.UsuarioRepository",
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "org.jboss.logging.Logger",
+      "java.math.BigDecimal",
+      "java.sql.SQLException",
+      "java.time.LocalDate",
+      "java.util.List",
+      "java.util.Locale",
+      "java.util.Set"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/support/ConexaoBD.java",
+    "package": "com.turmadobem.support",
+    "name": "ConexaoBD",
+    "kind": "class",
+    "record_components": [],
+    "fields": [
+      {
+        "type": "String",
+        "name": "DB_URL",
+        "signature": "private static final String DB_URL = \"jdbc:oracle:thin:"
+      },
+      {
+        "type": "String",
+        "name": "DB_USER",
+        "signature": "private static final String DB_USER = \"SEU_USUARIO\""
+      },
+      {
+        "type": "String",
+        "name": "DB_PASSWORD",
+        "signature": "private static final String DB_PASSWORD = \"SUA_SENHA\""
+      },
+      {
+        "type": "DataSource",
+        "name": "dataSource",
+        "signature": "DataSource dataSource"
+      }
+    ],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "conectar",
+        "return": "public Connection",
+        "params": "",
+        "signature": "public Connection conectar() throws SQLException"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "jakarta.enterprise.context.ApplicationScoped",
+      "jakarta.inject.Inject",
+      "javax.sql.DataSource",
+      "java.sql.Connection",
+      "java.sql.SQLException"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/teste/BancoSimulado.java",
+    "package": "com.turmadobem.teste",
+    "name": "BancoSimulado",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "getContatos",
+        "return": "public List<Contato>",
+        "params": "",
+        "signature": "public List<Contato> getContatos()"
+      },
+      {
+        "name": "getTickets",
+        "return": "public List<Ticket>",
+        "params": "",
+        "signature": "public List<Ticket> getTickets()"
+      },
+      {
+        "name": "getTransacoes",
+        "return": "public List<TransacaoFinanceira>",
+        "params": "",
+        "signature": "public List<TransacaoFinanceira> getTransacoes()"
+      },
+      {
+        "name": "adicionarContato",
+        "return": "public void",
+        "params": "Contato contato",
+        "signature": "public void adicionarContato(Contato contato)"
+      },
+      {
+        "name": "adicionarTicket",
+        "return": "public void",
+        "params": "Ticket ticket",
+        "signature": "public void adicionarTicket(Ticket ticket)"
+      },
+      {
+        "name": "adicionarTransacao",
+        "return": "public void",
+        "params": "TransacaoFinanceira transacao",
+        "signature": "public void adicionarTransacao(TransacaoFinanceira transacao)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Contato",
+      "com.turmadobem.entity.Ticket",
+      "com.turmadobem.entity.TransacaoFinanceira",
+      "java.util.ArrayList",
+      "java.util.List"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/teste/CanaisTeste.java",
+    "package": "com.turmadobem.teste",
+    "name": "CanaisTeste",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "exibir",
+        "return": "public static void",
+        "params": "",
+        "signature": "public static void exibir()"
+      }
+    ],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/teste/ConfiguracoesTeste.java",
+    "package": "com.turmadobem.teste",
+    "name": "ConfiguracoesTeste",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "exibir",
+        "return": "public static void",
+        "params": "",
+        "signature": "public static void exibir()"
+      }
+    ],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/teste/ConsoleUtils.java",
+    "package": "com.turmadobem.teste",
+    "name": "ConsoleUtils",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "lerOpcao",
+        "return": "public static int",
+        "params": "String mensagem, int minimo, int maximo",
+        "signature": "public static int lerOpcao(String mensagem, int minimo, int maximo)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "java.math.BigDecimal",
+      "java.util.Scanner"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/teste/ContatosTeste.java",
+    "package": "com.turmadobem.teste",
+    "name": "ContatosTeste",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "exibir",
+        "return": "public static void",
+        "params": "BancoSimulado banco",
+        "signature": "public static void exibir(BancoSimulado banco)"
+      }
+    ],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/teste/DashboardTeste.java",
+    "package": "com.turmadobem.teste",
+    "name": "DashboardTeste",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "exibir",
+        "return": "public static void",
+        "params": "BancoSimulado banco",
+        "signature": "public static void exibir(BancoSimulado banco)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Ticket",
+      "com.turmadobem.entity.TransacaoFinanceira",
+      "java.math.BigDecimal",
+      "java.util.Map",
+      "java.util.stream.Collectors"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/teste/DentistasTeste.java",
+    "package": "com.turmadobem.teste",
+    "name": "DentistasTeste",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "exibir",
+        "return": "public static void",
+        "params": "",
+        "signature": "public static void exibir()"
+      }
+    ],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/teste/FinanceiroTeste.java",
+    "package": "com.turmadobem.teste",
+    "name": "FinanceiroTeste",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "exibir",
+        "return": "public static void",
+        "params": "BancoSimulado banco",
+        "signature": "public static void exibir(BancoSimulado banco)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.TransacaoFinanceira",
+      "java.math.BigDecimal"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/teste/HistoricoTeste.java",
+    "package": "com.turmadobem.teste",
+    "name": "HistoricoTeste",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "exibir",
+        "return": "public static void",
+        "params": "BancoSimulado banco",
+        "signature": "public static void exibir(BancoSimulado banco)"
+      }
+    ],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/teste/RelatoriosTeste.java",
+    "package": "com.turmadobem.teste",
+    "name": "RelatoriosTeste",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "exibir",
+        "return": "public static void",
+        "params": "BancoSimulado banco",
+        "signature": "public static void exibir(BancoSimulado banco)"
+      },
+      {
+        "name": "relatorioTickets",
+        "return": "private static void",
+        "params": "BancoSimulado banco",
+        "signature": "private static void relatorioTickets(BancoSimulado banco)"
+      },
+      {
+        "name": "relatorioFinanceiro",
+        "return": "private static void",
+        "params": "BancoSimulado banco",
+        "signature": "private static void relatorioFinanceiro(BancoSimulado banco)"
+      },
+      {
+        "name": "relatorioContatos",
+        "return": "private static void",
+        "params": "BancoSimulado banco",
+        "signature": "private static void relatorioContatos(BancoSimulado banco)"
+      }
+    ],
+    "nested_types": [],
+    "imports": [
+      "com.turmadobem.entity.Ticket",
+      "com.turmadobem.entity.TransacaoFinanceira",
+      "java.math.BigDecimal",
+      "java.util.Map",
+      "java.util.stream.Collectors"
+    ]
+  },
+  {
+    "file": "src/main/java/com/turmadobem/teste/TesteSprint3App.java",
+    "package": "com.turmadobem.teste",
+    "name": "TesteSprint3App",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "main",
+        "return": "public static void",
+        "params": "String[] args",
+        "signature": "public static void main(String[] args)"
+      }
+    ],
+    "nested_types": [],
+    "imports": []
+  },
+  {
+    "file": "src/main/java/com/turmadobem/teste/TicketsTeste.java",
+    "package": "com.turmadobem.teste",
+    "name": "TicketsTeste",
+    "kind": "class",
+    "record_components": [],
+    "fields": [],
+    "constructors": [],
+    "methods": [
+      {
+        "name": "abrir",
+        "return": "public static void",
+        "params": "BancoSimulado banco",
+        "signature": "public static void abrir(BancoSimulado banco)"
+      },
+      {
+        "name": "selecionarCanal",
+        "return": "private static String",
+        "params": "",
+        "signature": "private static String selecionarCanal()"
+      },
+      {
+        "name": "selecionarMotivoContato",
+        "return": "private static String",
+        "params": "",
+        "signature": "private static String selecionarMotivoContato()"
+      },
+      {
+        "name": "coletarDadosPessoaFisica",
+        "return": "private static Contato",
+        "params": "String canalOrigem, String tipoContato",
+        "signature": "private static Contato coletarDadosPessoaFisica(String canalOrigem, String tipoContato)"
+      },
+      {
+        "name": "coletarDadosDoacao",
+        "return": "private static CadastroDoacao",
+        "params": "String canalOrigem",
+        "signature": "private static CadastroDoacao coletarDadosDoacao(String canalOrigem)"
+      },
+      {
+        "name": "coletarDadosVoluntario",
+        "return": "private static DadosVoluntario",
+        "params": "",
+        "signature": "private static DadosVoluntario coletarDadosVoluntario()"
+      },
+      {
+        "name": "coletarDadosEmpresaParceiro",
+        "return": "private static CadastroParceiro",
+        "params": "String canalOrigem",
+        "signature": "private static CadastroParceiro coletarDadosEmpresaParceiro(String canalOrigem)"
+      },
+      {
+        "name": "gerarTicket",
+        "return": "private static Ticket",
+        "params": "Contato contato, String motivoContato, String assunto, String mensagemUsuario",
+        "signature": "private static Ticket gerarTicket( Contato contato, String motivoContato, String assunto, String mensagemUsuario )"
+      },
+      {
+        "name": "definirPrioridade",
+        "return": "private static String",
+        "params": "String motivoContato",
+        "signature": "private static String definirPrioridade(String motivoContato)"
+      },
+      {
+        "name": "gerarProtocolo",
+        "return": "private static String",
+        "params": "int idTicket, LocalDateTime dataHora",
+        "signature": "private static String gerarProtocolo(int idTicket, LocalDateTime dataHora)"
+      },
+      {
+        "name": "gerarIdAleatorio",
+        "return": "private static int",
+        "params": "",
+        "signature": "private static int gerarIdAleatorio()"
+      },
+      {
+        "name": "normalizarCanal",
+        "return": "private static String",
+        "params": "String canal",
+        "signature": "private static String normalizarCanal(String canal)"
+      },
+      {
+        "name": "imprimirResumoAtendimento",
+        "return": "private static void",
+        "params": "Contato contato, Ticket ticket, TransacaoFinanceira transacaoFinanceira, DadosVoluntario dadosVoluntario, DadosComplementares dadosComplementares",
+        "signature": "private static void imprimirResumoAtendimento( Contato contato, Ticket ticket, TransacaoFinanceira transacaoFinanceira, DadosVoluntario dadosVoluntario, DadosComplementares dadosComplementares )"
+      }
+    ],
+    "nested_types": [
+      {
+        "declaration": "private record DadosVoluntario( String cro, String especialidade, String estado, String status )",
+        "name": "DadosVoluntario",
+        "type_kind": "record",
+        "record_components": [
+          {
+            "type": "String",
+            "name": "cro"
+          },
+          {
+            "type": "String",
+            "name": "especialidade"
+          },
+          {
+            "type": "String",
+            "name": "estado"
+          },
+          {
+            "type": "String",
+            "name": "status"
+          }
+        ]
+      },
+      {
+        "declaration": "private record DadosComplementares( String tipoPessoa, String representante )",
+        "name": "DadosComplementares",
+        "type_kind": "record",
+        "record_components": [
+          {
+            "type": "String",
+            "name": "tipoPessoa"
+          },
+          {
+            "type": "String",
+            "name": "representante"
+          }
+        ]
+      },
+      {
+        "declaration": "private record CadastroDoacao( Contato contato, DadosComplementares dadosComplementares, TransacaoFinanceira transacaoFinanceira )",
+        "name": "CadastroDoacao",
+        "type_kind": "record",
+        "record_components": [
+          {
+            "type": "Contato",
+            "name": "contato"
+          },
+          {
+            "type": "DadosComplementares",
+            "name": "dadosComplementares"
+          },
+          {
+            "type": "TransacaoFinanceira",
+            "name": "transacaoFinanceira"
+          }
+        ]
+      },
+      {
+        "declaration": "private record CadastroParceiro( Contato contato, DadosComplementares dadosComplementares )",
+        "name": "CadastroParceiro",
+        "type_kind": "record",
+        "record_components": [
+          {
+            "type": "Contato",
+            "name": "contato"
+          },
+          {
+            "type": "DadosComplementares",
+            "name": "dadosComplementares"
+          }
+        ]
+      }
+    ],
+    "imports": [
+      "com.turmadobem.entity.Contato",
+      "com.turmadobem.entity.Ticket",
+      "com.turmadobem.entity.TransacaoFinanceira",
+      "java.math.BigDecimal",
+      "java.time.LocalDate",
+      "java.time.LocalDateTime",
+      "java.time.format.DateTimeFormatter",
+      "java.util.Locale",
+      "java.util.Random",
+      "java.util.Set"
+    ]
+  }
+]
