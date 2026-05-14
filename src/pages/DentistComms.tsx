@@ -166,13 +166,15 @@ export default function DentistComms() {
           <Input placeholder="Buscar por nome ou especialidade..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-32"><SelectValue placeholder="Filtrar status" /></SelectTrigger>
+          <SelectTrigger className="w-32"><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="Ativo">Ativo</SelectItem>
             <SelectItem value="Inativo">Inativo</SelectItem>
           </SelectContent>
         </Select>
+        {statusFilter !== "all" && (
+          <Button variant="ghost" size="sm" onClick={() => setStatusFilter("all")}>Limpar filtro</Button>
+        )}
       </div>
 
       <div className="border border-border rounded-lg overflow-hidden shadow-sm">
