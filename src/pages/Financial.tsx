@@ -151,7 +151,7 @@ export default function Financial() {
             <Plus className="w-4 h-4 mr-2" /> Nova Transação
           </Button>
           <Select value={period} onValueChange={(v) => setPeriod(v as Period)}>
-            <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-32"><SelectValue placeholder="Período" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="weekly">Semanal</SelectItem>
               <SelectItem value="monthly">Mensal</SelectItem>
