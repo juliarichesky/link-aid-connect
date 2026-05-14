@@ -269,9 +269,8 @@ export default function History() {
           <Input placeholder="Buscar por nome, ID ou assunto..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
         <Select value={channelFilter} onValueChange={(v) => { setChannelFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Filtrar por canal" /></SelectTrigger>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Canal" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos Canais</SelectItem>
             <SelectItem value="WhatsApp">WhatsApp</SelectItem>
             <SelectItem value="Instagram">Instagram</SelectItem>
             <SelectItem value="E-mail">E-mail</SelectItem>
@@ -279,14 +278,22 @@ export default function History() {
           </SelectContent>
         </Select>
         <Select value={dentistFilter} onValueChange={(v) => { setDentistFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-48"><SelectValue placeholder="Filtrar por dentista" /></SelectTrigger>
+          <SelectTrigger className="w-48"><SelectValue placeholder="Dentista" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos Dentistas</SelectItem>
             {dentists.map((d) => (
               <SelectItem key={d} value={d}>{d}</SelectItem>
             ))}
           </SelectContent>
         </Select>
+        {(channelFilter !== "all" || dentistFilter !== "all") && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => { setChannelFilter("all"); setDentistFilter("all"); setPage(1); }}
+          >
+            Limpar filtros
+          </Button>
+        )}
       </div>
 
       <div className="border border-border rounded-lg overflow-hidden">
