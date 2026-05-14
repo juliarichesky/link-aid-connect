@@ -151,7 +151,7 @@ export default function Financial() {
             <Plus className="w-4 h-4 mr-2" /> Nova Transação
           </Button>
           <Select value={period} onValueChange={(v) => setPeriod(v as Period)}>
-            <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-32"><SelectValue placeholder="Período" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="weekly">Semanal</SelectItem>
               <SelectItem value="monthly">Mensal</SelectItem>
@@ -183,36 +183,43 @@ export default function Financial() {
           <Input placeholder="Buscar por entidade ou descrição..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
         <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Filtrar por tipo" /></SelectTrigger>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Tipo" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos Tipos</SelectItem>
             <SelectItem value="Receita">Receita</SelectItem>
             <SelectItem value="Despesa">Despesa</SelectItem>
           </SelectContent>
         </Select>
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Filtrar por status" /></SelectTrigger>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos Status</SelectItem>
             <SelectItem value="Confirmado">Confirmado</SelectItem>
             <SelectItem value="Pago">Pago</SelectItem>
             <SelectItem value="Pendente">Pendente</SelectItem>
           </SelectContent>
         </Select>
         <Select value={categoryFilter} onValueChange={(v) => { setCategoryFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Filtrar categoria" /></SelectTrigger>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Categoria" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas Categorias</SelectItem>
             {categories.map((c) => (<SelectItem key={c} value={c}>{c}</SelectItem>))}
           </SelectContent>
         </Select>
         <Select value={dentistFilter} onValueChange={(v) => { setDentistFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-48"><SelectValue placeholder="Filtrar dentista" /></SelectTrigger>
+          <SelectTrigger className="w-48"><SelectValue placeholder="Dentista" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos Dentistas</SelectItem>
             {dentistsList.map((d) => (<SelectItem key={d} value={d}>{d}</SelectItem>))}
           </SelectContent>
         </Select>
+        {(typeFilter !== "all" || statusFilter !== "all" || categoryFilter !== "all" || dentistFilter !== "all") && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setTypeFilter("all"); setStatusFilter("all"); setCategoryFilter("all"); setDentistFilter("all"); setPage(1);
+            }}
+          >
+            Limpar filtros
+          </Button>
+        )}
       </div>
 
       <div className="border border-border rounded-lg overflow-hidden">

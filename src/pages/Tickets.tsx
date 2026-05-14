@@ -100,18 +100,16 @@ export default function Tickets() {
           <Input placeholder="Buscar por nome, assunto ou ID..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Filtrar por status" /></SelectTrigger>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos Status</SelectItem>
             <SelectItem value="Novo">Novo</SelectItem>
             <SelectItem value="Aberto">Aberto</SelectItem>
             <SelectItem value="Aguardando">Aguardando</SelectItem>
           </SelectContent>
         </Select>
         <Select value={priorityFilter} onValueChange={(v) => { setPriorityFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Filtrar por prioridade" /></SelectTrigger>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Prioridade" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas Prioridades</SelectItem>
             <SelectItem value="Crítica">Crítica</SelectItem>
             <SelectItem value="Alta">Alta</SelectItem>
             <SelectItem value="Média">Média</SelectItem>
@@ -119,17 +117,26 @@ export default function Tickets() {
           </SelectContent>
         </Select>
         <Select value={classificationFilter} onValueChange={(v) => { setClassificationFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-40"><SelectValue placeholder="Filtrar por classificação" /></SelectTrigger>
+          <SelectTrigger className="w-40"><SelectValue placeholder="Classificação" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas Classificações</SelectItem>
             {classifications.map((c) => (
               <SelectItem key={c} value={c}>{c}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        {channelFilter !== "all" && (
-          <Button variant="ghost" size="sm" onClick={() => navigate("/tickets")}>
-            Limpar filtro de canal
+        {(statusFilter !== "all" || priorityFilter !== "all" || classificationFilter !== "all" || channelFilter !== "all") && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setStatusFilter("all");
+              setPriorityFilter("all");
+              setClassificationFilter("all");
+              setPage(1);
+              if (channelFilter !== "all") navigate("/tickets");
+            }}
+          >
+            Limpar filtros
           </Button>
         )}
       </div>
