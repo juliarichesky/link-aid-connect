@@ -59,11 +59,13 @@ export default function Archived() {
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
           <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="Resolvido">Resolvido</SelectItem>
             <SelectItem value="Fechado">Fechado</SelectItem>
           </SelectContent>
         </Select>
+        {statusFilter !== "all" && (
+          <Button variant="ghost" size="sm" onClick={() => { setStatusFilter("all"); setPage(1); }}>Limpar filtro</Button>
+        )}
       </div>
 
       <div className="border border-border rounded-lg overflow-hidden">
