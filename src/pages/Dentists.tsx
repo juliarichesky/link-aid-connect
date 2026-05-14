@@ -228,20 +228,27 @@ export default function Dentists() {
           <Input placeholder="Buscar por nome, especialidade ou cidade..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-32"><SelectValue placeholder="Filtrar status" /></SelectTrigger>
+          <SelectTrigger className="w-32"><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="Ativo">Ativo</SelectItem>
             <SelectItem value="Inativo">Inativo</SelectItem>
           </SelectContent>
         </Select>
         <Select value={ufFilter} onValueChange={(v) => { setUfFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-28"><SelectValue placeholder="Filtrar UF" /></SelectTrigger>
+          <SelectTrigger className="w-28"><SelectValue placeholder="UF" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos UFs</SelectItem>
             {ufs.map((u) => (<SelectItem key={u} value={u}>{u}</SelectItem>))}
           </SelectContent>
         </Select>
+        {(statusFilter !== "all" || ufFilter !== "all") && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => { setStatusFilter("all"); setUfFilter("all"); setPage(1); }}
+          >
+            Limpar filtros
+          </Button>
+        )}
       </div>
 
       <div className="border border-border rounded-lg overflow-hidden shadow-sm">
