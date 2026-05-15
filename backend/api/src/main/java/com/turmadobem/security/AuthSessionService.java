@@ -1,6 +1,6 @@
 package com.turmadobem.security;
 
-import com.turmadobem.entity.Usuario;
+import com.turmadobem.model.Usuario;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Map;
@@ -22,13 +22,12 @@ public class AuthSessionService {
     }
 
     private Usuario sanitize(Usuario usuario) {
-        return new Usuario(
-                usuario.getIdUsuario(),
-                usuario.getNome(),
-                usuario.getEmail(),
-                null,
-                usuario.getRole(),
-                usuario.getStatus()
-        );
+        Usuario sessao = new Usuario();
+        sessao.setIdUsuario(usuario.getIdUsuario());
+        sessao.setNome(usuario.getNome());
+        sessao.setEmail(usuario.getEmail());
+        sessao.setPerfil(usuario.getPerfil());
+        sessao.setStatus(usuario.getStatus());
+        return sessao;
     }
 }

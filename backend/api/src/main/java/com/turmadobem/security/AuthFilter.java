@@ -1,6 +1,6 @@
 package com.turmadobem.security;
 
-import com.turmadobem.entity.Usuario;
+import com.turmadobem.model.Usuario;
 import com.turmadobem.resource.ApiErrorResponse;
 import jakarta.annotation.Priority;
 import jakarta.inject.Inject;
@@ -62,7 +62,8 @@ public class AuthFilter implements ContainerRequestFilter {
 
         if (roleRequired != null) {
             Set<String> allowed = new HashSet<>(Arrays.asList(roleRequired.value()));
-            if (usuario.getRole() == null || !allowed.contains(usuario.getRole())) {
+            String perfil = usuario.getPerfil() == null ? null : usuario.getPerfil().getCodigo();
+            if (perfil == null || !allowed.contains(perfil)) {
                 abort(requestContext, Response.Status.FORBIDDEN, "Usuario sem permissao para acessar este recurso.");
             }
         }

@@ -1,6 +1,6 @@
 package com.turmadobem.security;
 
-import com.turmadobem.entity.Usuario;
+import com.turmadobem.model.Usuario;
 import jakarta.enterprise.context.RequestScoped;
 
 @RequestScoped

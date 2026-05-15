@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Java / Maven / Quarkus
+**/target/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
