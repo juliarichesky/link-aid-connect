@@ -1,0 +1,108 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="765D31F5-5374-9323-2131-8AFFE65C202C" schemaObject="74BEA16E-269E-97D0-62A3-4AFAA48317BB" name="T_LKA_PERFIL">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>T_LKA_PERFIL</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:56 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID_PERFIL" id="0B0E6ED2-8647-7336-F558-DAB397A7011F">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_PERFIL</sourceObjSchema>
+<sourceObjName>ID_PERFIL</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementColumn>true</autoIncrementColumn>
+<identityColumn>true</identityColumn>
+<autoIncrementGenerateAlways>true</autoIncrementGenerateAlways>
+<autoIncrementCycle>false</autoIncrementCycle>
+<autoIncrementDisableCache>false</autoIncrementDisableCache>
+<autoIncrementCache>20</autoIncrementCache>
+<autoIncrementOrder>false</autoIncrementOrder>
+</Column>
+<Column name="CD_PERFIL" id="89C5F596-2E04-FEFB-7418-053328627405">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_PERFIL</sourceObjSchema>
+<sourceObjName>CD_PERFIL</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<constraintName>CHK_LKA_PERFIL_CD</constraintName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>30 BYTE</dataTypeSize>
+<listOfValues>
+<valueDef value="&apos;ADMIN&apos;" description=""/>
+<valueDef value="&apos;COLABORADOR&apos;" description=""/>
+</listOfValues>
+<ownDataTypeParameters>30 BYTE,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="NM_PERFIL" id="7C5CA9DD-9326-9C9C-F3A8-CAF117257FB2">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_PERFIL</sourceObjSchema>
+<sourceObjName>NM_PERFIL</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>60 BYTE</dataTypeSize>
+<ownDataTypeParameters>60 BYTE,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="BA0C253A-09EC-34C7-AC3B-6A79609CE893" schemaObject="74BEA16E-269E-97D0-62A3-4AFAA48317BB" name="T_LKA_PERFIL_PK">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>SYS_C006725892</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:58 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="0B0E6ED2-8647-7336-F558-DAB397A7011F"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="54DA29E0-D8D4-A43C-1D63-D31C75A6A4DE" name="UK_LKA_PERFIL_CD">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>UK_LKA_PERFIL_CD</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:11 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Unique Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="89C5F596-2E04-FEFB-7418-053328627405"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="318C29E8-C29B-6DA0-8475-1FBB176E7735" schemaObject="74BEA16E-269E-97D0-62A3-4AFAA48317BB" name="UK_LKA_PERFIL_CD">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>UK_LKA_PERFIL_CD</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:58 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="89C5F596-2E04-FEFB-7418-053328627405"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

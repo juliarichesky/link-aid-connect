@@ -1,0 +1,170 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="892C50F8-9DC7-DDA9-E5C3-9238B922061B" schemaObject="74BEA16E-269E-97D0-62A3-4AFAA48317BB" name="T_LKA_WEBHOOK_EVENTO">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>T_LKA_WEBHOOK_EVENTO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:56 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID_WEBHOOK_EVENTO" id="7A35AFE2-A133-91EC-B0C1-5CC041CF8EB5">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_WEBHOOK_EVENTO</sourceObjSchema>
+<sourceObjName>ID_WEBHOOK_EVENTO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementColumn>true</autoIncrementColumn>
+<identityColumn>true</identityColumn>
+<autoIncrementGenerateAlways>true</autoIncrementGenerateAlways>
+<autoIncrementCycle>false</autoIncrementCycle>
+<autoIncrementDisableCache>false</autoIncrementDisableCache>
+<autoIncrementCache>20</autoIncrementCache>
+<autoIncrementOrder>false</autoIncrementOrder>
+</Column>
+<Column name="ID_TICKET" id="797339C6-D4AA-DAB3-7D42-38FCF723AD44">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_WEBHOOK_EVENTO</sourceObjSchema>
+<sourceObjName>ID_TICKET</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="0E59DC07-0786-07E5-1C02-637DE4697F82" referredColumn="3E5F70A3-5438-3804-D224-4E3C7401CE75"/>
+</associations>
+</Column>
+<Column name="DS_ORIGEM" id="448AE664-397B-A059-AD5D-A09B30FC79B0">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_WEBHOOK_EVENTO</sourceObjSchema>
+<sourceObjName>DS_ORIGEM</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>40 BYTE</dataTypeSize>
+<ownDataTypeParameters>40 BYTE,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DS_EXTERNAL_ID" id="1F05946B-9115-2D2C-5042-D057D46F01F4">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_WEBHOOK_EVENTO</sourceObjSchema>
+<sourceObjName>DS_EXTERNAL_ID</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>120 BYTE</dataTypeSize>
+<ownDataTypeParameters>120 BYTE,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DS_PAYLOAD" id="2B5166BD-C4B9-D847-8F86-4C3020E4ED0E">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_WEBHOOK_EVENTO</sourceObjSchema>
+<sourceObjName>DS_PAYLOAD</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT028</logicalDatatype>
+<dataTypeSize>4000</dataTypeSize>
+<ownDataTypeParameters>4000,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ST_PROCESSAMENTO" id="47070898-A7E8-7B56-35D5-454F5AEBA856">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_WEBHOOK_EVENTO</sourceObjSchema>
+<sourceObjName>ST_PROCESSAMENTO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<constraintName>CHK_LKA_WEBHOOK_STATUS</constraintName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>20 BYTE</dataTypeSize>
+<listOfValues>
+<valueDef value="&apos;ERRO&apos;" description=""/>
+<valueDef value="&apos;PROCESSADO&apos;" description=""/>
+<valueDef value="&apos;RECEBIDO&apos;" description=""/>
+</listOfValues>
+<defaultValue>&apos;RECEBIDO&apos;</defaultValue>
+<ownDataTypeParameters>20 BYTE,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DS_ERRO" id="B2DB1F23-026B-3811-01CE-79DB16BE096B">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_WEBHOOK_EVENTO</sourceObjSchema>
+<sourceObjName>DS_ERRO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>500 BYTE</dataTypeSize>
+<ownDataTypeParameters>500 BYTE,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DT_RECEBIMENTO" id="8C556E1D-FF94-7E89-8876-A2378AA44500">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_WEBHOOK_EVENTO</sourceObjSchema>
+<sourceObjName>DT_RECEBIMENTO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT015</logicalDatatype>
+<dataTypePrecision>6</dataTypePrecision>
+<defaultValue>SYSTIMESTAMP</defaultValue>
+<ownDataTypeParameters>,6,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="8D015509-FFAB-2C36-F73C-0389D20639BD" schemaObject="74BEA16E-269E-97D0-62A3-4AFAA48317BB" name="T_LKA_WEBHOOK_EVENTO_PK">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>SYS_C006726011</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:58 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="7A35AFE2-A133-91EC-B0C1-5CC041CF8EB5"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="D9EAB2C1-DFA4-4E92-12AA-71B761D66757" name="FK_LKA_WEBHOOK_TICKET">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="797339C6-D4AA-DAB3-7D42-38FCF723AD44"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

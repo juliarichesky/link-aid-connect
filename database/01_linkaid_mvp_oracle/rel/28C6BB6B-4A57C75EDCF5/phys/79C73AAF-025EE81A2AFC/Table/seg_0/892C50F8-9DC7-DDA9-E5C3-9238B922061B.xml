@@ -1,0 +1,95 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="T_LKA_WEBHOOK_EVENTO" directorySegmentName="seg_0" id="892C50F8-9DC7-DDA9-E5C3-9238B922061B">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:56 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<schemaObject>74BEA16E-269E-97D0-62A3-4AFAA48317BB</schemaObject>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<segment>D2762DDE-815E-D36D-6CCE-1837906B52CA</segment>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<inMemory>NO</inMemory>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="DS_EXTERNAL_ID" id="1F05946B-9115-2D2C-5042-D057D46F01F4">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="DS_PAYLOAD" id="2B5166BD-C4B9-D847-8F86-4C3020E4ED0E">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="DS_ORIGEM" id="448AE664-397B-A059-AD5D-A09B30FC79B0">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="ST_PROCESSAMENTO" id="47070898-A7E8-7B56-35D5-454F5AEBA856">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<defaultValue>&apos;RECEBIDO&apos;</defaultValue>
+</ColumnProxy>
+<ColumnProxy name="ID_TICKET" id="797339C6-D4AA-DAB3-7D42-38FCF723AD44">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="ID_WEBHOOK_EVENTO" id="7A35AFE2-A133-91EC-B0C1-5CC041CF8EB5">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<autoIncrementDDL>IDENTITY_CLAUSE</autoIncrementDDL>
+</ColumnProxy>
+<ColumnProxy name="DT_RECEBIMENTO" id="8C556E1D-FF94-7E89-8876-A2378AA44500">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<defaultValue>SYSTIMESTAMP</defaultValue>
+</ColumnProxy>
+<ColumnProxy name="DS_ERRO" id="B2DB1F23-026B-3811-01CE-79DB16BE096B">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="FK_LKA_WEBHOOK_TICKET" id="D9EAB2C1-DFA4-4E92-12AA-71B761D66757">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<lobStorages>
+<LobStorage class="oracle.dbtools.crest.model.design.storage.oracle.v11g.LobStorageOraclev11g" name="SYS_LOB0003966996C00005$$" id="5CC156B7-A51E-3F0C-8F76-4FDEB59854E8">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<cache>NOCACHE</cache>
+<chunk>8192</chunk>
+<column>DS_PAYLOAD</column>
+<compression>NO</compression>
+<duplication>KEEP_DUPLICATES</duplication>
+<logging>YES</logging>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+<lobStorageType>SECUREFILE</lobStorageType>
+</LobStorage>
+</lobStorages>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="T_LKA_WEBHOOK_EVENTO_PK" id="8D015509-FFAB-2C36-F73C-0389D20639BD">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:11 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<schemaObject>74BEA16E-269E-97D0-62A3-4AFAA48317BB</schemaObject>
+<segment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</segment>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+<indexSegment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</PrimaryKey>
+</primaryKeys>
+</TableProxyOraclev12c>

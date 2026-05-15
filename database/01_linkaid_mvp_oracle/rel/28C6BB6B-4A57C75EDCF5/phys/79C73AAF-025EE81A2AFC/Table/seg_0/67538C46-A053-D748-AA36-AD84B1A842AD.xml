@@ -1,0 +1,127 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="T_LKA_CONTATO" directorySegmentName="seg_0" id="67538C46-A053-D748-AA36-AD84B1A842AD">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:56 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<schemaObject>74BEA16E-269E-97D0-62A3-4AFAA48317BB</schemaObject>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<segment>D2762DDE-815E-D36D-6CCE-1837906B52CA</segment>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<inMemory>NO</inMemory>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="EMAIL_CONTATO" id="0CEE7C0F-7D1C-67C1-DD61-2EABB2917B8C">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="ID_CONTATO" id="0CF145AF-2582-FD52-23A3-ED9791934262">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<autoIncrementDDL>IDENTITY_CLAUSE</autoIncrementDDL>
+</ColumnProxy>
+<ColumnProxy name="DT_CADASTRO" id="1A5C6EFA-A6DC-BE89-1466-25266505F8FC">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<defaultValue>SYSTIMESTAMP</defaultValue>
+</ColumnProxy>
+<ColumnProxy name="NM_CIDADE" id="601763E9-DD24-A2F5-0C23-B8D2F348C61E">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="SG_UF" id="689402BC-ABB5-9D72-5304-BF5EC594F346">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="TEL_CONTATO" id="82F5808F-0929-9D3A-F5BB-36338B49C94C">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="DOC_CONTATO" id="8384AB74-9FE7-FA7F-3649-B02C2A7C66AD">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="NM_CONTATO" id="A960F0A2-858B-C437-9BBC-0544188E06CC">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="DS_OBSERVACAO" id="C5BFE49D-53FC-CB77-A7A9-A8FA6D76E376">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="ID_TIPO_CONTATO" id="D590EC67-BFA4-538D-31D5-BD7781FF7276">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="UK_LKA_CONTATO_DOC" id="F30DEF3D-5ADA-0604-D38B-92A7B5AB3D6C">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:58 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<schemaObject>74BEA16E-269E-97D0-62A3-4AFAA48317BB</schemaObject>
+<segment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</segment>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+</IndexProxy>
+</indexProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="FK_LKA_CONTATO_TIPO" id="B5042CAE-25E0-C087-01F9-F4A3C83D7B1E">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<lobStorages>
+<LobStorage class="oracle.dbtools.crest.model.design.storage.oracle.v11g.LobStorageOraclev11g" name="SYS_LOB0003966959C00009$$" id="2EC9D73E-B3DD-C94A-883E-C3BD9F0DA10D">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<cache>NOCACHE</cache>
+<chunk>8192</chunk>
+<column>DS_OBSERVACAO</column>
+<compression>NO</compression>
+<duplication>KEEP_DUPLICATES</duplication>
+<logging>YES</logging>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+<lobStorageType>SECUREFILE</lobStorageType>
+</LobStorage>
+</lobStorages>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="T_LKA_CONTATO_PK" id="851F35B9-EC3A-F4DF-8118-BF9B0B98F0E9">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:11 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<schemaObject>74BEA16E-269E-97D0-62A3-4AFAA48317BB</schemaObject>
+<segment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</segment>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+<indexSegment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</PrimaryKey>
+</primaryKeys>
+<uniqueKeys>
+<UniqueKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.UniqueOraclev10g" name="UK_LKA_CONTATO_DOC" id="5B688309-B635-0D86-FE3F-6DF000429842">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:11 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<segment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</segment>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+<existingIndex>F30DEF3D-5ADA-0604-D38B-92A7B5AB3D6C</existingIndex>
+<indexSegment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</UniqueKey>
+</uniqueKeys>
+</TableProxyOraclev12c>

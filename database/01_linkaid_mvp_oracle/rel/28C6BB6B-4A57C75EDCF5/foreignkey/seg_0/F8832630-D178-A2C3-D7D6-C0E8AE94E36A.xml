@@ -1,0 +1,19 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="F8832630-D178-A2C3-D7D6-C0E8AE94E36A" containerWithKeyObject="67538C46-A053-D748-AA36-AD84B1A842AD" localFKIndex="B5042CAE-25E0-C087-01F9-F4A3C83D7B1E" name="FK_LKA_CONTATO_TIPO">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>FK_LKA_CONTATO_TIPO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<referredTableLongName>RM566754.T_LKA_TIPO_CONTATO</referredTableLongName>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>62D65241-98B4-67AE-CEE2-70D422D8487C</referredTableID>
+<keyObject>868C4455-3EFE-08CA-ADA1-58DC4F0B437E</keyObject>
+<referredKeyID>868C4455-3EFE-08CA-ADA1-58DC4F0B437E</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>ID_TIPO_CONTATO</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

@@ -1,0 +1,76 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="T_LKA_AGENDA_DENTISTA" directorySegmentName="seg_0" id="BB566AA7-D35C-2BE2-5471-071BF77BB065">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:56 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<schemaObject>74BEA16E-269E-97D0-62A3-4AFAA48317BB</schemaObject>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<segment>D2762DDE-815E-D36D-6CCE-1837906B52CA</segment>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<inMemory>NO</inMemory>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="DT_HORA_FIM" id="20F7CE80-32FF-057B-FE4B-DA660D2ACAD0">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="ST_AGENDA" id="46C86378-B012-526C-5CE4-4C29672A5B3C">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<defaultValue>&apos;DISPONIVEL&apos;</defaultValue>
+</ColumnProxy>
+<ColumnProxy name="DT_HORA_INICIO" id="57CFFD43-7C8A-5C72-4940-D07430168F9F">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="ID_AGENDA_DENTISTA" id="690B16DE-BF0E-798B-5B21-94E3AA86A685">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<autoIncrementDDL>IDENTITY_CLAUSE</autoIncrementDDL>
+</ColumnProxy>
+<ColumnProxy name="ID_DENTISTA" id="A0FEAF73-D70F-5ECB-D3AA-8DBCB253F27C">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="DS_OBSERVACAO" id="F829001C-111D-51C0-702D-8CDF6111EC35">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<foreignKeys>
+<ForeignKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.FKProxyOraclev10g" name="FK_LKA_AGENDA_DENTISTA" id="24B0C650-43B8-4A65-13C3-B17DA34E8153">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ForeignKey>
+</foreignKeys>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="T_LKA_AGENDA_DENTISTA_PK" id="101D0455-B80E-CA71-11B0-67ED6831AB59">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:11 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<schemaObject>74BEA16E-269E-97D0-62A3-4AFAA48317BB</schemaObject>
+<segment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</segment>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+<indexSegment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</PrimaryKey>
+</primaryKeys>
+<tableCheckConstraints itemClass="oracle.dbtools.crest.model.design.storage.oracle.TableCheckConstraintOracle">
+<TableCheckConstraint name="CHK_LKA_AGENDA_PERIODO" id="834B950E-5544-7D31-CC91-BF07A67B8C7F">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:24 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</TableCheckConstraint>
+</tableCheckConstraints>
+</TableProxyOraclev12c>

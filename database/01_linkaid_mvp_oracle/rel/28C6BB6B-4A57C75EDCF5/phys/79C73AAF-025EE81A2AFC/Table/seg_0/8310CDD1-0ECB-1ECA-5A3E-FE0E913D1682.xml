@@ -1,0 +1,69 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev12c class="oracle.dbtools.crest.model.design.storage.oracle.v12c.TableProxyOraclev12c" name="T_LKA_CANAL" directorySegmentName="seg_0" id="8310CDD1-0ECB-1ECA-5A3E-FE0E913D1682">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:56 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<schemaObject>74BEA16E-269E-97D0-62A3-4AFAA48317BB</schemaObject>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<segment>D2762DDE-815E-D36D-6CCE-1837906B52CA</segment>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<inMemory>NO</inMemory>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="ID_CANAL" id="68D26CC4-4EAF-2A06-51E1-D1C8CDAA548E">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<autoIncrementDDL>IDENTITY_CLAUSE</autoIncrementDDL>
+</ColumnProxy>
+<ColumnProxy name="NM_CANAL" id="B4C33614-32DC-CA19-1F45-CA05DA572EB6">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="CD_CANAL" id="E16C3A45-3C12-6074-BF69-20341D6E11BD">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+<indexProxies>
+<IndexProxy class="oracle.dbtools.crest.model.design.storage.oracle.v10g.IndexProxyOraclev10g" name="UK_LKA_CANAL_CD" id="6C0A235E-C30E-E061-5AC8-73B69FE602C2">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:58 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<schemaObject>74BEA16E-269E-97D0-62A3-4AFAA48317BB</schemaObject>
+<segment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</segment>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+</IndexProxy>
+</indexProxies>
+<primaryKeys>
+<PrimaryKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.PKProxyOraclev10g" name="T_LKA_CANAL_PK" id="8E53D3EA-61DB-3D38-1971-3B14B602C491">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:11 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<schemaObject>74BEA16E-269E-97D0-62A3-4AFAA48317BB</schemaObject>
+<segment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</segment>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+<indexSegment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</PrimaryKey>
+</primaryKeys>
+<uniqueKeys>
+<UniqueKey class="oracle.dbtools.crest.model.design.storage.oracle.v10g.UniqueOraclev10g" name="UK_LKA_CANAL_CD" id="2F67981D-3FE7-4489-6076-41CAB2033843">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:11 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<segment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</segment>
+<tableSpace>20F019BE-6764-7F5E-739C-8411BBBB2A00</tableSpace>
+<existingIndex>6C0A235E-C30E-E061-5AC8-73B69FE602C2</existingIndex>
+<indexSegment>A0D13F5F-DE38-D15E-F2F5-5E4EE66DFB93</indexSegment>
+<indexSort>SORTED</indexSort>
+<usingIndex>BY INDEX NAME</usingIndex>
+</UniqueKey>
+</uniqueKeys>
+</TableProxyOraclev12c>

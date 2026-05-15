@@ -1,0 +1,150 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="BB566AA7-D35C-2BE2-5471-071BF77BB065" schemaObject="74BEA16E-269E-97D0-62A3-4AFAA48317BB" name="T_LKA_AGENDA_DENTISTA">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>T_LKA_AGENDA_DENTISTA</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:56 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID_AGENDA_DENTISTA" id="690B16DE-BF0E-798B-5B21-94E3AA86A685">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_AGENDA_DENTISTA</sourceObjSchema>
+<sourceObjName>ID_AGENDA_DENTISTA</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementColumn>true</autoIncrementColumn>
+<identityColumn>true</identityColumn>
+<autoIncrementGenerateAlways>true</autoIncrementGenerateAlways>
+<autoIncrementCycle>false</autoIncrementCycle>
+<autoIncrementDisableCache>false</autoIncrementDisableCache>
+<autoIncrementCache>20</autoIncrementCache>
+<autoIncrementOrder>false</autoIncrementOrder>
+</Column>
+<Column name="ID_DENTISTA" id="A0FEAF73-D70F-5ECB-D3AA-8DBCB253F27C">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_AGENDA_DENTISTA</sourceObjSchema>
+<sourceObjName>ID_DENTISTA</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="26870BB2-91AD-3DCF-5168-A6ED64620169" referredColumn="BFD5E2A4-A7EE-20E7-54BA-191A55392253"/>
+</associations>
+</Column>
+<Column name="DT_HORA_INICIO" id="57CFFD43-7C8A-5C72-4940-D07430168F9F">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_AGENDA_DENTISTA</sourceObjSchema>
+<sourceObjName>DT_HORA_INICIO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT015</logicalDatatype>
+<dataTypePrecision>6</dataTypePrecision>
+<ownDataTypeParameters>,6,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DT_HORA_FIM" id="20F7CE80-32FF-057B-FE4B-DA660D2ACAD0">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_AGENDA_DENTISTA</sourceObjSchema>
+<sourceObjName>DT_HORA_FIM</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT015</logicalDatatype>
+<dataTypePrecision>6</dataTypePrecision>
+<ownDataTypeParameters>,6,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ST_AGENDA" id="46C86378-B012-526C-5CE4-4C29672A5B3C">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_AGENDA_DENTISTA</sourceObjSchema>
+<sourceObjName>ST_AGENDA</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<constraintName>CHK_LKA_AGENDA_STATUS</constraintName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>20 BYTE</dataTypeSize>
+<listOfValues>
+<valueDef value="&apos;CANCELADO&apos;" description=""/>
+<valueDef value="&apos;DISPONIVEL&apos;" description=""/>
+<valueDef value="&apos;RESERVADO&apos;" description=""/>
+</listOfValues>
+<defaultValue>&apos;DISPONIVEL&apos;</defaultValue>
+<ownDataTypeParameters>20 BYTE,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DS_OBSERVACAO" id="F829001C-111D-51C0-702D-8CDF6111EC35">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_AGENDA_DENTISTA</sourceObjSchema>
+<sourceObjName>DS_OBSERVACAO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>300 BYTE</dataTypeSize>
+<ownDataTypeParameters>300 BYTE,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="101D0455-B80E-CA71-11B0-67ED6831AB59" schemaObject="74BEA16E-269E-97D0-62A3-4AFAA48317BB" name="T_LKA_AGENDA_DENTISTA_PK">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>SYS_C006725955</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:58 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="690B16DE-BF0E-798B-5B21-94E3AA86A685"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="24B0C650-43B8-4A65-13C3-B17DA34E8153" name="FK_LKA_AGENDA_DENTISTA">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="A0FEAF73-D70F-5ECB-D3AA-8DBCB253F27C"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+<tableCheckConstraints itemClass="oracle.dbtools.crest.model.design.constraint.TableLevelConstraint">
+<tableCheckConstraint name="CHK_LKA_AGENDA_PERIODO" directorySegmentName="seg_0" id="834B950E-5544-7D31-CC91-BF07A67B8C7F">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>CHK_LKA_AGENDA_PERIODO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:24 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<rule><![CDATA[dt_hora_fim > dt_hora_inicio]]></rule>
+</tableCheckConstraint>
+</tableCheckConstraints>
+</Table>

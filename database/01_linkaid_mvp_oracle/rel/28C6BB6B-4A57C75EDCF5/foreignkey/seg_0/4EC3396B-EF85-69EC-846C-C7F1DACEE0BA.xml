@@ -1,0 +1,19 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="4EC3396B-EF85-69EC-846C-C7F1DACEE0BA" containerWithKeyObject="07169B0A-B7BC-007E-602A-838E85DEC095" localFKIndex="871D3784-DCF7-5557-3541-A94BDD75D2C9" name="FK_LKA_TICKET_DENTISTA_RESP">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>FK_LKA_TICKET_DENTISTA_RESP</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<referredTableLongName>RM566754.T_LKA_DENTISTA</referredTableLongName>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>078753CD-CEB1-3AA8-C7AF-11A63EE95D1C</referredTableID>
+<keyObject>8A4EA51A-66DC-5BE1-17CB-8FB4E1063B23</keyObject>
+<referredKeyID>8A4EA51A-66DC-5BE1-17CB-8FB4E1063B23</referredKeyID>
+<mandatory>false</mandatory>
+<refColNames>ID_DENTISTA</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

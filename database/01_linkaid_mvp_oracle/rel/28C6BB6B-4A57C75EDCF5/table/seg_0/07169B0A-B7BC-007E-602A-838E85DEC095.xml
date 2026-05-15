@@ -1,0 +1,389 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="07169B0A-B7BC-007E-602A-838E85DEC095" schemaObject="74BEA16E-269E-97D0-62A3-4AFAA48317BB" name="T_LKA_TICKET">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>T_LKA_TICKET</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:56 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID_TICKET" id="3E5F70A3-5438-3804-D224-4E3C7401CE75">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>ID_TICKET</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementColumn>true</autoIncrementColumn>
+<identityColumn>true</identityColumn>
+<autoIncrementGenerateAlways>true</autoIncrementGenerateAlways>
+<autoIncrementCycle>false</autoIncrementCycle>
+<autoIncrementDisableCache>false</autoIncrementDisableCache>
+<autoIncrementCache>20</autoIncrementCache>
+<autoIncrementOrder>false</autoIncrementOrder>
+</Column>
+<Column name="NR_PROTOCOLO" id="092CEDE9-381F-5E25-1569-868B1D09375E">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>NR_PROTOCOLO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>40 BYTE</dataTypeSize>
+<ownDataTypeParameters>40 BYTE,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_CONTATO" id="DD8A590C-E445-353F-8DDF-804B0B47C9E0">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>ID_CONTATO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="201348F1-1BEF-66C9-0045-030732220514" referredColumn="0CF145AF-2582-FD52-23A3-ED9791934262"/>
+</associations>
+</Column>
+<Column name="ID_CANAL" id="C29AF4AA-61A3-A838-01A2-9C297948A9AA">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>ID_CANAL</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="19795CD5-FAE1-E23F-3C38-159F0150B3D5" referredColumn="68D26CC4-4EAF-2A06-51E1-D1C8CDAA548E"/>
+</associations>
+</Column>
+<Column name="ID_STATUS" id="C3B69F68-A0E9-DB4E-C949-E4AA731F7F7B">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>ID_STATUS</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="A1ED6B4E-2A78-C502-5658-D428BBCB70C5" referredColumn="788C5CAF-2AF1-E388-6D5B-11094546E81E"/>
+</associations>
+</Column>
+<Column name="ID_PRIORIDADE" id="49AD1668-9BBA-23C2-E456-9CFAF0E4B9DA">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>ID_PRIORIDADE</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="34F8C6F3-2D90-6E43-7188-23D81415D747" referredColumn="674E1A4C-EA2D-169C-C963-E63011CD1536"/>
+</associations>
+</Column>
+<Column name="ID_CLASSIFICACAO" id="86B57E6B-CF00-42A3-32EE-DC718D2E28AD">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>ID_CLASSIFICACAO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="2C173310-F2D8-BC53-C5A6-CB0894AB8F75" referredColumn="64C80612-87E5-A8EC-624F-6B561B16D985"/>
+</associations>
+</Column>
+<Column name="ID_USUARIO_RESPONSAVEL" id="2F4713CC-3EA4-283A-3DA6-DA3CFF0095C3">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>ID_USUARIO_RESPONSAVEL</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="5FD1837A-5F65-35BB-15EB-C45BB9E3EC1E" referredColumn="E944924A-D818-2741-6A48-7648CA2F589D"/>
+</associations>
+</Column>
+<Column name="ID_DENTISTA_RESPONSAVEL" id="1F941CF4-83D6-2CEC-A735-D989534E154B">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>ID_DENTISTA_RESPONSAVEL</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="4EC3396B-EF85-69EC-846C-C7F1DACEE0BA" referredColumn="BFD5E2A4-A7EE-20E7-54BA-191A55392253"/>
+</associations>
+</Column>
+<Column name="DS_ASSUNTO" id="804CB278-49AF-3618-130F-FC1E21C13E05">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>DS_ASSUNTO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>150 BYTE</dataTypeSize>
+<ownDataTypeParameters>150 BYTE,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DS_TICKET" id="748F0E07-532F-2C78-37A4-2E1BEB35B967">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>DS_TICKET</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT028</logicalDatatype>
+<dataTypeSize>4000</dataTypeSize>
+<ownDataTypeParameters>4000,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DS_RESUMO_IA" id="865F2DAB-6FE6-D52F-5197-E10372C49824">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>DS_RESUMO_IA</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT028</logicalDatatype>
+<dataTypeSize>4000</dataTypeSize>
+<ownDataTypeParameters>4000,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="VL_CONFIANCA_IA" id="09DFCC39-E9CE-C229-3AE6-9D75DEFE07CA">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>VL_CONFIANCA_IA</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<constraintName>CHK_LKA_TICKET_IA</constraintName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<dataTypePrecision>5</dataTypePrecision>
+<dataTypeScale>2</dataTypeScale>
+<checkConstraint>
+<implementationDef dbType="Generic Constraint" definition="vl_confianca_ia IS NULL"/>
+<implementationDef dbType="Oracle Database 12cR2" definition="vl_confianca_ia IS NULL"/>
+</checkConstraint>
+<ownDataTypeParameters>,5,2</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<listOfRanges>
+<rangeDef class="oracle.dbtools.crest.model.design.constraint.AVT">
+<beginValue>0</beginValue>
+<endValue>100</endValue>
+</rangeDef>
+</listOfRanges>
+</Column>
+<Column name="DT_ABERTURA" id="018C4DC9-D268-08CE-E5A5-C0255A8091B1">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>DT_ABERTURA</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT015</logicalDatatype>
+<dataTypePrecision>6</dataTypePrecision>
+<defaultValue>SYSTIMESTAMP</defaultValue>
+<ownDataTypeParameters>,6,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DT_ATUALIZACAO" id="EDFB8A1F-2F20-5251-0CC3-63B064DBA656">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>DT_ATUALIZACAO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT015</logicalDatatype>
+<dataTypePrecision>6</dataTypePrecision>
+<defaultValue>SYSTIMESTAMP</defaultValue>
+<ownDataTypeParameters>,6,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DT_FECHAMENTO" id="24074E5D-BC86-34E3-DA00-9042E1E89FDF">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TICKET</sourceObjSchema>
+<sourceObjName>DT_FECHAMENTO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT015</logicalDatatype>
+<dataTypePrecision>6</dataTypePrecision>
+<ownDataTypeParameters>,6,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="47179EE2-F884-4A32-77D1-9837D40B65FB" schemaObject="74BEA16E-269E-97D0-62A3-4AFAA48317BB" name="T_LKA_TICKET_PK">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>SYS_C006725968</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:58 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="3E5F70A3-5438-3804-D224-4E3C7401CE75"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="73D37984-3203-F096-8F5D-A46448BB1930" name="UK_LKA_TICKET_PROTOCOLO">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>UK_LKA_TICKET_PROTOCOLO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:11 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Unique Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="092CEDE9-381F-5E25-1569-868B1D09375E"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="DEF5706F-7D15-6DD4-8696-2E8DECD335B5" schemaObject="74BEA16E-269E-97D0-62A3-4AFAA48317BB" name="UK_LKA_TICKET_PROTOCOLO">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>UK_LKA_TICKET_PROTOCOLO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:58 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Unique Plain Index</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="092CEDE9-381F-5E25-1569-868B1D09375E"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="84E71385-25AF-5176-604F-EE27880D720C" name="FK_LKA_TICKET_CANAL">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="C29AF4AA-61A3-A838-01A2-9C297948A9AA"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="BF532239-7663-C70B-4190-7D44693BD1F0" name="FK_LKA_TICKET_CLASSIFICACAO">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="86B57E6B-CF00-42A3-32EE-DC718D2E28AD"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="4C01FB34-E7AC-23D2-2575-CD1919CE0CF5" name="FK_LKA_TICKET_CONTATO">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="DD8A590C-E445-353F-8DDF-804B0B47C9E0"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="871D3784-DCF7-5557-3541-A94BDD75D2C9" name="FK_LKA_TICKET_DENTISTA_RESP">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="1F941CF4-83D6-2CEC-A735-D989534E154B"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="537FFF1D-0019-826B-80B7-CC4EA8FD3A0E" name="FK_LKA_TICKET_PRIORIDADE">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="49AD1668-9BBA-23C2-E456-9CFAF0E4B9DA"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="26A41011-1476-6D52-FB28-EEB2C0796E90" name="FK_LKA_TICKET_STATUS">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="C3B69F68-A0E9-DB4E-C949-E4AA731F7F7B"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="24D07684-22D6-55D0-A64C-934648171FA0" name="FK_LKA_TICKET_USUARIO_RESP">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="2F4713CC-3EA4-283A-3DA6-DA3CFF0095C3"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

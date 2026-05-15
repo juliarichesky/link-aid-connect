@@ -1,0 +1,19 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="7874EC47-49B3-D1EE-6CB5-CFDDA8618BAD" containerWithKeyObject="77F90CD5-B058-DDAC-8559-F9FCB2D77B41" localFKIndex="9FC1592D-9320-70BE-EBB6-CFA75D7F4AFF" name="FK_LKA_TRIAGEM_TICKET">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>FK_LKA_TRIAGEM_TICKET</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<referredTableLongName>RM566754.T_LKA_TICKET</referredTableLongName>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>07169B0A-B7BC-007E-602A-838E85DEC095</referredTableID>
+<keyObject>47179EE2-F884-4A32-77D1-9837D40B65FB</keyObject>
+<referredKeyID>47179EE2-F884-4A32-77D1-9837D40B65FB</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>ID_TICKET</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

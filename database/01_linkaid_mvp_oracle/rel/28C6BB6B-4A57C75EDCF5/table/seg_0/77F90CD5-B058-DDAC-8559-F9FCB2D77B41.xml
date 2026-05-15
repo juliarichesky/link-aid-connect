@@ -1,0 +1,206 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="77F90CD5-B058-DDAC-8559-F9FCB2D77B41" schemaObject="74BEA16E-269E-97D0-62A3-4AFAA48317BB" name="T_LKA_TRIAGEM">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>T_LKA_TRIAGEM</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:56 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID_TRIAGEM" id="F78A2D36-51CC-8C91-FCBB-F7093B14EAEC">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TRIAGEM</sourceObjSchema>
+<sourceObjName>ID_TRIAGEM</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementColumn>true</autoIncrementColumn>
+<identityColumn>true</identityColumn>
+<autoIncrementGenerateAlways>true</autoIncrementGenerateAlways>
+<autoIncrementCycle>false</autoIncrementCycle>
+<autoIncrementDisableCache>false</autoIncrementDisableCache>
+<autoIncrementCache>20</autoIncrementCache>
+<autoIncrementOrder>false</autoIncrementOrder>
+</Column>
+<Column name="ID_TICKET" id="9CE29D78-15BF-DB60-8947-433C20FD56AA">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TRIAGEM</sourceObjSchema>
+<sourceObjName>ID_TICKET</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="7874EC47-49B3-D1EE-6CB5-CFDDA8618BAD" referredColumn="3E5F70A3-5438-3804-D224-4E3C7401CE75"/>
+</associations>
+</Column>
+<Column name="ID_CONTATO" id="29D594FF-C0C3-33A6-B52F-635C864AFFDA">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TRIAGEM</sourceObjSchema>
+<sourceObjName>ID_CONTATO</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="E469A969-6705-6A6F-6B52-D4AC7867C89F" referredColumn="0CF145AF-2582-FD52-23A3-ED9791934262"/>
+</associations>
+</Column>
+<Column name="ID_USUARIO_RESPONSAVEL" id="17EB3E83-BF09-DB51-2784-49B15125E431">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TRIAGEM</sourceObjSchema>
+<sourceObjName>ID_USUARIO_RESPONSAVEL</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="5139BF5E-7608-2C3C-CCC9-B1AD5BBB8AA3" referredColumn="E944924A-D818-2741-6A48-7648CA2F589D"/>
+</associations>
+</Column>
+<Column name="ID_DENTISTA" id="7584E61F-DA9E-146D-49C9-9D417845927E">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TRIAGEM</sourceObjSchema>
+<sourceObjName>ID_DENTISTA</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT019</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="B4D16665-BA46-0E72-DFCB-0D0945F99BD4" referredColumn="BFD5E2A4-A7EE-20E7-54BA-191A55392253"/>
+</associations>
+</Column>
+<Column name="DT_HORA_TRIAGEM" id="46478BE9-2AE3-2718-16DD-7520FF336D9B">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TRIAGEM</sourceObjSchema>
+<sourceObjName>DT_HORA_TRIAGEM</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT015</logicalDatatype>
+<dataTypePrecision>6</dataTypePrecision>
+<ownDataTypeParameters>,6,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ST_TRIAGEM" id="B364D6C7-D253-1A29-4922-7942AFB41211">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TRIAGEM</sourceObjSchema>
+<sourceObjName>ST_TRIAGEM</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<constraintName>CHK_LKA_TRIAGEM_STATUS</constraintName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>20 BYTE</dataTypeSize>
+<listOfValues>
+<valueDef value="&apos;AGENDADA&apos;" description=""/>
+<valueDef value="&apos;CANCELADA&apos;" description=""/>
+<valueDef value="&apos;PENDENTE&apos;" description=""/>
+<valueDef value="&apos;REALIZADA&apos;" description=""/>
+</listOfValues>
+<defaultValue>&apos;PENDENTE&apos;</defaultValue>
+<ownDataTypeParameters>20 BYTE,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DS_TRIAGEM" id="31BEFBF7-D27E-AFCD-D334-E2CE418743DA">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>T_LKA_TRIAGEM</sourceObjSchema>
+<sourceObjName>DS_TRIAGEM</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:57 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT028</logicalDatatype>
+<dataTypeSize>4000</dataTypeSize>
+<ownDataTypeParameters>4000,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="DF64ADBA-CE39-CF1B-6428-5BFF5740805A" schemaObject="74BEA16E-269E-97D0-62A3-4AFAA48317BB" name="T_LKA_TRIAGEM_PK">
+<sourceConnName>LINKAID_FIAP_ORACLE</sourceConnName>
+<sourceObjSchema>RM566754</sourceObjSchema>
+<sourceObjName>SYS_C006726000</sourceObjName>
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:53:58 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="F78A2D36-51CC-8C91-FCBB-F7093B14EAEC"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="D8B616D4-0361-95CF-B266-878E62E35E31" name="FK_LKA_TRIAGEM_CONTATO">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="29D594FF-C0C3-33A6-B52F-635C864AFFDA"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="D1316502-73E8-363C-3BC6-7A906F5E02FE" name="FK_LKA_TRIAGEM_DENTISTA">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="7584E61F-DA9E-146D-49C9-9D417845927E"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="9FC1592D-9320-70BE-EBB6-CFA75D7F4AFF" name="FK_LKA_TRIAGEM_TICKET">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="9CE29D78-15BF-DB60-8947-433C20FD56AA"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="76CDCA4B-365A-5158-9EBC-E1E65ACA3C3C" name="FK_LKA_TRIAGEM_USUARIO">
+<createdBy>User PC</createdBy>
+<createdTime>2026-05-15 00:54:25 UTC</createdTime>
+<ownerDesignName>01_linkaid_mvp_oracle</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="17EB3E83-BF09-DB51-2784-49B15125E431"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>
