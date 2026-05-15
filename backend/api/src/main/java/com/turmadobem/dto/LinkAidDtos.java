@@ -38,7 +38,8 @@ public final class LinkAidDtos {
             Long idUsuario,
             String nome,
             String email,
-            String perfil
+            String perfil,
+            String status
     ) {
     }
 
@@ -154,6 +155,22 @@ public final class LinkAidDtos {
     ) {
     }
 
+    public record NotaInternaRequest(
+            @NotBlank String nota,
+            Long idUsuario
+    ) {
+    }
+
+    public record NotaInternaResponse(
+            Long idNotaInterna,
+            Long idTicket,
+            Long idUsuario,
+            String nomeUsuario,
+            String nota,
+            LocalDateTime dataNota
+    ) {
+    }
+
     public record TicketResponse(
             Long idTicket,
             String protocolo,
@@ -208,6 +225,22 @@ public final class LinkAidDtos {
             List<AgrupamentoResponse> ticketsPorStatus,
             List<AgrupamentoResponse> ticketsPorCanal,
             List<TicketResponse> ultimosTickets
+    ) {
+    }
+
+    public record DominioItemResponse(
+            String codigo,
+            String nome,
+            Integer ordem
+    ) {
+    }
+
+    public record DominiosResponse(
+            List<DominioItemResponse> tiposContato,
+            List<DominioItemResponse> canais,
+            List<DominioItemResponse> statusTicket,
+            List<DominioItemResponse> prioridades,
+            List<DominioItemResponse> classificacoes
     ) {
     }
 

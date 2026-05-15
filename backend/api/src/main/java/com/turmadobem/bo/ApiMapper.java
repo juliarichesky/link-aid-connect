@@ -5,6 +5,7 @@ import com.turmadobem.model.Contato;
 import com.turmadobem.model.Dentista;
 import com.turmadobem.model.Ticket;
 import com.turmadobem.model.TicketMensagem;
+import com.turmadobem.model.TicketNotaInterna;
 import com.turmadobem.model.Usuario;
 
 import java.util.List;
@@ -21,7 +22,8 @@ final class ApiMapper {
                 usuario.getIdUsuario(),
                 usuario.getNome(),
                 usuario.getEmail(),
-                usuario.getPerfil() == null ? null : usuario.getPerfil().getCodigo()
+                usuario.getPerfil() == null ? null : usuario.getPerfil().getCodigo(),
+                usuario.getStatus()
         );
     }
 
@@ -75,6 +77,21 @@ final class ApiMapper {
                 mensagem.getTipoRemetente(),
                 mensagem.getMensagem(),
                 mensagem.getDataMensagem()
+        );
+    }
+
+    static LinkAidDtos.NotaInternaResponse notaInterna(TicketNotaInterna notaInterna) {
+        if (notaInterna == null) {
+            return null;
+        }
+        Usuario usuario = notaInterna.getUsuario();
+        return new LinkAidDtos.NotaInternaResponse(
+                notaInterna.getIdNotaInterna(),
+                notaInterna.getTicket() == null ? null : notaInterna.getTicket().getIdTicket(),
+                usuario == null ? null : usuario.getIdUsuario(),
+                usuario == null ? null : usuario.getNome(),
+                notaInterna.getNota(),
+                notaInterna.getDataNota()
         );
     }
 

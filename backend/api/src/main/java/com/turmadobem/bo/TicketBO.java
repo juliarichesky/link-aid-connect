@@ -6,6 +6,7 @@ import com.turmadobem.dao.PrioridadeDAO;
 import com.turmadobem.dao.StatusTicketDAO;
 import com.turmadobem.dao.TicketDAO;
 import com.turmadobem.dao.TicketMensagemDAO;
+import com.turmadobem.dao.TicketNotaInternaDAO;
 import com.turmadobem.dao.UsuarioDAO;
 import com.turmadobem.dto.LinkAidDtos;
 import com.turmadobem.exception.BusinessException;
@@ -18,6 +19,7 @@ import com.turmadobem.model.Prioridade;
 import com.turmadobem.model.StatusTicket;
 import com.turmadobem.model.Ticket;
 import com.turmadobem.model.TicketMensagem;
+import com.turmadobem.model.TicketNotaInterna;
 import com.turmadobem.model.Usuario;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -39,6 +41,9 @@ public class TicketBO {
 
     @Inject
     TicketMensagemDAO mensagemDAO;
+
+    @Inject
+    TicketNotaInternaDAO notaInternaDAO;
 
     @Inject
     ContatoBO contatoBO;
@@ -155,6 +160,35 @@ public class TicketBO {
     public List<LinkAidDtos.MensagemResponse> listarMensagens(Long idTicket) {
         buscarEntidade(idTicket);
         return mensagemDAO.listarPorTicket(idTicket).stream().map(ApiMapper::mensagem).toList();
+    }
+
+    @Transactional
+    public LinkAidDtos.NotaInternaResponse adicionarNotaInterna(Long idTicket,
+                                                                LinkAidDtos.NotaInternaRequest request,
+                                                                Long idUsuarioPadrao) {
+        Ticket ticket = buscarEntidade(idTicket);
+        Long idUsuario = request.idUsuario() == null ? idUsuarioPadrao : request.idUsuario();
+        if (idUsuario == null) {
+            throw new BusinessException("Nota interna precisa estar vinculada a um usuario.");
+        }
+
+        TicketNotaInterna notaInterna = new TicketNotaInterna();
+        notaInterna.setTicket(ticket);
+        notaInterna.setUsuario(buscarUsuarioAtivo(idUsuario));
+        notaInterna.setNota(normalizarObrigatorio(request.nota(), "Nota interna obrigatoria."));
+        notaInterna.setDataNota(LocalDateTime.now());
+        notaInternaDAO.persist(notaInterna);
+
+        ticket.setDataAtualizacao(notaInterna.getDataNota());
+        return ApiMapper.notaInterna(notaInterna);
+    }
+
+    @Transactional(Transactional.TxType.SUPPORTS)
+    public List<LinkAidDtos.NotaInternaResponse> listarNotasInternas(Long idTicket) {
+        buscarEntidade(idTicket);
+        return notaInternaDAO.listarPorTicket(idTicket).stream()
+                .map(ApiMapper::notaInterna)
+                .toList();
     }
 
     Ticket criarEntidade(LinkAidDtos.TicketRequest request) {

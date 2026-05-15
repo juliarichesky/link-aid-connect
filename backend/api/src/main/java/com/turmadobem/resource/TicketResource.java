@@ -98,4 +98,20 @@ public class TicketResource {
                 .entity(ticketBO.adicionarMensagem(id, request, usuarioPadrao))
                 .build();
     }
+
+    @GET
+    @Path("/{id}/notas-internas")
+    public List<LinkAidDtos.NotaInternaResponse> listarNotasInternas(@PathParam("id") Long id) {
+        return ticketBO.listarNotasInternas(id);
+    }
+
+    @POST
+    @Path("/{id}/notas-internas")
+    public Response adicionarNotaInterna(@PathParam("id") Long id,
+                                         @Valid LinkAidDtos.NotaInternaRequest request) {
+        Long usuarioPadrao = currentUser.getUsuario() == null ? null : currentUser.getUsuario().getIdUsuario();
+        return Response.status(Response.Status.CREATED)
+                .entity(ticketBO.adicionarNotaInterna(id, request, usuarioPadrao))
+                .build();
+    }
 }
