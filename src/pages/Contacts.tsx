@@ -31,7 +31,7 @@ interface DerivedContact {
   cpf: string;
   ticketCount: number;
   lastInteraction: string;
-  linkedTickets: { id: string; subject: string; date: string; status: string }[];
+  linkedTickets: { id: string; protocol?: string; subject: string; date: string; status: string }[];
 }
 
 export default function Contacts() {
@@ -63,7 +63,7 @@ export default function Contacts() {
       }
       const c = map.get(key)!;
       c.ticketCount++;
-      c.linkedTickets.push({ id: t.id, subject: t.subject, date: t.openedAt, status: t.status });
+      c.linkedTickets.push({ id: t.id, protocol: t.protocol, subject: t.subject, date: t.openedAt, status: t.status });
     });
 
     // Add manually created contacts that may not have tickets yet
@@ -96,7 +96,7 @@ export default function Contacts() {
 
   if (selected) {
     const filteredTickets = selected.linkedTickets.filter((t) =>
-      t.subject.toLowerCase().includes(detailSearch.toLowerCase()) || t.id.toLowerCase().includes(detailSearch.toLowerCase())
+      t.subject.toLowerCase().includes(detailSearch.toLowerCase()) || (t.protocol || t.id).toLowerCase().includes(detailSearch.toLowerCase())
     );
 
     return (
@@ -151,7 +151,7 @@ export default function Contacts() {
                   <TableBody>
                     {filteredTickets.map((t) => (
                       <TableRow key={t.id} className="hover:bg-accent/50 cursor-pointer transition-colors" onClick={() => navigate(`/tickets/${t.id}`)}>
-                        <TableCell className="font-mono text-xs">{t.id}</TableCell>
+                        <TableCell className="font-mono text-xs">{t.protocol || t.id}</TableCell>
                         <TableCell className="text-sm">{t.subject}</TableCell>
                         <TableCell className="text-sm text-muted-foreground">{t.date}</TableCell>
                         <TableCell><Badge variant="secondary">{t.status}</Badge></TableCell>

@@ -79,33 +79,37 @@ export default function CreateTicket() {
   const [ndCity, setNdCity] = useState("");
   const [ndUf, setNdUf] = useState("");
 
-  const handleCreateDentist = () => {
+  const handleCreateDentist = async () => {
     if (!ndName || !ndSpecialty) {
       toast.error("Preencha nome e especialidade do dentista");
       return;
     }
     const newId = dentists.length + 1;
-    addDentist({
-      id: newId,
-      name: ndName,
-      specialty: ndSpecialty,
-      status: DENTISTA_STATUS_LABELS.A,
-      totalSlots: 0,
-      openSlots: 0,
-      phone: ndPhone,
-      email: ndEmail,
-      crm: ndCrm,
-      location: ndCity,
-      uf: ndUf.toUpperCase().slice(0, 2),
-      country: "Brasil",
-      schedule: [],
-    });
-    toast.success("Dentista cadastrado com sucesso!");
-    setNewDentistOpen(false);
-    setNdName(""); setNdSpecialty(""); setNdPhone(""); setNdEmail(""); setNdCrm(""); setNdCity(""); setNdUf("");
+    try {
+      await addDentist({
+        id: newId,
+        name: ndName,
+        specialty: ndSpecialty,
+        status: DENTISTA_STATUS_LABELS.A,
+        totalSlots: 0,
+        openSlots: 0,
+        phone: ndPhone,
+        email: ndEmail,
+        crm: ndCrm,
+        location: ndCity,
+        uf: ndUf.toUpperCase().slice(0, 2),
+        country: "Brasil",
+        schedule: [],
+      });
+      toast.success("Dentista cadastrado com sucesso!");
+      setNewDentistOpen(false);
+      setNdName(""); setNdSpecialty(""); setNdPhone(""); setNdEmail(""); setNdCrm(""); setNdCity(""); setNdUf("");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao cadastrar dentista");
+    }
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!name || !subject || !priority || !channel) {
       toast.error("Preencha os campos obrigatórios: Nome, Assunto, Canal e Prioridade");
       return;
@@ -115,11 +119,13 @@ export default function CreateTicket() {
     const now = new Date();
     const openedAt = `${now.toLocaleDateString("pt-BR")} ${now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
 
-    addTicket({
+    try {
+      await addTicket({
       id: newId,
       channel: channelMap[channel] || channel,
       sender: name,
       subject,
+      description: desc || subject,
       classification: "Geral",
       priority: priorityMap[priority] || PRIORIDADE_LABELS.MEDIA,
       status: "Novo",
@@ -132,10 +138,13 @@ export default function CreateTicket() {
       location: city && state ? `${city}, ${state}` : "",
       type: ticketType,
       cpf: doc,
-    });
+      });
 
-    toast.success("Ticket criado com sucesso!");
-    navigate("/tickets");
+      toast.success("Ticket criado com sucesso!");
+      navigate("/tickets");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao criar ticket");
+    }
   };
 
   // Dentist tab: direct registration form

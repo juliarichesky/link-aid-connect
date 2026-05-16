@@ -17,21 +17,21 @@ export default function Login() {
 
   if (user) return <Navigate to="/" replace />;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    const res = login(email, password);
+    const res = await login(email, password);
     setLoading(false);
     if (!res.ok) setError(res.error || "Falha no login.");
   };
 
   const fillDemo = (kind: "admin" | "colab") => {
     if (kind === "admin") {
-      setEmail("admin@exemplo.com");
+      setEmail("admin@linkaid.com");
       setPassword("admin123");
     } else {
-      setEmail("colab@exemplo.com");
+      setEmail("colab@linkaid.com");
       setPassword("colab123");
     }
   };

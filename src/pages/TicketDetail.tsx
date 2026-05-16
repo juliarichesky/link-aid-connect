@@ -54,30 +54,38 @@ export default function TicketDetail() {
     }
   }, [ticket]);
 
-  const handleSave = (field: string, value: string) => {
+  const handleSave = async (field: string, value: string) => {
     if (!id) return;
-    updateTicket(id, { [field]: value });
-    if (field === "status" && value === "Resolvido") {
-      toast.success("Ticket resolvido e movido para Histórico");
-      setTimeout(() => navigate(backUrl), 500);
-      return;
+    try {
+      await updateTicket(id, { [field]: value });
+      if (field === "status" && value === "Resolvido") {
+        toast.success("Ticket resolvido e movido para Histórico");
+        setTimeout(() => navigate(backUrl), 500);
+        return;
+      }
+      toast.success("Alteração salva com sucesso");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao salvar alteração");
     }
-    toast.success("Alteração salva com sucesso");
   };
 
-  const handleSendReply = () => {
+  const handleSendReply = async () => {
     if (!reply.trim() || !id) return;
     const now = new Date();
     const time = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-    addChatMessage(id, { from: "agent", text: reply, time });
-    setReply("");
-    toast.success("Mensagem enviada");
+    try {
+      await addChatMessage(id, { from: "agent", text: reply, time });
+      setReply("");
+      toast.success("Mensagem enviada");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao enviar mensagem");
+    }
   };
 
   // Related tickets by same CPF
   const relatedTickets = ticket ? tickets.filter((t) => t.cpf === ticket.cpf && t.id !== ticket.id) : [];
 
-  const allMessages = [...defaultMessages, ...(ticket?.chatMessages || [])];
+  const allMessages = ticket?.chatMessages?.length ? ticket.chatMessages : defaultMessages;
 
   if (!ticket) {
     return (
@@ -101,7 +109,7 @@ export default function TicketDetail() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs text-muted-foreground mb-1">Ticket</p>
-            <p className="font-mono font-semibold">{id}</p>
+            <p className="font-mono font-semibold">{ticket.protocol || id}</p>
           </div>
           <div className="text-right">
             <p className="text-xs text-muted-foreground flex items-center gap-1 justify-end">
@@ -228,7 +236,7 @@ export default function TicketDetail() {
               {relatedTickets.map((h) => (
                 <div key={h.id} className="text-xs px-3 py-2 bg-muted rounded-md space-y-1 cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => navigate(`/tickets/${h.id}`, { state: { backUrl } })}>
                   <div className="flex justify-between">
-                    <span className="font-mono font-medium">{h.id}</span>
+                    <span className="font-mono font-medium">{h.protocol || h.id}</span>
                     <span className="text-muted-foreground">{h.openedAt}</span>
                   </div>
                   <p>{h.subject}</p>

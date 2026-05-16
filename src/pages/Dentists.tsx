@@ -55,12 +55,16 @@ export default function Dentists() {
     setEditing(true);
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (!selected) return;
-    updateDentist(selected.id, editData);
-    setSelected({ ...selected, ...editData } as Dentist);
-    setEditing(false);
-    toast.success("Dados do dentista atualizados");
+    try {
+      await updateDentist(selected.id, editData);
+      setSelected({ ...selected, ...editData } as Dentist);
+      setEditing(false);
+      toast.success("Dados do dentista atualizados");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao atualizar dentista");
+    }
   };
 
   if (selected) {
@@ -190,7 +194,7 @@ export default function Dentists() {
                   <TableBody>
                     {assignedTickets.map((t) => (
                       <TableRow key={t.id} className="hover:bg-accent/50 cursor-pointer transition-colors" onClick={() => navigate(`/tickets/${t.id}`)}>
-                        <TableCell className="font-mono text-xs">{t.id}</TableCell>
+                        <TableCell className="font-mono text-xs">{t.protocol || t.id}</TableCell>
                         <TableCell className="font-medium text-sm">{t.sender}</TableCell>
                         <TableCell className="text-sm">{t.subject}</TableCell>
                         <TableCell className="text-sm text-muted-foreground">{t.openedAt}</TableCell>

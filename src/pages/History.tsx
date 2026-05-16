@@ -20,6 +20,7 @@ import { toast } from "sonner";
 
 interface HistoryTicket {
   id: string;
+  protocol?: string;
   sender: string;
   cpf: string;
   subject: string;
@@ -39,7 +40,7 @@ interface HistoryTicket {
   medications?: string;
   surgeryHistory?: string;
   timeline: { date: string; action: string; user: string }[];
-  relatedTickets: { id: string; subject: string; date: string; status: string }[];
+  relatedTickets: { id: string; protocol?: string; subject: string; date: string; status: string }[];
   isFromGlobal?: boolean;
 }
 
@@ -65,9 +66,10 @@ export default function History() {
   const [selected, setSelected] = useState<HistoryTicket | null>(null);
 
   const resolvedFromGlobal: HistoryTicket[] = globalTickets
-    .filter((t) => t.status === "Resolvido")
+    .filter((t) => t.status === "Resolvido" || t.status === "Arquivado")
     .map((t) => ({
       id: t.id,
+      protocol: t.protocol,
       sender: t.sender,
       cpf: t.cpf,
       subject: t.subject,
@@ -75,7 +77,7 @@ export default function History() {
       openedAt: t.openedAt,
       channel: t.channel,
       dentist: t.dentistResponsible || "-",
-      status: "Resolvido",
+      status: t.status,
       priority: t.priority,
       classification: t.classification,
       description: t.subject,
@@ -104,7 +106,8 @@ export default function History() {
   });
 
   const filtered = sorted.filter((t) => {
-    const matchSearch = t.sender.toLowerCase().includes(search.toLowerCase()) || t.id.toLowerCase().includes(search.toLowerCase()) || t.subject.toLowerCase().includes(search.toLowerCase());
+    const ticketCode = t.protocol || t.id;
+    const matchSearch = t.sender.toLowerCase().includes(search.toLowerCase()) || ticketCode.toLowerCase().includes(search.toLowerCase()) || t.subject.toLowerCase().includes(search.toLowerCase());
     const matchChannel = channelFilter === "all" || t.channel === channelFilter;
     const matchDentist = dentistFilter === "all" || t.dentist === dentistFilter;
     return matchSearch && matchChannel && matchDentist;
@@ -114,10 +117,14 @@ export default function History() {
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
   const dentists = [...new Set(merged.map((t) => t.dentist).filter((d) => d !== "-"))];
 
-  const handleRevert = (ticketId: string) => {
-    updateTicket(ticketId, { status: "Aberto" });
-    toast.success("Ticket revertido para status Aberto");
-    setSelected(null);
+  const handleRevert = async (ticketId: string) => {
+    try {
+      await updateTicket(ticketId, { status: "Aberto" });
+      toast.success("Ticket revertido para status Aberto");
+      setSelected(null);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao reverter ticket");
+    }
   };
 
   if (selected) {
@@ -135,7 +142,7 @@ export default function History() {
         </div>
 
         <div className="flex items-center gap-3 mb-2">
-          <h1 className="text-xl font-display font-bold">{selected.id}</h1>
+          <h1 className="text-xl font-display font-bold">{selected.protocol || selected.id}</h1>
           <Badge variant="secondary">{selected.status}</Badge>
           <Badge variant="outline">{selected.priority}</Badge>
         </div>
@@ -233,7 +240,7 @@ export default function History() {
                           onClick={() => fullTicket && setSelected(fullTicket)}
                         >
                           <div className="flex items-center gap-3 min-w-0">
-                            <span className="font-mono text-xs text-muted-foreground">{rt.id}</span>
+                            <span className="font-mono text-xs text-muted-foreground">{rt.protocol || rt.id}</span>
                             <span className="text-sm truncate">{rt.subject}</span>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
@@ -313,7 +320,7 @@ export default function History() {
           <TableBody>
             {paginated.map((t) => (
               <TableRow key={t.id} className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setSelected(t)}>
-                <TableCell className="font-mono text-xs">{t.id}</TableCell>
+                <TableCell className="font-mono text-xs">{t.protocol || t.id}</TableCell>
                 <TableCell className="font-medium text-sm">{t.sender}</TableCell>
                 <TableCell className="text-sm">{t.subject}</TableCell>
                 <TableCell className="text-sm">{t.channel}</TableCell>

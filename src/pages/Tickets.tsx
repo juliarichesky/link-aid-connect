@@ -62,8 +62,9 @@ export default function Tickets() {
   const classifications = [...new Set(tickets.map((t) => t.classification))];
 
   const filtered = tickets.filter((t) => {
-    if (t.status === "Resolvido") return false;
-    const matchSearch = t.sender.toLowerCase().includes(search.toLowerCase()) || t.subject.toLowerCase().includes(search.toLowerCase()) || t.id.toLowerCase().includes(search.toLowerCase());
+    if (t.status === "Resolvido" || t.status === "Arquivado") return false;
+    const ticketCode = t.protocol || t.id;
+    const matchSearch = t.sender.toLowerCase().includes(search.toLowerCase()) || t.subject.toLowerCase().includes(search.toLowerCase()) || ticketCode.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "all" || t.status === statusFilter;
     const matchPriority = priorityFilter === "all" || t.priority === priorityFilter;
     const matchClassification = classificationFilter === "all" || t.classification === classificationFilter;
@@ -74,10 +75,14 @@ export default function Tickets() {
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-  const handleArchive = (e: React.MouseEvent, id: string) => {
+  const handleArchive = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    archiveTicket(id);
-    toast.success("Ticket arquivado e movido para Histórico");
+    try {
+      await archiveTicket(id);
+      toast.success("Ticket arquivado e movido para Histórico");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao arquivar ticket");
+    }
   };
 
   return (
@@ -172,7 +177,7 @@ export default function Tickets() {
                     navigate(`/tickets/${t.id}`, { state: { backUrl } });
                   }}
                 >
-                  <TableCell className="font-mono text-xs">{t.id}</TableCell>
+                  <TableCell className="font-mono text-xs">{t.protocol || t.id}</TableCell>
                   <TableCell><ChIcon className={cn("w-4 h-4", chColor)} /></TableCell>
                   <TableCell className="font-medium text-sm">{t.sender}</TableCell>
                   <TableCell className="text-sm">{t.subject}</TableCell>

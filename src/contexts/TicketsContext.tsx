@@ -1,13 +1,42 @@
-import { createContext, useContext, useState, ReactNode } from "react";
-import type { PrioridadeLabel } from "@/lib/linkaidMappings";
+import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  linkAidApi,
+  type ApiContatoResponse,
+  type ApiDentistaResponse,
+  type ApiTicketRequest,
+  type ApiTicketResponse,
+  type ApiTicketUpdateRequest,
+  type ApiUsuarioResponse,
+} from "@/lib/linkaidApi";
+import {
+  canalCodigo,
+  canalLabel,
+  classificacaoCodigo,
+  classificacaoLabel,
+  dentistaStatusCodigo,
+  dentistaStatusLabel,
+  perfilLabel,
+  prioridadeCodigo,
+  PRIORIDADE_LABELS,
+  prioridadeLabel,
+  type PrioridadeLabel,
+  statusTicketCodigo,
+  statusTicketLabel,
+  tipoContatoCodigo,
+  tipoContatoLabel,
+} from "@/lib/linkaidMappings";
 
 export type Priority = PrioridadeLabel;
 
 export interface Ticket {
   id: string;
+  protocol?: string;
+  idContato?: number;
   channel: string;
   sender: string;
   subject: string;
+  description?: string;
   classification: string;
   priority: Priority;
   status: string;
@@ -27,6 +56,7 @@ export interface Ticket {
 }
 
 export interface TeamMember {
+  id?: number;
   name: string;
   role: string;
 }
@@ -84,6 +114,7 @@ const initialTickets: Ticket[] = [
 ];
 
 interface Contact {
+  id?: number;
   name: string;
   phone: string;
   email: string;
@@ -97,35 +128,262 @@ interface TicketsContextType {
   contacts: Contact[];
   teamMembers: TeamMember[];
   dentists: Dentist[];
-  updateTicket: (id: string, updates: Partial<Ticket>) => void;
-  addTicket: (ticket: Ticket) => void;
-  archiveTicket: (id: string) => void;
-  addChatMessage: (id: string, message: { from: string; text: string; time: string }) => void;
-  addDentist: (dentist: Dentist) => void;
-  updateDentist: (id: number, updates: Partial<Dentist>) => void;
+  loading: boolean;
+  error: string | null;
+  refresh: () => Promise<void>;
+  updateTicket: (id: string, updates: Partial<Ticket>) => Promise<void>;
+  addTicket: (ticket: Ticket) => Promise<Ticket | void>;
+  archiveTicket: (id: string) => Promise<void>;
+  addChatMessage: (id: string, message: { from: string; text: string; time: string }) => Promise<void>;
+  addDentist: (dentist: Dentist) => Promise<Dentist | void>;
+  updateDentist: (id: number, updates: Partial<Dentist>) => Promise<void>;
 }
+
+const isRemoteId = (id: string | number) => /^\d+$/.test(String(id));
+
+const onlyDigits = (value?: string) => value?.replace(/\D/g, "") || undefined;
+
+const splitLocation = (location?: string) => {
+  const [city, uf] = (location || "").split(",").map((part) => part.trim());
+  return { city: city || undefined, uf: uf || undefined };
+};
+
+const formatDateTime = (value?: string) => {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const formatTime = (value?: string) => {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+};
+
+const messageSenderFromApi = (tipoRemetente: string) => {
+  const tipo = tipoRemetente.toUpperCase();
+  if (tipo === "CONTATO") return "client";
+  if (tipo === "IA") return "ai";
+  return "agent";
+};
+
+const apiTicketToTicket = (ticket: ApiTicketResponse): Ticket => {
+  const contato = ticket.contato;
+  const cidadeUf = [contato?.cidade, contato?.uf].filter(Boolean).join(", ");
+  return {
+    id: String(ticket.idTicket),
+    protocol: ticket.protocolo,
+    idContato: contato?.idContato,
+    channel: canalLabel(ticket.canalCodigo) || ticket.canalNome || "",
+    sender: contato?.nome || "Contato sem nome",
+    subject: ticket.assunto,
+    description: ticket.descricao,
+    classification: classificacaoLabel(ticket.classificacaoCodigo) || ticket.classificacaoNome || "Geral",
+    priority: (prioridadeLabel(ticket.prioridadeCodigo) || PRIORIDADE_LABELS.MEDIA) as Priority,
+    status: statusTicketLabel(ticket.statusCodigo) || ticket.statusNome || "Novo",
+    responsible: ticket.responsavel?.nome || "Sem responsável",
+    dentistResponsible: ticket.dentistaResponsavel?.nome,
+    updated: formatDateTime(ticket.dataAtualizacao) || "agora",
+    openedAt: formatDateTime(ticket.dataAbertura),
+    phone: contato?.telefone || "",
+    email: contato?.email || "",
+    location: cidadeUf,
+    type: tipoContatoLabel(contato?.tipoContatoCodigo) || contato?.tipoContatoNome || "Beneficiário",
+    cpf: contato?.documento || "-",
+    chatMessages: ticket.mensagens?.map((mensagem) => ({
+      from: messageSenderFromApi(mensagem.tipoRemetente),
+      text: mensagem.mensagem,
+      time: formatTime(mensagem.dataMensagem),
+    })),
+  };
+};
+
+const apiContatoToContact = (contato: ApiContatoResponse): Contact => ({
+  id: contato.idContato,
+  name: contato.nome,
+  phone: contato.telefone || "",
+  email: contato.email || "",
+  cpf: contato.documento || "-",
+  location: [contato.cidade, contato.uf].filter(Boolean).join(", "),
+  type: tipoContatoLabel(contato.tipoContatoCodigo) || contato.tipoContatoNome || "Beneficiário",
+});
+
+const apiDentistaToDentist = (dentista: ApiDentistaResponse): Dentist => ({
+  id: dentista.idDentista,
+  name: dentista.nome,
+  specialty: dentista.especialidade,
+  status: dentistaStatusLabel(dentista.status) || dentista.status,
+  totalSlots: 0,
+  openSlots: 0,
+  phone: dentista.telefone || "",
+  email: dentista.email || "",
+  crm: dentista.cro,
+  location: dentista.cidade || "",
+  uf: dentista.uf || "",
+  country: "Brasil",
+  schedule: [],
+});
+
+const apiUsuarioToTeamMember = (usuario: ApiUsuarioResponse): TeamMember => ({
+  id: usuario.idUsuario,
+  name: usuario.nome,
+  role: perfilLabel(usuario.perfil) || usuario.perfil,
+});
 
 const TicketsContext = createContext<TicketsContextType | undefined>(undefined);
 
 export function TicketsProvider({ children }: { children: ReactNode }) {
+  const { token } = useAuth();
   const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [dentists, setDentists] = useState<Dentist[]>(initialDentists);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialTeam);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const updateTicket = (id: string, updates: Partial<Ticket>) => {
+  const refresh = useCallback(async () => {
+    if (!token) {
+      setTickets(initialTickets);
+      setContacts([]);
+      setDentists(initialDentists);
+      setTeamMembers(initialTeam);
+      setError(null);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      const [apiTickets, apiDentists, apiUsuarios, apiContatos] = await Promise.all([
+        linkAidApi.listarTickets(token),
+        linkAidApi.listarDentistas(token),
+        linkAidApi.listarUsuarios(token),
+        linkAidApi.listarContatos(token),
+      ]);
+
+      setTickets(apiTickets.map(apiTicketToTicket));
+      setDentists(apiDentists.map(apiDentistaToDentist));
+      setTeamMembers(apiUsuarios.map(apiUsuarioToTeamMember));
+      setContacts(apiContatos.map(apiContatoToContact));
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : "Falha ao carregar dados da API.");
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  const upsertTicket = (ticket: Ticket) => {
+    setTickets((prev) => {
+      const exists = prev.some((item) => item.id === ticket.id);
+      return exists
+        ? prev.map((item) => (item.id === ticket.id ? ticket : item))
+        : [ticket, ...prev];
+    });
+  };
+
+  const buildTicketRequest = (ticket: Ticket): ApiTicketRequest => {
+    const { city, uf } = splitLocation(ticket.location);
+    const responsavel = teamMembers.find((member) => member.name === ticket.responsible);
+    const dentista = dentists.find((item) => item.name === ticket.dentistResponsible);
+
+    return {
+      idContato: ticket.idContato,
+      nomeContato: ticket.sender,
+      documentoContato: onlyDigits(ticket.cpf),
+      emailContato: ticket.email || undefined,
+      telefoneContato: onlyDigits(ticket.phone),
+      tipoContatoCodigo: tipoContatoCodigo(ticket.type) || "BENEFICIARIO",
+      cidadeContato: city,
+      ufContato: uf,
+      canalCodigo: canalCodigo(ticket.channel) || "MANUAL",
+      prioridadeCodigo: prioridadeCodigo(ticket.priority) || "MEDIA",
+      classificacaoCodigo: classificacaoCodigo(ticket.classification) || "GERAL",
+      idUsuarioResponsavel: responsavel?.id,
+      idDentistaResponsavel: dentista?.id,
+      assunto: ticket.subject,
+      descricao: ticket.description || ticket.subject,
+    };
+  };
+
+  const buildTicketUpdateRequest = (updates: Partial<Ticket>): ApiTicketUpdateRequest => {
+    const body: ApiTicketUpdateRequest = {};
+    if (updates.channel) body.canalCodigo = canalCodigo(updates.channel);
+    if (updates.status) body.statusCodigo = statusTicketCodigo(updates.status);
+    if (updates.priority) body.prioridadeCodigo = prioridadeCodigo(updates.priority);
+    if (updates.classification) body.classificacaoCodigo = classificacaoCodigo(updates.classification);
+    if (updates.responsible) {
+      body.idUsuarioResponsavel = teamMembers.find((member) => member.name === updates.responsible)?.id;
+    }
+    if (updates.dentistResponsible) {
+      body.idDentistaResponsavel = dentists.find((dentist) => dentist.name === updates.dentistResponsible)?.id;
+    }
+    if (updates.subject) body.assunto = updates.subject;
+    if (updates.description) body.descricao = updates.description;
+    return Object.fromEntries(Object.entries(body).filter(([, value]) => value !== undefined));
+  };
+
+  const buildDentistaRequest = (dentist: Dentist) => ({
+    nome: dentist.name,
+    cro: dentist.crm,
+    especialidade: dentist.specialty,
+    email: dentist.email || undefined,
+    telefone: onlyDigits(dentist.phone),
+    cidade: dentist.location || undefined,
+    uf: dentist.uf || undefined,
+    status: dentistaStatusCodigo(dentist.status) || "A",
+  });
+
+  const updateTicket = async (id: string, updates: Partial<Ticket>) => {
     setTickets((prev) =>
       prev.map((t) => {
         if (t.id !== id) return t;
         const updated = { ...t, ...updates };
-        if (updates.status === "Resolvido") {
+        if (updates.status === "Resolvido" || updates.status === "Arquivado") {
           updated.updated = "agora";
         }
         return updated;
-      })
+      }),
     );
+
+    if (!token || !isRemoteId(id)) return;
+
+    const body = buildTicketUpdateRequest(updates);
+    if (Object.keys(body).length === 0) return;
+
+    try {
+      const updated = await linkAidApi.atualizarTicket(token, id, body);
+      upsertTicket(apiTicketToTicket(updated));
+    } catch (updateError) {
+      setError(updateError instanceof Error ? updateError.message : "Falha ao atualizar ticket.");
+      throw updateError;
+    }
   };
 
-  const addTicket = (ticket: Ticket) => {
+  const addTicket = async (ticket: Ticket) => {
+    if (token) {
+      try {
+        const created = await linkAidApi.criarTicket(token, buildTicketRequest(ticket));
+        const mapped = apiTicketToTicket(created);
+        upsertTicket(mapped);
+        return mapped;
+      } catch (createError) {
+        setError(createError instanceof Error ? createError.message : "Falha ao criar ticket.");
+        throw createError;
+      }
+    }
+
     setTickets((prev) => [ticket, ...prev]);
     const exists = contacts.some((c) => c.cpf === ticket.cpf) ||
                    initialTickets.some((t) => t.cpf === ticket.cpf);
@@ -139,9 +397,21 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
         type: ticket.type,
       }]);
     }
+    return ticket;
   };
 
-  const archiveTicket = (id: string) => {
+  const archiveTicket = async (id: string) => {
+    if (token && isRemoteId(id)) {
+      try {
+        const updated = await linkAidApi.arquivarTicket(token, id);
+        upsertTicket(apiTicketToTicket(updated));
+        return;
+      } catch (archiveError) {
+        setError(archiveError instanceof Error ? archiveError.message : "Falha ao arquivar ticket.");
+        throw archiveError;
+      }
+    }
+
     setTickets((prev) =>
       prev.map((t) =>
         t.id === id ? { ...t, status: "Resolvido", updated: "agora" } : t
@@ -149,7 +419,22 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const addChatMessage = (id: string, message: { from: string; text: string; time: string }) => {
+  const addChatMessage = async (id: string, message: { from: string; text: string; time: string }) => {
+    if (token && isRemoteId(id)) {
+      try {
+        const tipoRemetente = message.from === "client" ? "CONTATO" : message.from === "ai" ? "IA" : "ATENDENTE";
+        const created = await linkAidApi.adicionarMensagem(token, id, message.text, tipoRemetente);
+        message = {
+          from: messageSenderFromApi(created.tipoRemetente),
+          text: created.mensagem,
+          time: formatTime(created.dataMensagem),
+        };
+      } catch (messageError) {
+        setError(messageError instanceof Error ? messageError.message : "Falha ao adicionar mensagem.");
+        throw messageError;
+      }
+    }
+
     setTickets((prev) =>
       prev.map((t) =>
         t.id === id
@@ -159,16 +444,41 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const addDentist = (dentist: Dentist) => {
+  const addDentist = async (dentist: Dentist) => {
+    if (token) {
+      try {
+        const created = await linkAidApi.criarDentista(token, buildDentistaRequest(dentist));
+        const mapped = apiDentistaToDentist(created);
+        setDentists((prev) => [...prev, mapped]);
+        return mapped;
+      } catch (dentistError) {
+        setError(dentistError instanceof Error ? dentistError.message : "Falha ao cadastrar dentista.");
+        throw dentistError;
+      }
+    }
+
     setDentists((prev) => [...prev, dentist]);
+    return dentist;
   };
 
-  const updateDentist = (id: number, updates: Partial<Dentist>) => {
+  const updateDentist = async (id: number, updates: Partial<Dentist>) => {
+    const current = dentists.find((dentist) => dentist.id === id);
+    const updated = current ? { ...current, ...updates } : undefined;
     setDentists((prev) => prev.map((d) => d.id === id ? { ...d, ...updates } : d));
+
+    if (!token || !updated) return;
+
+    try {
+      const saved = await linkAidApi.atualizarDentista(token, id, buildDentistaRequest(updated));
+      setDentists((prev) => prev.map((dentist) => dentist.id === id ? apiDentistaToDentist(saved) : dentist));
+    } catch (dentistError) {
+      setError(dentistError instanceof Error ? dentistError.message : "Falha ao atualizar dentista.");
+      throw dentistError;
+    }
   };
 
   return (
-    <TicketsContext.Provider value={{ tickets, contacts, teamMembers: initialTeam, dentists, updateTicket, addTicket, archiveTicket, addChatMessage, addDentist, updateDentist }}>
+    <TicketsContext.Provider value={{ tickets, contacts, teamMembers, dentists, loading, error, refresh, updateTicket, addTicket, archiveTicket, addChatMessage, addDentist, updateDentist }}>
       {children}
     </TicketsContext.Provider>
   );

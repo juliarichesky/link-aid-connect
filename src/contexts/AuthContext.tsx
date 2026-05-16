@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { linkAidApi, type ApiLoginResponse, type ApiUsuarioResponse } from "@/lib/linkaidApi";
+import { perfilFrontRole, perfilLabel } from "@/lib/linkaidMappings";
 
 export type Role = "admin" | "colaborador";
 
@@ -14,52 +16,57 @@ export interface User {
 
 interface AuthContextValue {
   user: User | null;
-  login: (email: string, password: string) => { ok: boolean; error?: string };
+  token: string | null;
+  login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
   updateUser: (patch: Partial<User>) => void;
 }
 
 const STORAGE_KEY = "linkaid-auth-user";
-
-const MOCK_USERS: Record<string, { password: string; user: User }> = {
-  "admin@exemplo.com": {
-    password: "admin123",
-    user: {
-      email: "admin@exemplo.com",
-      name: "Ana Costa",
-      role: "admin",
-      initials: "AC",
-      roleLabel: "Administradora",
-    },
-  },
-  "colab@exemplo.com": {
-    password: "colab123",
-    user: {
-      email: "colab@exemplo.com",
-      name: "Carlos Silva",
-      role: "colaborador",
-      initials: "CS",
-      roleLabel: "Colaborador",
-    },
-  },
-};
+const TOKEN_STORAGE_KEY = "linkaid-auth-token";
 
 const AuthContext = createContext<AuthContextValue>({
   user: null,
-  login: () => ({ ok: false }),
+  token: null,
+  login: async () => ({ ok: false }),
   logout: () => {},
   updateUser: () => {},
 });
+
+const initialsFromName = (name: string) =>
+  name
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+const userFromApi = (data: ApiLoginResponse | ApiUsuarioResponse): User => {
+  const role = perfilFrontRole(data.perfil) || "colaborador";
+  return {
+    email: data.email,
+    name: data.nome,
+    role,
+    initials: initialsFromName(data.nome),
+    roleLabel: perfilLabel(data.perfil) || (role === "admin" ? "Administradora" : "Colaborador"),
+  };
+};
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => {
     if (typeof window === "undefined") return null;
     try {
+      if (!localStorage.getItem(TOKEN_STORAGE_KEY)) return null;
       const raw = localStorage.getItem(STORAGE_KEY);
       return raw ? (JSON.parse(raw) as User) : null;
     } catch {
       return null;
     }
+  });
+  const [token, setToken] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem(TOKEN_STORAGE_KEY);
   });
 
   useEffect(() => {
@@ -67,22 +74,54 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     else localStorage.removeItem(STORAGE_KEY);
   }, [user]);
 
-  const login = (email: string, password: string) => {
-    const record = MOCK_USERS[email.trim().toLowerCase()];
-    if (!record || record.password !== password) {
-      return { ok: false, error: "E-mail ou senha inválidos." };
+  useEffect(() => {
+    if (token) localStorage.setItem(TOKEN_STORAGE_KEY, token);
+    else localStorage.removeItem(TOKEN_STORAGE_KEY);
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    let active = true;
+    linkAidApi.me(token)
+      .then((response) => {
+        if (active) setUser(userFromApi(response));
+      })
+      .catch(() => {
+        if (!active) return;
+        setUser(null);
+        setToken(null);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [token]);
+
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await linkAidApi.login(email.trim().toLowerCase(), password);
+      setToken(response.token);
+      setUser(userFromApi(response));
+      return { ok: true };
+    } catch (error) {
+      return {
+        ok: false,
+        error: error instanceof Error ? error.message : "E-mail ou senha inválidos.",
+      };
     }
-    setUser(record.user);
-    return { ok: true };
   };
 
-  const logout = () => setUser(null);
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+  };
 
   const updateUser = (patch: Partial<User>) =>
     setUser((u) => (u ? { ...u, ...patch } : u));
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
