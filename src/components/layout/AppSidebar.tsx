@@ -15,7 +15,7 @@ import {
   ChevronRight,
   History,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/classnames";
 import { useState } from "react";
 import { useAuth, Role } from "@/contexts/AuthContext";
 

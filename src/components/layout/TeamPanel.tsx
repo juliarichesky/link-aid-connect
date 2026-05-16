@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, Circle, Send, Plus, Hash, ArrowLeft, Users, MessageSquare } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/classnames";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
