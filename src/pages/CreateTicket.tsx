@@ -15,16 +15,33 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTickets, type Priority } from "@/contexts/TicketsContext";
 import { maskCPF, maskCNPJ, maskPhone } from "@/lib/masks";
+import {
+  CANAL_LABELS,
+  DENTISTA_STATUS_LABELS,
+  PRIORIDADE_LABELS,
+  TIPO_CONTATO_LABELS,
+} from "@/lib/linkaidMappings";
 import { toast } from "sonner";
 
-const channelMap: Record<string, string> = { whatsapp: "WhatsApp", instagram: "Instagram", email: "E-mail", other: "Outro" };
-const priorityMap: Record<string, Priority> = { critical: "Crítica", high: "Alta", medium: "Média", low: "Baixa" };
+const channelMap: Record<string, string> = {
+  whatsapp: CANAL_LABELS.WHATSAPP,
+  instagram: CANAL_LABELS.INSTAGRAM,
+  email: CANAL_LABELS.EMAIL,
+  other: CANAL_LABELS.MANUAL,
+};
+
+const priorityMap: Record<string, Priority> = {
+  critical: PRIORIDADE_LABELS.CRITICA,
+  high: PRIORIDADE_LABELS.ALTA,
+  medium: PRIORIDADE_LABELS.MEDIA,
+  low: PRIORIDADE_LABELS.BAIXA,
+};
 
 const typeOptions = [
-  { value: "Beneficiário", label: "Beneficiário" },
-  { value: "Parceiro", label: "Parceiro" },
-  { value: "Doador", label: "Doador" },
-  { value: "Voluntário", label: "Voluntário" },
+  { value: TIPO_CONTATO_LABELS.BENEFICIARIO, label: TIPO_CONTATO_LABELS.BENEFICIARIO },
+  { value: TIPO_CONTATO_LABELS.PARCEIRO, label: TIPO_CONTATO_LABELS.PARCEIRO },
+  { value: TIPO_CONTATO_LABELS.DOADOR, label: TIPO_CONTATO_LABELS.DOADOR },
+  { value: TIPO_CONTATO_LABELS.VOLUNTARIO, label: TIPO_CONTATO_LABELS.VOLUNTARIO },
 ];
 
 export default function CreateTicket() {
@@ -50,7 +67,7 @@ export default function CreateTicket() {
   const [priority, setPriority] = useState("");
   const [responsible, setResponsible] = useState("");
   const [dentistResp, setDentistResp] = useState("");
-  const [ticketType, setTicketType] = useState("Beneficiário");
+  const [ticketType, setTicketType] = useState(TIPO_CONTATO_LABELS.BENEFICIARIO);
 
   // New dentist modal
   const [newDentistOpen, setNewDentistOpen] = useState(false);
@@ -72,7 +89,7 @@ export default function CreateTicket() {
       id: newId,
       name: ndName,
       specialty: ndSpecialty,
-      status: "Ativo",
+      status: DENTISTA_STATUS_LABELS.A,
       totalSlots: 0,
       openSlots: 0,
       phone: ndPhone,
@@ -104,7 +121,7 @@ export default function CreateTicket() {
       sender: name,
       subject,
       classification: "Geral",
-      priority: priorityMap[priority] || "Média",
+      priority: priorityMap[priority] || PRIORIDADE_LABELS.MEDIA,
       status: "Novo",
       responsible: responsible || "Sem responsável",
       dentistResponsible: dentistResp && dentistResp !== "none" ? dentistResp : undefined,

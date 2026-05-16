@@ -15,34 +15,35 @@ import {
 import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTickets, type Priority } from "@/contexts/TicketsContext";
+import { CANAL_LABELS, PRIORIDADE_LABELS, TIPO_CONTATO_LABELS } from "@/lib/linkaidMappings";
 import { toast } from "sonner";
 
 const channelIcon: Record<string, React.ElementType> = {
-  WhatsApp: MessageCircle,
-  Instagram: Instagram,
-  "E-mail": Mail,
-  Outro: MoreHorizontal,
+  [CANAL_LABELS.WHATSAPP]: MessageCircle,
+  [CANAL_LABELS.INSTAGRAM]: Instagram,
+  [CANAL_LABELS.EMAIL]: Mail,
+  [CANAL_LABELS.MANUAL]: MoreHorizontal,
 };
 
 const channelColors: Record<string, string> = {
-  WhatsApp: "text-green-500",
-  Instagram: "text-pink-500",
-  "E-mail": "text-blue-500",
-  Outro: "text-muted-foreground",
+  [CANAL_LABELS.WHATSAPP]: "text-green-500",
+  [CANAL_LABELS.INSTAGRAM]: "text-pink-500",
+  [CANAL_LABELS.EMAIL]: "text-blue-500",
+  [CANAL_LABELS.MANUAL]: "text-muted-foreground",
 };
 
 const priorityClasses: Record<Priority, string> = {
-  Crítica: "bg-status-critical text-status-critical-foreground",
-  Alta: "bg-status-high text-status-high-foreground",
-  Média: "bg-status-medium text-status-medium-foreground",
-  Baixa: "bg-status-low text-status-low-foreground",
+  [PRIORIDADE_LABELS.CRITICA]: "bg-status-critical text-status-critical-foreground",
+  [PRIORIDADE_LABELS.ALTA]: "bg-status-high text-status-high-foreground",
+  [PRIORIDADE_LABELS.MEDIA]: "bg-status-medium text-status-medium-foreground",
+  [PRIORIDADE_LABELS.BAIXA]: "bg-status-low text-status-low-foreground",
 };
 
 const typeColors: Record<string, string> = {
-  Beneficiário: "bg-warning/15 text-warning",
-  Doador: "bg-primary/15 text-primary",
-  Voluntário: "bg-success/15 text-success",
-  Parceiro: "bg-info/15 text-info",
+  [TIPO_CONTATO_LABELS.BENEFICIARIO]: "bg-warning/15 text-warning",
+  [TIPO_CONTATO_LABELS.DOADOR]: "bg-primary/15 text-primary",
+  [TIPO_CONTATO_LABELS.VOLUNTARIO]: "bg-success/15 text-success",
+  [TIPO_CONTATO_LABELS.PARCEIRO]: "bg-info/15 text-info",
 };
 
 const ITEMS_PER_PAGE = 10;

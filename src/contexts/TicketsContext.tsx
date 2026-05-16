@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, ReactNode } from "react";
+import type { PrioridadeLabel } from "@/lib/linkaidMappings";
 
-export type Priority = "Crítica" | "Alta" | "Média" | "Baixa";
+export type Priority = PrioridadeLabel;
 
 export interface Ticket {
   id: string;
