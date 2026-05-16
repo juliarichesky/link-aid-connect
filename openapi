@@ -1,0 +1,1229 @@
+---
+openapi: 3.1.0
+components:
+  schemas:
+    AgrupamentoResponse:
+      type: object
+      properties:
+        codigo:
+          type: string
+        nome:
+          type: string
+        quantidade:
+          type: integer
+          format: int64
+    ContatoRequest:
+      type: object
+      required:
+      - nome
+      - tipoContatoCodigo
+      properties:
+        nome:
+          type: string
+          pattern: \S
+        documento:
+          type: string
+        email:
+          type: string
+        telefone:
+          type: string
+        tipoContatoCodigo:
+          type: string
+          pattern: \S
+        cidade:
+          type: string
+        uf:
+          type: string
+          maxLength: 2
+        observacao:
+          type: string
+    ContatoResponse:
+      type: object
+      properties:
+        idContato:
+          type: integer
+          format: int64
+        nome:
+          type: string
+        documento:
+          type: string
+        email:
+          type: string
+        telefone:
+          type: string
+        tipoContatoCodigo:
+          type: string
+        tipoContatoNome:
+          type: string
+        cidade:
+          type: string
+        uf:
+          type: string
+        observacao:
+          type: string
+        dataCadastro:
+          $ref: "#/components/schemas/LocalDateTime"
+    DashboardResponse:
+      type: object
+      properties:
+        resumo:
+          $ref: "#/components/schemas/DashboardResumoResponse"
+        ticketsPorStatus:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgrupamentoResponse"
+        ticketsPorCanal:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgrupamentoResponse"
+        ultimosTickets:
+          type: array
+          items:
+            $ref: "#/components/schemas/TicketResponse"
+    DashboardResumoResponse:
+      type: object
+      properties:
+        totalContatos:
+          type: integer
+          format: int64
+        totalTickets:
+          type: integer
+          format: int64
+        ticketsNovos:
+          type: integer
+          format: int64
+        ticketsEmAtendimento:
+          type: integer
+          format: int64
+        ticketsResolvidos:
+          type: integer
+          format: int64
+        totalDentistas:
+          type: integer
+          format: int64
+        dentistasAtivos:
+          type: integer
+          format: int64
+    DentistaRequest:
+      type: object
+      required:
+      - nome
+      - cro
+      - especialidade
+      properties:
+        nome:
+          type: string
+          pattern: \S
+        cro:
+          type: string
+          pattern: \S
+        especialidade:
+          type: string
+          pattern: \S
+        email:
+          type: string
+        telefone:
+          type: string
+        cidade:
+          type: string
+        uf:
+          type: string
+          maxLength: 2
+        status:
+          type: string
+    DentistaResponse:
+      type: object
+      properties:
+        idDentista:
+          type: integer
+          format: int64
+        nome:
+          type: string
+        cro:
+          type: string
+        especialidade:
+          type: string
+        email:
+          type: string
+        telefone:
+          type: string
+        cidade:
+          type: string
+        uf:
+          type: string
+        status:
+          type: string
+        dataCadastro:
+          $ref: "#/components/schemas/LocalDateTime"
+    DominioItemResponse:
+      type: object
+      properties:
+        codigo:
+          type: string
+        nome:
+          type: string
+        ordem:
+          type: integer
+          format: int32
+    DominiosResponse:
+      type: object
+      properties:
+        tiposContato:
+          type: array
+          items:
+            $ref: "#/components/schemas/DominioItemResponse"
+        canais:
+          type: array
+          items:
+            $ref: "#/components/schemas/DominioItemResponse"
+        statusTicket:
+          type: array
+          items:
+            $ref: "#/components/schemas/DominioItemResponse"
+        prioridades:
+          type: array
+          items:
+            $ref: "#/components/schemas/DominioItemResponse"
+        classificacoes:
+          type: array
+          items:
+            $ref: "#/components/schemas/DominioItemResponse"
+    HistoricoContatoResponse:
+      type: object
+      properties:
+        contato:
+          $ref: "#/components/schemas/ContatoResponse"
+        tickets:
+          type: array
+          items:
+            $ref: "#/components/schemas/TicketResponse"
+    LocalDateTime:
+      type: string
+      format: date-time
+      examples:
+      - 2022-03-10T12:15:50
+    LoginRequest:
+      type: object
+      required:
+      - email
+      properties:
+        email:
+          type: string
+          pattern: \S
+        senha:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        idUsuario:
+          type: integer
+          format: int64
+        nome:
+          type: string
+        email:
+          type: string
+        perfil:
+          type: string
+    MensagemRequest:
+      type: object
+      required:
+      - tipoRemetente
+      - mensagem
+      properties:
+        tipoRemetente:
+          type: string
+          pattern: \S
+        mensagem:
+          type: string
+          pattern: \S
+        idUsuario:
+          type: integer
+          format: int64
+    MensagemResponse:
+      type: object
+      properties:
+        idMensagem:
+          type: integer
+          format: int64
+        idTicket:
+          type: integer
+          format: int64
+        idUsuario:
+          type: integer
+          format: int64
+        nomeUsuario:
+          type: string
+        tipoRemetente:
+          type: string
+        mensagem:
+          type: string
+        dataMensagem:
+          $ref: "#/components/schemas/LocalDateTime"
+    NotaInternaRequest:
+      type: object
+      required:
+      - nota
+      properties:
+        nota:
+          type: string
+          pattern: \S
+        idUsuario:
+          type: integer
+          format: int64
+    NotaInternaResponse:
+      type: object
+      properties:
+        idNotaInterna:
+          type: integer
+          format: int64
+        idTicket:
+          type: integer
+          format: int64
+        idUsuario:
+          type: integer
+          format: int64
+        nomeUsuario:
+          type: string
+        nota:
+          type: string
+        dataNota:
+          $ref: "#/components/schemas/LocalDateTime"
+    TicketRequest:
+      type: object
+      required:
+      - canalCodigo
+      - prioridadeCodigo
+      - assunto
+      - descricao
+      properties:
+        idContato:
+          type: integer
+          format: int64
+        nomeContato:
+          type: string
+        documentoContato:
+          type: string
+        emailContato:
+          type: string
+        telefoneContato:
+          type: string
+        tipoContatoCodigo:
+          type: string
+        cidadeContato:
+          type: string
+        ufContato:
+          type: string
+          maxLength: 2
+        canalCodigo:
+          type: string
+          pattern: \S
+        prioridadeCodigo:
+          type: string
+          pattern: \S
+        classificacaoCodigo:
+          type: string
+        idUsuarioResponsavel:
+          type: integer
+          format: int64
+        idDentistaResponsavel:
+          type: integer
+          format: int64
+        assunto:
+          type: string
+          pattern: \S
+        descricao:
+          type: string
+          pattern: \S
+        resumoIa:
+          type: string
+        confiancaIa:
+          type: number
+          maximum: 100.0
+          minimum: 0.0
+    TicketResponsavelRequest:
+      type: object
+      required:
+      - idUsuarioResponsavel
+      properties:
+        idUsuarioResponsavel:
+          type: integer
+          format: int64
+    TicketResponse:
+      type: object
+      properties:
+        idTicket:
+          type: integer
+          format: int64
+        protocolo:
+          type: string
+        contato:
+          $ref: "#/components/schemas/ContatoResponse"
+        canalCodigo:
+          type: string
+        canalNome:
+          type: string
+        statusCodigo:
+          type: string
+        statusNome:
+          type: string
+        prioridadeCodigo:
+          type: string
+        prioridadeNome:
+          type: string
+        classificacaoCodigo:
+          type: string
+        classificacaoNome:
+          type: string
+        responsavel:
+          $ref: "#/components/schemas/UsuarioResponse"
+        dentistaResponsavel:
+          $ref: "#/components/schemas/DentistaResponse"
+        assunto:
+          type: string
+        descricao:
+          type: string
+        resumoIa:
+          type: string
+        confiancaIa:
+          type: number
+        dataAbertura:
+          $ref: "#/components/schemas/LocalDateTime"
+        dataAtualizacao:
+          $ref: "#/components/schemas/LocalDateTime"
+        dataFechamento:
+          $ref: "#/components/schemas/LocalDateTime"
+        mensagens:
+          type: array
+          items:
+            $ref: "#/components/schemas/MensagemResponse"
+    TicketStatusRequest:
+      type: object
+      required:
+      - statusCodigo
+      properties:
+        statusCodigo:
+          type: string
+          pattern: \S
+    TicketUpdateRequest:
+      type: object
+      properties:
+        canalCodigo:
+          type: string
+        statusCodigo:
+          type: string
+        prioridadeCodigo:
+          type: string
+        classificacaoCodigo:
+          type: string
+        idUsuarioResponsavel:
+          type: integer
+          format: int64
+        idDentistaResponsavel:
+          type: integer
+          format: int64
+        assunto:
+          type: string
+        descricao:
+          type: string
+        resumoIa:
+          type: string
+        confiancaIa:
+          type: number
+          maximum: 100.0
+          minimum: 0.0
+    UsuarioResponse:
+      type: object
+      properties:
+        idUsuario:
+          type: integer
+          format: int64
+        nome:
+          type: string
+        email:
+          type: string
+        perfil:
+          type: string
+        status:
+          type: string
+    WebhookTicketRequest:
+      type: object
+      required:
+      - body
+      properties:
+        externalId:
+          type: string
+        origem:
+          type: string
+        from:
+          type: string
+        nome:
+          type: string
+        body:
+          type: string
+          pattern: \S
+        tipoContatoCodigo:
+          type: string
+        prioridadeCodigo:
+          type: string
+        classificacaoCodigo:
+          type: string
+        intent:
+          type: string
+        confiancaIa:
+          type: number
+          maximum: 100.0
+          minimum: 0.0
+        payload:
+          type: string
+paths:
+  /auth/login:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          description: Bad Request
+      summary: Login
+      tags:
+      - Auth Resource
+  /auth/me:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsuarioResponse"
+      summary: Me
+      tags:
+      - Auth Resource
+  /contatos:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ContatoResponse"
+      summary: Listar
+      tags:
+      - Contato Resource
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContatoRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Criar
+      tags:
+      - Contato Resource
+  /contatos/{id}:
+    delete:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+      summary: Remover
+      tags:
+      - Contato Resource
+    get:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContatoResponse"
+      summary: Buscar
+      tags:
+      - Contato Resource
+    put:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContatoRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContatoResponse"
+        "400":
+          description: Bad Request
+      summary: Atualizar
+      tags:
+      - Contato Resource
+  /contatos/{id}/historico:
+    get:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HistoricoContatoResponse"
+      summary: Historico
+      tags:
+      - Contato Resource
+  /dashboard:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardResponse"
+      summary: Dashboard
+      tags:
+      - Dashboard Resource
+  /dashboard/resumo:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardResumoResponse"
+      summary: Resumo
+      tags:
+      - Dashboard Resource
+  /dashboard/tickets-por-canal:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AgrupamentoResponse"
+      summary: Tickets Por Canal
+      tags:
+      - Dashboard Resource
+  /dashboard/tickets-por-status:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AgrupamentoResponse"
+      summary: Tickets Por Status
+      tags:
+      - Dashboard Resource
+  /dashboard/ultimos-tickets:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TicketResponse"
+      summary: Ultimos Tickets
+      tags:
+      - Dashboard Resource
+  /dentistas:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DentistaResponse"
+      summary: Listar
+      tags:
+      - Dentista Resource
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DentistaRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Criar
+      tags:
+      - Dentista Resource
+  /dentistas/{id}:
+    delete:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+      summary: Remover
+      tags:
+      - Dentista Resource
+    get:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DentistaResponse"
+      summary: Buscar
+      tags:
+      - Dentista Resource
+    put:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DentistaRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DentistaResponse"
+        "400":
+          description: Bad Request
+      summary: Atualizar
+      tags:
+      - Dentista Resource
+  /dominios:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DominiosResponse"
+      summary: Listar
+      tags:
+      - Dominio Resource
+  /dominios/canais:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DominioItemResponse"
+      summary: Listar Canais
+      tags:
+      - Dominio Resource
+  /dominios/classificacoes:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DominioItemResponse"
+      summary: Listar Classificacoes
+      tags:
+      - Dominio Resource
+  /dominios/prioridades:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DominioItemResponse"
+      summary: Listar Prioridades
+      tags:
+      - Dominio Resource
+  /dominios/status-ticket:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DominioItemResponse"
+      summary: Listar Status Ticket
+      tags:
+      - Dominio Resource
+  /dominios/tipos-contato:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DominioItemResponse"
+      summary: Listar Tipos Contato
+      tags:
+      - Dominio Resource
+  /integracoes/watson/tickets:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WebhookTicketRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Criar Ticket Via Watson
+      tags:
+      - Webhook Resource
+  /relatorios:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardResponse"
+      summary: Relatorio Geral
+      tags:
+      - Relatorio Resource
+  /relatorios/resumo:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardResumoResponse"
+      summary: Resumo
+      tags:
+      - Relatorio Resource
+  /relatorios/tickets-por-canal:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AgrupamentoResponse"
+      summary: Tickets Por Canal
+      tags:
+      - Relatorio Resource
+  /relatorios/tickets-por-status:
+    get:
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AgrupamentoResponse"
+      summary: Tickets Por Status
+      tags:
+      - Relatorio Resource
+  /relatorios/ultimos-tickets:
+    get:
+      parameters:
+      - name: limite
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TicketResponse"
+      summary: Ultimos Tickets
+      tags:
+      - Relatorio Resource
+  /tickets:
+    get:
+      parameters:
+      - name: canal
+        in: query
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: responsavelId
+        in: query
+        schema:
+          type: integer
+          format: int64
+      - name: size
+        in: query
+        schema:
+          type: integer
+          format: int32
+          default: 20
+      - name: status
+        in: query
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TicketResponse"
+      summary: Listar
+      tags:
+      - Ticket Resource
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Criar
+      tags:
+      - Ticket Resource
+  /tickets/{id}:
+    get:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketResponse"
+      summary: Buscar
+      tags:
+      - Ticket Resource
+    put:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketUpdateRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketResponse"
+        "400":
+          description: Bad Request
+      summary: Atualizar
+      tags:
+      - Ticket Resource
+    delete:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketResponse"
+      summary: Arquivar
+      tags:
+      - Ticket Resource
+  /tickets/{id}/mensagens:
+    get:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MensagemResponse"
+      summary: Listar Mensagens
+      tags:
+      - Ticket Resource
+    post:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MensagemRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Adicionar Mensagem
+      tags:
+      - Ticket Resource
+  /tickets/{id}/notas-internas:
+    get:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NotaInternaResponse"
+      summary: Listar Notas Internas
+      tags:
+      - Ticket Resource
+    post:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotaInternaRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Adicionar Nota Interna
+      tags:
+      - Ticket Resource
+  /tickets/{id}/responsavel:
+    put:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketResponsavelRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketResponse"
+        "400":
+          description: Bad Request
+      summary: Atribuir Responsavel
+      tags:
+      - Ticket Resource
+  /tickets/{id}/status:
+    put:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketStatusRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketResponse"
+        "400":
+          description: Bad Request
+      summary: Atualizar Status
+      tags:
+      - Ticket Resource
+  /usuarios:
+    get:
+      parameters:
+      - name: ativos
+        in: query
+        schema:
+          type: boolean
+          default: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UsuarioResponse"
+      summary: Listar
+      tags:
+      - Usuario Resource
+info:
+  title: LinkAid API
+  version: 1.0.0
+  description: "API MVP do LinkAid para gestao de tickets, contatos, dentistas, dashboard,\
+    \ relatorios e integracao Watson sandbox."
