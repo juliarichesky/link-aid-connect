@@ -19,12 +19,14 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 
 import java.util.List;
 
 @Path("/tickets")
 @AuthenticatedAccess
 @RoleRequired({"ADMIN", "COLABORADOR"})
+@SecurityRequirement(name = "bearerAuth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TicketResource {
