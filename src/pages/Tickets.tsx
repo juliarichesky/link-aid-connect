@@ -12,7 +12,7 @@ import {
 import {
   Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/classnames";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTickets, type Priority } from "@/contexts/TicketsContext";
 import { CANAL_LABELS, PRIORIDADE_LABELS, TIPO_CONTATO_LABELS } from "@/lib/linkaidMappings";

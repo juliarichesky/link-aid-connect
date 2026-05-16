@@ -14,7 +14,7 @@ export function Toaster() {
               {description && <ToastDescription>{description}</ToastDescription>}
             </div>
             {action}
-            <ToastClose />
+            <ToastClose onClick={() => props.onOpenChange?.(false)} />
           </Toast>
         );
       })}
