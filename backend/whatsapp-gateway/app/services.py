@@ -166,7 +166,7 @@ class QuarkusTicketClient:
             "from": inbound.clean_from,
             "nome": inbound.display_name,
             "body": inbound.body or _media_placeholder(inbound),
-            "tipoContatoCodigo": "BENEFICIARIO",
+            "tipoContatoCodigo": _contact_type_from_triage(triage),
             "prioridadeCodigo": triage.priority_code,
             "classificacaoCodigo": triage.classification_code,
             "intent": triage.intent,
@@ -247,6 +247,17 @@ def _classification_from_intent_or_text(intent: str | None, message: str) -> str
     if "feedback" in base:
         return "FEEDBACK"
     return "SAUDE"
+
+
+def _contact_type_from_triage(triage: TriageResult) -> str:
+    base = f"{triage.classification_code} {triage.intent or ''} {triage.summary}".upper()
+    if any(token in base for token in ["DOACAO", "DOADOR", "PATROCIN"]):
+        return "DOADOR"
+    if any(token in base for token in ["PARCERIA", "PARCEIRO", "EMPRESA", "INSTITUTO"]):
+        return "PARCEIRO"
+    if any(token in base for token in ["VOLUNTARIADO", "VOLUNTARIO", "VOLUNTARIA"]):
+        return "VOLUNTARIO"
+    return "BENEFICIARIO"
 
 
 def _media_placeholder(inbound: TwilioInboundMessage) -> str:
