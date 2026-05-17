@@ -67,7 +67,7 @@ export default function CreateTicket() {
   const [priority, setPriority] = useState("");
   const [responsible, setResponsible] = useState("");
   const [dentistResp, setDentistResp] = useState("");
-  const [ticketType, setTicketType] = useState(TIPO_CONTATO_LABELS.BENEFICIARIO);
+  const [ticketType, setTicketType] = useState<string>(TIPO_CONTATO_LABELS.BENEFICIARIO);
 
   // New dentist modal
   const [newDentistOpen, setNewDentistOpen] = useState(false);

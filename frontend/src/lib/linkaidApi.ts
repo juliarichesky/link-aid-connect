@@ -52,6 +52,29 @@ export interface ApiNotificacaoResponse {
   dataEvento?: string;
 }
 
+export interface ApiDashboardResumoResponse {
+  totalContatos: number;
+  totalTickets: number;
+  ticketsNovos: number;
+  ticketsEmAtendimento: number;
+  ticketsResolvidos: number;
+  totalDentistas: number;
+  dentistasAtivos: number;
+}
+
+export interface ApiAgrupamentoResponse {
+  codigo: string;
+  nome: string;
+  quantidade: number;
+}
+
+export interface ApiDashboardResponse {
+  resumo: ApiDashboardResumoResponse;
+  ticketsPorStatus: ApiAgrupamentoResponse[];
+  ticketsPorCanal: ApiAgrupamentoResponse[];
+  ultimosTickets: ApiTicketResponse[];
+}
+
 export interface ApiMensagemResponse {
   idMensagem: number;
   idTicket: number;
@@ -121,9 +144,9 @@ export interface ApiDentistaRequest {
   status?: string;
 }
 
-type RequestOptions = RequestInit & {
+type RequestOptions = Omit<RequestInit, "body"> & {
   token?: string | null;
-  body?: BodyInit | Record<string, unknown> | null;
+  body?: BodyInit | object | null;
 };
 
 export class ApiError extends Error {
@@ -140,10 +163,13 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const headers = new Headers(options.headers);
   headers.set("Accept", "application/json");
 
-  let body = options.body;
-  if (body && typeof body === "object" && !(body instanceof FormData) && !(body instanceof Blob)) {
+  const rawBody = options.body;
+  let body: BodyInit | null | undefined;
+  if (rawBody && typeof rawBody === "object" && !(rawBody instanceof FormData) && !(rawBody instanceof Blob)) {
     headers.set("Content-Type", "application/json");
-    body = JSON.stringify(body);
+    body = JSON.stringify(rawBody);
+  } else {
+    body = rawBody as BodyInit | null | undefined;
   }
 
   if (options.token) {
@@ -239,6 +265,9 @@ export const linkAidApi = {
 
   listarContatos: (token: string) =>
     request<ApiContatoResponse[]>("/contatos", { token }),
+
+  buscarDashboard: (token: string) =>
+    request<ApiDashboardResponse>("/dashboard", { token }),
 
   listarNotificacoes: (token: string) =>
     request<ApiNotificacaoResponse[]>("/dashboard/notificacoes", { token }),
