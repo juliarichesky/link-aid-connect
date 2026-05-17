@@ -1,0 +1,381 @@
+{
+  "name": "LinkAid - Assistente de Triagem",
+  "description": "Triagem inicial do LinkAid para WhatsApp: orienta doadores e voluntarios, registra parcerias e encaminha casos sensiveis para atendimento humano.",
+  "language": "pt-br",
+  "metadata": {
+    "api_version": {
+      "major_version": "v1",
+      "minor_version": "2024-08-25"
+    }
+  },
+  "intents": [
+    {
+      "intent": "doacao",
+      "description": "Pessoa quer doar ou apoiar financeiramente a Turma do Bem.",
+      "examples": [
+        { "text": "Quero fazer uma doacao" },
+        { "text": "Como faco para doar" },
+        { "text": "Quero ser doador" },
+        { "text": "Gostaria de contribuir com dinheiro" },
+        { "text": "Onde posso fazer uma doacao" },
+        { "text": "Quero ajudar financeiramente a ONG" },
+        { "text": "Tem link para doar" },
+        { "text": "Minha empresa quer doar" }
+      ]
+    },
+    {
+      "intent": "voluntariado_dentista",
+      "description": "Dentista quer participar como voluntario.",
+      "examples": [
+        { "text": "Sou dentista e quero ser voluntario" },
+        { "text": "Quero atender pacientes pelo projeto" },
+        { "text": "Tenho consultorio e quero participar" },
+        { "text": "Sou dentista e posso atender criancas" },
+        { "text": "Como faco para me cadastrar como dentista voluntario" },
+        { "text": "Quero oferecer vagas no meu consultorio" },
+        { "text": "Posso atender pessoas pela Turma do Bem" },
+        { "text": "Sou odontologista e quero ajudar" }
+      ]
+    },
+    {
+      "intent": "parceria_institucional",
+      "description": "Empresa, escola, instituicao ou organizacao quer falar sobre parceria.",
+      "examples": [
+        { "text": "Quero propor uma parceria" },
+        { "text": "Minha empresa quer apoiar a Turma do Bem" },
+        { "text": "Represento uma instituicao e gostaria de conversar" },
+        { "text": "Sou de uma ONG e quero fazer parceria" },
+        { "text": "Gostaria de apresentar uma proposta institucional" },
+        { "text": "Temos interesse em apoiar o projeto" },
+        { "text": "Quero falar sobre patrocinio" },
+        { "text": "Sou de uma escola e quero conversar com a equipe" }
+      ]
+    },
+    {
+      "intent": "ajuda_apolonias",
+      "description": "Mulher em situacao de vulnerabilidade ou violencia precisa de ajuda pelo programa Apolonias do Bem.",
+      "examples": [
+        { "text": "Sou mulher e preciso de ajuda" },
+        { "text": "Preciso do programa Apolonias do Bem" },
+        { "text": "Estou em situacao de violencia e preciso de atendimento" },
+        { "text": "Tenho vergonha do meu sorriso e preciso de ajuda" },
+        { "text": "Estou com dor e preciso de atendimento urgente" },
+        { "text": "Sou mulher e estou com problema nos dentes" },
+        { "text": "Preciso de ajuda odontologica por causa de violencia" },
+        { "text": "Quero atendimento do Apolonias" }
+      ]
+    },
+    {
+      "intent": "ajuda_dentistas_do_bem",
+      "description": "Pedido de triagem ou atendimento pelo programa Dentistas do Bem, incluindo escolas e criancas em vulnerabilidade.",
+      "examples": [
+        { "text": "Preciso de atendimento odontologico para meu filho" },
+        { "text": "Quero inscrever uma crianca no Dentistas do Bem" },
+        { "text": "Sou diretora de escola e preciso de triagem para alunos" },
+        { "text": "Tenho alunos em situacao de vulnerabilidade que precisam de dentista" },
+        { "text": "Como encaminhar criancas para atendimento odontologico" },
+        { "text": "Minha escola precisa de triagem odontologica" },
+        { "text": "Conheco uma crianca que precisa de tratamento" },
+        { "text": "Preciso de ajuda do Dentistas do Bem" }
+      ]
+    },
+    {
+      "intent": "emergencia_odontologica",
+      "description": "Dor, sangramento, trauma, inchaco ou urgencia odontologica.",
+      "examples": [
+        { "text": "Estou com muita dor de dente" },
+        { "text": "Meu rosto esta inchado" },
+        { "text": "Estou com sangramento na gengiva" },
+        { "text": "Preciso de atendimento urgente" },
+        { "text": "Tenho uma emergencia odontologica" },
+        { "text": "Quebrei um dente e estou com dor" },
+        { "text": "Nao consigo dormir por causa da dor de dente" },
+        { "text": "Estou com infeccao no dente" }
+      ]
+    },
+    {
+      "intent": "falar_atendente",
+      "description": "Pessoa pede explicitamente atendimento humano.",
+      "examples": [
+        { "text": "Quero falar com um atendente" },
+        { "text": "Preciso falar com uma pessoa" },
+        { "text": "Nao quero falar com robo" },
+        { "text": "Me passa para um humano" },
+        { "text": "Quero atendimento humano" },
+        { "text": "Pode chamar alguem da equipe" },
+        { "text": "Preciso conversar com um colaborador" },
+        { "text": "Quero falar com a equipe da Turma do Bem" }
+      ]
+    },
+    {
+      "intent": "informacoes_gerais",
+      "description": "Pessoa quer entender a Turma do Bem, programas ou funcionamento geral.",
+      "examples": [
+        { "text": "O que e a Turma do Bem" },
+        { "text": "Como funciona o projeto" },
+        { "text": "Quais programas existem" },
+        { "text": "Quero saber mais sobre a ONG" },
+        { "text": "Como funciona o atendimento" },
+        { "text": "Quem pode ser atendido" },
+        { "text": "Como o LinkAid funciona" },
+        { "text": "Quero informacoes sobre a Turma do Bem" }
+      ]
+    }
+  ],
+  "entities": [],
+  "counterexamples": [
+    { "text": "Qual e a previsao do tempo" },
+    { "text": "Quero comprar um produto" },
+    { "text": "Qual e a capital da Franca" }
+  ],
+  "dialog_nodes": [
+    {
+      "type": "standard",
+      "title": "Boas-vindas",
+      "dialog_node": "node_welcome",
+      "conditions": "welcome",
+      "output": {
+        "generic": [
+          {
+            "response_type": "text",
+            "selection_policy": "sequential",
+            "values": [
+              {
+                "text": "Ola! Sou o assistente de triagem do LinkAid. Posso orientar sobre doacoes, voluntariado, parcerias ou encaminhar pedidos de ajuda para a equipe humana."
+              }
+            ]
+          }
+        ]
+      },
+      "next_step": {
+        "behavior": "wait_for_user_input"
+      }
+    },
+    {
+      "type": "standard",
+      "title": "Doacao",
+      "dialog_node": "node_doacao",
+      "previous_sibling": "node_welcome",
+      "conditions": "#doacao",
+      "output": {
+        "generic": [
+          {
+            "response_type": "text",
+            "selection_policy": "sequential",
+            "values": [
+              {
+                "text": "Que bom saber que voce quer apoiar a Turma do Bem. Para a demonstracao do LinkAid, vou registrar este contato como doacao e indicar o encaminhamento para o link oficial de doacoes da organizacao."
+              }
+            ]
+          }
+        ]
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "condition"
+      }
+    },
+    {
+      "type": "standard",
+      "title": "Voluntariado dentista",
+      "dialog_node": "node_voluntariado_dentista",
+      "previous_sibling": "node_doacao",
+      "conditions": "#voluntariado_dentista",
+      "output": {
+        "generic": [
+          {
+            "response_type": "text",
+            "selection_policy": "sequential",
+            "values": [
+              {
+                "text": "Obrigada pelo interesse em participar como dentista voluntario. Vou registrar seu contato para que a equipe envie as orientacoes e o formulario de cadastro de voluntarios."
+              }
+            ]
+          }
+        ]
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "condition"
+      }
+    },
+    {
+      "type": "standard",
+      "title": "Parceria institucional",
+      "dialog_node": "node_parceria_institucional",
+      "previous_sibling": "node_voluntariado_dentista",
+      "conditions": "#parceria_institucional",
+      "output": {
+        "generic": [
+          {
+            "response_type": "text",
+            "selection_policy": "sequential",
+            "values": [
+              {
+                "text": "Entendi. Vou registrar sua proposta como parceria institucional para que a equipe LinkAid avalie e retorne com os proximos passos."
+              }
+            ]
+          }
+        ]
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "condition"
+      }
+    },
+    {
+      "type": "standard",
+      "title": "Ajuda Apolonias",
+      "dialog_node": "node_ajuda_apolonias",
+      "previous_sibling": "node_parceria_institucional",
+      "conditions": "#ajuda_apolonias",
+      "output": {
+        "generic": [
+          {
+            "response_type": "text",
+            "selection_policy": "sequential",
+            "values": [
+              {
+                "text": "Sinto muito por isso. Esse tipo de pedido precisa de acolhimento humano. Vou registrar sua solicitacao com prioridade para que a equipe LinkAid avalie o caso e continue o atendimento com cuidado."
+              }
+            ]
+          }
+        ]
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "condition"
+      }
+    },
+    {
+      "type": "standard",
+      "title": "Ajuda Dentistas do Bem",
+      "dialog_node": "node_ajuda_dentistas_do_bem",
+      "previous_sibling": "node_ajuda_apolonias",
+      "conditions": "#ajuda_dentistas_do_bem",
+      "output": {
+        "generic": [
+          {
+            "response_type": "text",
+            "selection_policy": "sequential",
+            "values": [
+              {
+                "text": "Entendi. Pedidos de triagem e atendimento pelo Dentistas do Bem precisam ser avaliados pela equipe humana. Vou registrar este contato para que a equipe LinkAid analise e oriente os proximos passos."
+              }
+            ]
+          }
+        ]
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "condition"
+      }
+    },
+    {
+      "type": "standard",
+      "title": "Emergencia odontologica",
+      "dialog_node": "node_emergencia_odontologica",
+      "previous_sibling": "node_ajuda_dentistas_do_bem",
+      "conditions": "#emergencia_odontologica",
+      "output": {
+        "generic": [
+          {
+            "response_type": "text",
+            "selection_policy": "sequential",
+            "values": [
+              {
+                "text": "Entendi. Isso pode ser uma emergencia odontologica. Vou registrar sua solicitacao com prioridade para que a equipe LinkAid avalie seu caso."
+              }
+            ]
+          }
+        ]
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "condition"
+      }
+    },
+    {
+      "type": "standard",
+      "title": "Falar com atendente",
+      "dialog_node": "node_falar_atendente",
+      "previous_sibling": "node_emergencia_odontologica",
+      "conditions": "#falar_atendente",
+      "output": {
+        "generic": [
+          {
+            "response_type": "text",
+            "selection_policy": "sequential",
+            "values": [
+              {
+                "text": "Claro. Vou registrar sua solicitacao para atendimento humano e encaminhar para a equipe LinkAid."
+              }
+            ]
+          }
+        ]
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "condition"
+      }
+    },
+    {
+      "type": "standard",
+      "title": "Informacoes gerais",
+      "dialog_node": "node_informacoes_gerais",
+      "previous_sibling": "node_falar_atendente",
+      "conditions": "#informacoes_gerais",
+      "output": {
+        "generic": [
+          {
+            "response_type": "text",
+            "selection_policy": "sequential",
+            "values": [
+              {
+                "text": "A Turma do Bem atua para ampliar o acesso a tratamento odontologico gratuito por meio de programas sociais e dentistas voluntarios. Vou registrar sua duvida para manter o historico no LinkAid."
+              }
+            ]
+          }
+        ]
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "condition"
+      }
+    },
+    {
+      "type": "standard",
+      "title": "Fallback",
+      "dialog_node": "node_fallback",
+      "previous_sibling": "node_informacoes_gerais",
+      "conditions": "anything_else",
+      "output": {
+        "generic": [
+          {
+            "response_type": "text",
+            "selection_policy": "sequential",
+            "values": [
+              {
+                "text": "Nao consegui identificar totalmente sua solicitacao. Vou registrar o contato para que a equipe LinkAid possa analisar e responder com seguranca."
+              }
+            ]
+          }
+        ]
+      },
+      "next_step": {
+        "behavior": "jump_to",
+        "selector": "condition"
+      }
+    }
+  ],
+  "system_settings": {
+    "disambiguation": {
+      "prompt": "Voce quis dizer:",
+      "none_of_the_above_prompt": "Nenhuma das opcoes"
+    },
+    "human_agent_assist": {
+      "prompt": "Voce quer falar com um atendente humano?"
+    }
+  },
+  "learning_opt_out": false
+}
