@@ -82,10 +82,10 @@ public class ContatoBO {
         if (contato == null && telefone != null && !telefone.isBlank()) {
             contato = contatoDAO.buscarPorTelefone(telefone.trim());
         }
-        if (contato == null) {
+        boolean novoContato = contato == null;
+        if (novoContato) {
             contato = new Contato();
             contato.setDataCadastro(LocalDateTime.now());
-            contatoDAO.persist(contato);
         }
 
         contato.setNome(textoOuPadrao(nome, "Contato sem nome"));
@@ -96,6 +96,9 @@ public class ContatoBO {
         contato.setCidade(normalizarTexto(cidade));
         contato.setUf(normalizarUf(uf));
         contato.setObservacao(normalizarTexto(observacao));
+        if (novoContato) {
+            contatoDAO.persist(contato);
+        }
         return contato;
     }
 
