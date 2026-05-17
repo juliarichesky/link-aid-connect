@@ -69,7 +69,7 @@ export default function Settings() {
             <CardContent className="space-y-4 text-left">
               <div>
                 <Label>Palavra-chave</Label>
-                <Input placeholder="Ex: urgência, doação, voluntário" />
+                <Input placeholder="Ex: urgência, doação, dentista voluntário" />
               </div>
               <div>
                 <Label>Ação automática</Label>

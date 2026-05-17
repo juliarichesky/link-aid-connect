@@ -20,7 +20,7 @@ export const TIPO_CONTATO_LABELS = {
   BENEFICIARIO: "Beneficiário",
   DOADOR: "Doador",
   PARCEIRO: "Parceiro",
-  VOLUNTARIO: "Voluntário",
+  VOLUNTARIO: "Dentista voluntário",
   ORGANIZACAO: "Organização",
 } as const;
 
@@ -40,7 +40,7 @@ export const CLASSIFICACAO_LABELS = {
   DOACAO: "Doação",
   PARCERIA: "Parceria",
   SOCIAL: "Social",
-  VOLUNTARIADO: "Voluntariado",
+  VOLUNTARIADO: "Voluntariado odontológico",
   FEEDBACK: "Feedback",
   GERAL: "Geral",
 } as const;

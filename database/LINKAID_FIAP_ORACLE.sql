@@ -209,7 +209,7 @@ CREATE TABLE T_LKA_USUARIO (
 
 -- ============================================================
 -- CONTATOS
--- Representa beneficiarios, doadores, parceiros, voluntarios etc.
+-- Representa beneficiarios, doadores, parceiros, dentistas voluntarios etc.
 -- O documento pode ser CPF ou CNPJ. Ele fica opcional para contatos
 -- vindos do WhatsApp que ainda nao informaram CPF/CNPJ.
 -- ============================================================
@@ -395,7 +395,7 @@ INSERT INTO T_LKA_TIPO_CONTATO (cd_tipo_contato, nm_tipo_contato)
 VALUES ('PARCEIRO', 'Parceiro');
 
 INSERT INTO T_LKA_TIPO_CONTATO (cd_tipo_contato, nm_tipo_contato)
-VALUES ('VOLUNTARIO', 'Voluntario');
+VALUES ('VOLUNTARIO', 'Dentista voluntario');
 
 INSERT INTO T_LKA_TIPO_CONTATO (cd_tipo_contato, nm_tipo_contato)
 VALUES ('ORGANIZACAO', 'Organizacao');
@@ -470,7 +470,7 @@ INSERT INTO T_LKA_CLASSIFICACAO (cd_classificacao, nm_classificacao)
 VALUES ('PARCERIA', 'Parceria');
 
 INSERT INTO T_LKA_CLASSIFICACAO (cd_classificacao, nm_classificacao)
-VALUES ('VOLUNTARIADO', 'Voluntariado');
+VALUES ('VOLUNTARIADO', 'Voluntariado odontologico');
 
 INSERT INTO T_LKA_CLASSIFICACAO (cd_classificacao, nm_classificacao)
 VALUES ('FEEDBACK', 'Feedback');

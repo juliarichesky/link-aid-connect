@@ -24,8 +24,12 @@ const defaultMessages = [
 const typeColors: Record<string, string> = {
   Beneficiário: "bg-warning/15 text-warning border-warning/30",
   Doador: "bg-primary/15 text-primary border-primary/30",
-  Voluntário: "bg-success/15 text-success border-success/30",
+  "Dentista voluntário": "bg-success/15 text-success border-success/30",
   Parceiro: "bg-info/15 text-info border-info/30",
+};
+
+type TicketDetailLocationState = {
+  backUrl?: string;
 };
 
 export default function TicketDetail() {
@@ -36,9 +40,10 @@ export default function TicketDetail() {
   const [reply, setReply] = useState("");
 
   const ticket = tickets.find((t) => t.id === id);
-  const backUrl = (location.state as any)?.backUrl || "/tickets";
+  const locationState = location.state as TicketDetailLocationState | null;
+  const backUrl = locationState?.backUrl || "/tickets";
 
-  const [priority, setPriority] = useState(ticket?.priority || "Alta");
+  const [priority, setPriority] = useState<string>(ticket?.priority || "Alta");
   const [status, setStatus] = useState(ticket?.status || "Aberto");
   const [responsible, setResponsible] = useState(ticket?.responsible || "");
   const [dentistResp, setDentistResp] = useState(ticket?.dentistResponsible || "");
@@ -161,7 +166,7 @@ export default function TicketDetail() {
           <CardContent className="space-y-3">
             <div>
               <Label className="text-xs">Prioridade</Label>
-              <Select value={priority} onValueChange={(v) => { setPriority(v as any); handleSave("priority", v); }}>
+              <Select value={priority} onValueChange={(v) => { setPriority(v); handleSave("priority", v); }}>
                 <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Crítica">Crítica</SelectItem>

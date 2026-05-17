@@ -34,6 +34,7 @@ import {
   type ApiContatoResponse,
   type ApiDashboardResponse,
 } from "@/lib/linkaidApi";
+import { tipoContatoLabel } from "@/lib/linkaidMappings";
 
 type Period = "weekly" | "monthly" | "yearly";
 
@@ -115,6 +116,9 @@ const formatRelativeDate = (value?: string) => {
 
 const contactTimestamp = (contact: ApiContatoResponse) =>
   toDate(contact.dataCadastro)?.getTime() ?? 0;
+
+const contactTypeName = (contact: ApiContatoResponse) =>
+  tipoContatoLabel(contact.tipoContatoCodigo) || contact.tipoContatoNome || "Sem tipo";
 
 const buildContactVolume = (contacts: ApiContatoResponse[], period: Period): VolumeBucket[] => {
   const today = startOfDay(new Date());
@@ -233,7 +237,7 @@ export default function Dashboard() {
   const contactTypes = useMemo(() => {
     const counts = new Map<string, number>();
     contacts.forEach((contact) => {
-      const name = contact.tipoContatoNome || contact.tipoContatoCodigo || "Sem tipo";
+      const name = contactTypeName(contact);
       counts.set(name, (counts.get(name) || 0) + 1);
     });
 
@@ -421,7 +425,7 @@ export default function Dashboard() {
                     <div>
                       <p className="text-sm font-medium">{contact.nome}</p>
                       <p className="text-xs text-muted-foreground">
-                        {contact.tipoContatoNome || contact.tipoContatoCodigo || "Sem tipo"}
+                        {contactTypeName(contact)}
                       </p>
                     </div>
                   </div>

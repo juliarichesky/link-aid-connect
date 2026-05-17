@@ -83,7 +83,7 @@ const initialTeam: TeamMember[] = [
   { name: "Maria Santos", role: "Atendente" },
   { name: "João Lima", role: "Atendente" },
   { name: "Paula Rocha", role: "Financeiro" },
-  { name: "Lucas Mendes", role: "Voluntário" },
+  { name: "Lucas Mendes", role: "Dentista voluntário" },
   { name: "Beatriz Alves", role: "Gestora" },
 ];
 
@@ -108,7 +108,7 @@ const initialTickets: Ticket[] = [
   { id: "TKT-007", channel: "Outro", sender: "CREAS Regional", subject: "Encaminhamento social", classification: "Social", priority: "Alta", status: "Novo", responsible: "Ana Costa", updated: "15 min", openedAt: "05/04/2025 14:00", phone: "(62) 3111-0000", email: "creas@gov.br", location: "Goiânia, GO", type: "Parceiro", cpf: "-" },
   { id: "TKT-008", channel: "WhatsApp", sender: "Roberto Dias", subject: "Agendar retorno", classification: "Agendamento", priority: "Baixa", status: "Aguardando", responsible: "Maria Santos", updated: "4h", openedAt: "05/04/2025 09:00", phone: "(51) 92222-1111", email: "roberto.d@email.com", location: "Porto Alegre, RS", type: "Beneficiário", cpf: "666.777.888-99" },
   { id: "TKT-009", channel: "E-mail", sender: "Empresa XYZ", subject: "Patrocínio mensal", classification: "Doação", priority: "Média", status: "Aberto", responsible: "Paula Rocha", updated: "5h", openedAt: "05/04/2025 08:00", phone: "(11) 4444-5555", email: "contato@xyz.com", location: "São Paulo, SP", type: "Doador", cpf: "11.222.333/0001-44" },
-  { id: "TKT-010", channel: "Instagram", sender: "Carla Nunes", subject: "Informação sobre voluntariado", classification: "Social", priority: "Baixa", status: "Novo", responsible: "Ana Costa", updated: "6h", openedAt: "05/04/2025 07:30", phone: "(21) 98888-7777", email: "carla.n@email.com", location: "Rio de Janeiro, RJ", type: "Voluntário", cpf: "777.888.999-00" },
+  { id: "TKT-010", channel: "Instagram", sender: "Carla Nunes", subject: "Informação sobre voluntariado odontológico", classification: "Social", priority: "Baixa", status: "Novo", responsible: "Ana Costa", updated: "6h", openedAt: "05/04/2025 07:30", phone: "(21) 98888-7777", email: "carla.n@email.com", location: "Rio de Janeiro, RJ", type: "Dentista voluntário", cpf: "777.888.999-00" },
   { id: "TKT-011", channel: "WhatsApp", sender: "Fernando Tavares", subject: "Dor de dente aguda", classification: "Emergência", priority: "Crítica", status: "Novo", responsible: "Carlos Silva", updated: "2 min", openedAt: "05/04/2025 14:55", phone: "(71) 91111-0000", email: "fernando.t@email.com", location: "Salvador, BA", type: "Beneficiário", cpf: "888.999.000-11" },
   { id: "TKT-012", channel: "E-mail", sender: "Prefeitura Municipal", subject: "Convênio público", classification: "Parceria", priority: "Alta", status: "Aberto", responsible: "Ana Costa", updated: "1h", openedAt: "05/04/2025 13:00", phone: "(31) 3333-2222", email: "prefeitura@gov.br", location: "Belo Horizonte, MG", type: "Parceiro", cpf: "18.720.000/0001-55" },
 ];

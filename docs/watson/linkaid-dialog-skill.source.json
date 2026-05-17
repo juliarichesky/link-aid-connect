@@ -1,6 +1,6 @@
 {
   "name": "LinkAid - Assistente de Triagem",
-  "description": "Triagem inicial do LinkAid para WhatsApp: orienta doadores e voluntarios, registra parcerias e encaminha casos sensiveis para atendimento humano.",
+  "description": "Triagem inicial do LinkAid para WhatsApp: orienta doadores e dentistas voluntarios, registra parcerias e encaminha casos sensiveis para atendimento humano.",
   "language": "pt-br",
   "metadata": {
     "api_version": {
@@ -141,7 +141,7 @@
             "selection_policy": "sequential",
             "values": [
               {
-                "text": "Ola! Sou o assistente de triagem do LinkAid. Posso orientar sobre doacoes, voluntariado, parcerias ou encaminhar pedidos de ajuda para a equipe humana."
+                "text": "Ola! Sou o assistente de triagem do LinkAid. Posso orientar sobre doacoes, dentistas voluntarios, parcerias ou encaminhar pedidos de ajuda para a equipe humana."
               }
             ]
           }
@@ -177,7 +177,7 @@
     },
     {
       "type": "standard",
-      "title": "Voluntariado dentista",
+      "title": "Dentista voluntario",
       "dialog_node": "node_voluntariado_dentista",
       "previous_sibling": "node_doacao",
       "conditions": "#voluntariado_dentista",
@@ -188,7 +188,7 @@
             "selection_policy": "sequential",
             "values": [
               {
-                "text": "Obrigada pelo interesse em participar como dentista voluntario. Vou registrar seu contato para que a equipe envie as orientacoes e o formulario de cadastro de voluntarios."
+                "text": "Obrigada pelo interesse em participar como dentista voluntario. Vou registrar seu contato para que a equipe envie as orientacoes e o formulario de cadastro de dentistas voluntarios."
               }
             ]
           }

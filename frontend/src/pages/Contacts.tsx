@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 const typeColors: Record<string, string> = {
   Beneficiário: "bg-warning/15 text-warning",
   Doador: "bg-primary/15 text-primary",
-  Voluntário: "bg-success/15 text-success",
+  "Dentista voluntário": "bg-success/15 text-success",
   Parceiro: "bg-info/15 text-info",
 };
 

@@ -150,7 +150,7 @@ export default function CreateTicket() {
   // Dentist tab: direct registration form
   const renderDentistForm = () => (
     <Card className="shadow-sm">
-      <CardHeader><CardTitle className="text-base">Cadastrar Novo Dentista / Voluntário</CardTitle></CardHeader>
+      <CardHeader><CardTitle className="text-base">Cadastrar Novo Dentista Voluntário</CardTitle></CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div><Label>Nome Completo *</Label><Input placeholder="Nome completo do profissional" value={ndName} onChange={(e) => setNdName(e.target.value)} /></div>
@@ -285,7 +285,7 @@ export default function CreateTicket() {
       {/* Dentist modal triggered from PF/PJ tabs */}
       <Dialog open={newDentistOpen} onOpenChange={setNewDentistOpen}>
         <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Cadastrar Novo Dentista/Voluntário</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Cadastrar Novo Dentista Voluntário</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div><Label>Nome</Label><Input value={ndName} onChange={(e) => setNdName(e.target.value)} placeholder="Nome completo" /></div>
             <div><Label>Especialidade</Label><Input value={ndSpecialty} onChange={(e) => setNdSpecialty(e.target.value)} placeholder="Ex: Ortodontia" /></div>

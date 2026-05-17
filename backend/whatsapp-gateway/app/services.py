@@ -54,10 +54,22 @@ class LocalTriageService:
             priority = "MEDIA"
             classification = "PARCERIA"
             intent = "parceria"
-        elif any(word in text for word in ["voluntario", "voluntaria", "ajudar"]):
+        elif any(
+            word in text
+            for word in [
+                "voluntario",
+                "voluntaria",
+                "sou dentista",
+                "odontologia",
+                "consultorio",
+                "cro",
+                "atender pacientes",
+                "ajudar",
+            ]
+        ):
             priority = "BAIXA"
             classification = "VOLUNTARIADO"
-            intent = "voluntariado"
+            intent = "voluntariado_dentista"
 
         return TriageResult(
             reply_text=(
@@ -68,7 +80,7 @@ class LocalTriageService:
             confidence=85.0,
             priority_code=priority,
             classification_code=classification,
-            summary=f"Triagem automatica: {classification}. Prioridade {priority}.",
+            summary=_triage_summary("Triagem automatica", classification, priority),
             source="LOCAL_FALLBACK",
         )
 
@@ -133,7 +145,7 @@ class WatsonAssistantService:
             confidence=confidence,
             priority_code=priority,
             classification_code=classification,
-            summary=f"Triagem Watson: {classification}. Prioridade {priority}.",
+            summary=_triage_summary("Triagem Watson", classification, priority),
             source="WATSON",
         )
 
@@ -255,9 +267,14 @@ def _contact_type_from_triage(triage: TriageResult) -> str:
         return "DOADOR"
     if any(token in base for token in ["PARCERIA", "PARCEIRO", "EMPRESA", "INSTITUTO"]):
         return "PARCEIRO"
-    if any(token in base for token in ["VOLUNTARIADO", "VOLUNTARIO", "VOLUNTARIA"]):
+    if any(token in base for token in ["VOLUNTARIADO", "VOLUNTARIO", "VOLUNTARIA", "DENTISTA_VOLUNTARIO"]):
         return "VOLUNTARIO"
     return "BENEFICIARIO"
+
+
+def _triage_summary(prefix: str, classification: str, priority: str) -> str:
+    label = "dentista voluntario" if classification == "VOLUNTARIADO" else classification
+    return f"{prefix}: {label}. Prioridade {priority}."
 
 
 def _media_placeholder(inbound: TwilioInboundMessage) -> str:

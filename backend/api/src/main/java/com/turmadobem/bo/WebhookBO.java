@@ -104,7 +104,7 @@ public class WebhookBO {
             case "AGENDAMENTO" -> "Solicitacao de agendamento";
             case "DOACAO" -> "Contato sobre doacao";
             case "PARCERIA" -> "Contato sobre parceria";
-            case "VOLUNTARIADO" -> "Contato sobre voluntariado";
+            case "VOLUNTARIADO" -> "Contato de dentista voluntario";
             default -> "Solicitacao de atendimento";
         };
     }
