@@ -69,7 +69,13 @@ SelectTrigger.displayName = "SelectTrigger";
 
 const SelectContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, children, ...props }, ref) => {
   const context = React.useContext(SelectContext);
-  if (!context?.open) return null;
+  if (!context?.open) {
+    return (
+      <div className="hidden" aria-hidden="true">
+        {children}
+      </div>
+    );
+  }
   return (
     <div
       ref={ref}
