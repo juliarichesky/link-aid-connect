@@ -43,6 +43,15 @@ export interface ApiDentistaResponse {
   dataCadastro?: string;
 }
 
+export interface ApiNotificacaoResponse {
+  id: string;
+  titulo: string;
+  descricao: string;
+  tipo: string;
+  idTicket?: number;
+  dataEvento?: string;
+}
+
 export interface ApiMensagemResponse {
   idMensagem: number;
   idTicket: number;
@@ -230,4 +239,7 @@ export const linkAidApi = {
 
   listarContatos: (token: string) =>
     request<ApiContatoResponse[]>("/contatos", { token }),
+
+  listarNotificacoes: (token: string) =>
+    request<ApiNotificacaoResponse[]>("/dashboard/notificacoes", { token }),
 };

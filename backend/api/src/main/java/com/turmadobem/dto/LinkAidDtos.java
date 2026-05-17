@@ -228,6 +228,16 @@ public final class LinkAidDtos {
     ) {
     }
 
+    public record NotificacaoResponse(
+            String id,
+            String titulo,
+            String descricao,
+            String tipo,
+            Long idTicket,
+            LocalDateTime dataEvento
+    ) {
+    }
+
     public record DominioItemResponse(
             String codigo,
             String nome,

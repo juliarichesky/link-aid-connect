@@ -44,6 +44,20 @@ public class TicketDAO implements PanacheRepository<Ticket> {
                 .list();
     }
 
+    public List<Ticket> notificacoesRecentes(int limite) {
+        TypedQuery<Ticket> query = getEntityManager().createQuery("""
+                select t
+                from Ticket t
+                join fetch t.status
+                join fetch t.prioridade
+                where t.status.codigo not in :statusFinais
+                order by t.dataAtualizacao desc, t.idTicket desc
+                """, Ticket.class);
+        query.setParameter("statusFinais", List.of("RESOLVIDO", "CANCELADO", "ARQUIVADO"));
+        query.setMaxResults(Math.min(Math.max(limite, 1), 20));
+        return query.getResultList();
+    }
+
     public List<Object[]> contarPorStatus() {
         TypedQuery<Object[]> query = getEntityManager().createQuery("""
                 select t.status.codigo, t.status.nome, count(t)

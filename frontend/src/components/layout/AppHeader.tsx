@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Bell, Moon, Sun, Users, Check, LogOut, User as UserIcon, Camera } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { linkAidApi, type ApiNotificacaoResponse } from "@/lib/linkaidApi";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,19 +28,54 @@ interface AppHeaderProps {
   onToggleTeam: () => void;
 }
 
-const notifications = [
-  { id: 1, text: "Novo ticket TKT-004 — Urgência odontológica", time: "5 min", read: false },
-  { id: 2, text: "Pedro Almeida confirmou doação de R$ 2.000", time: "15 min", read: false },
-  { id: 3, text: "Dra. Fernanda atualizou vagas disponíveis", time: "1h", read: true },
-  { id: 4, text: "Ticket TKT-002 movido para Aguardando", time: "2h", read: true },
-  { id: 5, text: "Novo contato: CREAS Regional adicionado", time: "3h", read: true },
-];
+const NOTIFICATIONS_STORAGE_PREFIX = "linkaid-read-notifications";
+
+const getNotificationsStorageKey = (email?: string) =>
+  `${NOTIFICATIONS_STORAGE_PREFIX}:${email || "anonymous"}`;
+
+const readStoredNotificationIds = (storageKey: string): string[] => {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : [];
+  } catch {
+    return [];
+  }
+};
+
+const formatNotificationTime = (value?: string) => {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const diffMs = Date.now() - date.getTime();
+  const diffMinutes = Math.max(Math.floor(diffMs / 60000), 0);
+  if (diffMinutes < 1) return "agora";
+  if (diffMinutes < 60) return `${diffMinutes} min`;
+
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours}h`;
+
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 7) return `${diffDays}d`;
+
+  return date.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+  });
+};
 
 export function AppHeader({ onToggleTeam }: AppHeaderProps) {
   const { theme, toggleTheme } = useTheme();
-  const { user, logout, updateUser } = useAuth();
+  const { user, token, logout, updateUser } = useAuth();
   const navigate = useNavigate();
   const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState<ApiNotificacaoResponse[]>([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [notificationsError, setNotificationsError] = useState<string | null>(null);
+  const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
   const [profileOpen, setProfileOpen] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -47,6 +83,7 @@ export function AppHeader({ onToggleTeam }: AppHeaderProps) {
   const [formName, setFormName] = useState(user?.name || "");
   const [formPhone, setFormPhone] = useState(user?.phone || "");
   const [formAvatar, setFormAvatar] = useState(user?.avatar || "");
+  const notificationsStorageKey = useMemo(() => getNotificationsStorageKey(user?.email), [user?.email]);
 
   useEffect(() => {
     if (profileOpen) {
@@ -66,7 +103,82 @@ export function AppHeader({ onToggleTeam }: AppHeaderProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  useEffect(() => {
+    setReadNotificationIds(readStoredNotificationIds(notificationsStorageKey));
+  }, [notificationsStorageKey]);
+
+  const saveReadNotificationIds = useCallback(
+    (ids: string[]) => {
+      const uniqueIds = Array.from(new Set(ids)).slice(-200);
+      setReadNotificationIds(uniqueIds);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(notificationsStorageKey, JSON.stringify(uniqueIds));
+      }
+    },
+    [notificationsStorageKey],
+  );
+
+  const fetchNotifications = useCallback(async () => {
+    if (!token) {
+      setNotifications([]);
+      setNotificationsError(null);
+      return;
+    }
+
+    setNotificationsLoading(true);
+    try {
+      const response = await linkAidApi.listarNotificacoes(token);
+      setNotifications(response);
+      setNotificationsError(null);
+    } catch (error) {
+      setNotificationsError(error instanceof Error ? error.message : "Nao foi possivel carregar notificacoes.");
+    } finally {
+      setNotificationsLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    void fetchNotifications();
+    if (!token) return undefined;
+
+    const intervalId = window.setInterval(() => {
+      void fetchNotifications();
+    }, 60000);
+
+    return () => window.clearInterval(intervalId);
+  }, [fetchNotifications, token]);
+
+  useEffect(() => {
+    if (notifOpen) {
+      void fetchNotifications();
+    }
+  }, [fetchNotifications, notifOpen]);
+
+  const readNotificationSet = useMemo(() => new Set(readNotificationIds), [readNotificationIds]);
+  const unreadCount = notifications.filter((n) => !readNotificationSet.has(n.id)).length;
+
+  const markNotificationAsRead = useCallback(
+    (id: string) => {
+      if (readNotificationSet.has(id)) return;
+      saveReadNotificationIds([...readNotificationIds, id]);
+    },
+    [readNotificationIds, readNotificationSet, saveReadNotificationIds],
+  );
+
+  const handleNotificationClick = (notification: ApiNotificacaoResponse) => {
+    markNotificationAsRead(notification.id);
+    setNotifOpen(false);
+    if (notification.idTicket) {
+      navigate(`/tickets/${notification.idTicket}`);
+    }
+  };
+
+  const handleMarkAllNotificationsRead = () => {
+    saveReadNotificationIds([
+      ...readNotificationIds,
+      ...notifications.map((notification) => notification.id),
+    ]);
+  };
 
   const handleLogout = () => {
     logout();
@@ -117,28 +229,59 @@ export function AppHeader({ onToggleTeam }: AppHeaderProps) {
             <div className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] bg-card border border-border rounded-lg shadow-lg z-50 overflow-hidden">
               <div className="px-4 py-3 border-b border-border flex items-center justify-between">
                 <p className="text-sm font-semibold">Notificações</p>
-                <span className="text-xs text-muted-foreground">{unreadCount} não lidas</span>
+                <span className="text-xs text-muted-foreground">
+                  {notificationsLoading ? "Atualizando..." : `${unreadCount} não lidas`}
+                </span>
               </div>
               <div className="max-h-72 overflow-y-auto">
-                {notifications.map((n) => (
-                  <div
-                    key={n.id}
-                    className={`px-4 py-3 border-b border-border last:border-0 hover:bg-accent/50 transition-colors cursor-pointer ${
-                      !n.read ? "bg-primary/5" : ""
-                    }`}
-                  >
-                    <div className="flex items-start gap-2">
-                      {!n.read && <span className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />}
-                      <div className={!n.read ? "" : "ml-4"}>
-                        <p className="text-sm leading-snug">{n.text}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{n.time}</p>
-                      </div>
-                    </div>
+                {notificationsError && (
+                  <div className="px-4 py-4 text-sm text-muted-foreground">
+                    <p>{notificationsError}</p>
+                    <button
+                      type="button"
+                      className="mt-2 text-xs text-primary hover:underline"
+                      onClick={() => void fetchNotifications()}
+                    >
+                      Tentar novamente
+                    </button>
                   </div>
-                ))}
+                )}
+                {!notificationsError && notificationsLoading && notifications.length === 0 && (
+                  <div className="px-4 py-4 text-sm text-muted-foreground">Carregando notificações...</div>
+                )}
+                {!notificationsError && !notificationsLoading && notifications.length === 0 && (
+                  <div className="px-4 py-4 text-sm text-muted-foreground">Nenhuma notificação agora.</div>
+                )}
+                {!notificationsError && notifications.map((n) => {
+                  const read = readNotificationSet.has(n.id);
+                  return (
+                    <button
+                      key={n.id}
+                      type="button"
+                      className={`w-full text-left px-4 py-3 border-b border-border last:border-0 hover:bg-accent/50 transition-colors ${
+                        !read ? "bg-primary/5" : ""
+                      }`}
+                      onClick={() => handleNotificationClick(n)}
+                    >
+                      <div className="flex items-start gap-2">
+                        {!read && <span className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />}
+                        <div className={!read ? "" : "ml-4"}>
+                          <p className="text-sm font-medium leading-snug">{n.titulo}</p>
+                          <p className="text-sm leading-snug text-muted-foreground">{n.descricao}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{formatNotificationTime(n.dataEvento)}</p>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
               <div className="px-4 py-2 border-t border-border">
-                <button className="text-xs text-primary hover:underline flex items-center gap-1">
+                <button
+                  type="button"
+                  className="text-xs text-primary hover:underline flex items-center gap-1 disabled:pointer-events-none disabled:opacity-50"
+                  onClick={handleMarkAllNotificationsRead}
+                  disabled={notifications.length === 0 || unreadCount === 0}
+                >
                   <Check className="w-3 h-3" /> Marcar todas como lidas
                 </button>
               </div>

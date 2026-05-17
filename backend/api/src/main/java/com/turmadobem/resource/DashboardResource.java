@@ -6,8 +6,10 @@ import com.turmadobem.security.AuthenticatedAccess;
 import com.turmadobem.security.RoleRequired;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 
@@ -49,5 +51,11 @@ public class DashboardResource {
     @Path("/ultimos-tickets")
     public List<LinkAidDtos.TicketResponse> ultimosTickets() {
         return dashboardBO.ultimosTickets(10);
+    }
+
+    @GET
+    @Path("/notificacoes")
+    public List<LinkAidDtos.NotificacaoResponse> notificacoes(@QueryParam("limite") @DefaultValue("8") int limite) {
+        return dashboardBO.notificacoes(limite);
     }
 }
