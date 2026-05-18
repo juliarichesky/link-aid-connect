@@ -19,7 +19,7 @@ const typeColors: Record<string, string> = {
   Solicitante: "bg-warning/15 text-warning border-warning/30",
   Beneficiário: "bg-warning/15 text-warning border-warning/30",
   Doador: "bg-primary/15 text-primary border-primary/30",
-  "Dentista voluntário": "bg-success/15 text-success border-success/30",
+  Dentista: "bg-success/15 text-success border-success/30",
   Parceiro: "bg-info/15 text-info border-info/30",
 };
 
@@ -45,6 +45,7 @@ export default function TicketDetail() {
   const [responsible, setResponsible] = useState(ticket?.responsible || "");
   const [dentistResp, setDentistResp] = useState(ticket?.dentistResponsible || "");
   const [channel, setChannel] = useState(ticket?.channel || "WhatsApp");
+  const [senderName, setSenderName] = useState(ticket?.sender || "");
 
   useEffect(() => {
     if (!id) return;
@@ -71,6 +72,7 @@ export default function TicketDetail() {
       setResponsible(ticket.responsible);
       setDentistResp(ticket.dentistResponsible || "");
       setChannel(ticket.channel);
+      setSenderName(ticket.sender);
     }
   }, [ticket]);
 
@@ -125,11 +127,28 @@ export default function TicketDetail() {
     setReleasingPhone(true);
     try {
       const updated = await releasePhoneForTesting(id);
-      toast.success(`Numero liberado para novo teste${updated?.phone ? `: ${updated.phone}` : ""}`);
+      const phoneSuffix = updated ? `: ${updated.phone}` : "";
+      toast.success(`Numero liberado para novo teste${phoneSuffix}`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Erro ao liberar numero para teste");
     } finally {
       setReleasingPhone(false);
+    }
+  };
+
+  const handleSavePersonalData = async () => {
+    if (!id) return;
+    const normalizedName = senderName.trim();
+    if (!normalizedName) {
+      toast.error("Informe o nome do remetente");
+      return;
+    }
+
+    try {
+      await updateTicket(id, { sender: normalizedName });
+      toast.success("Nome do remetente salvo com sucesso");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao salvar nome do remetente");
     }
   };
 
@@ -318,7 +337,7 @@ export default function TicketDetail() {
           <TabsContent value="personal">
             <div className="space-y-3 mt-2">
               <div className="grid grid-cols-2 gap-3">
-                <div><Label className="text-xs">Nome</Label><Input className="h-8 text-sm" defaultValue={ticket.sender} /></div>
+                <div><Label className="text-xs">Nome</Label><Input className="h-8 text-sm" value={senderName} onChange={(event) => setSenderName(event.target.value)} /></div>
                 <div><Label className="text-xs">CPF</Label><Input className="h-8 text-sm" defaultValue={ticket.cpf} /></div>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -329,7 +348,7 @@ export default function TicketDetail() {
                 <div><Label className="text-xs">Cidade</Label><Input className="h-8 text-sm" defaultValue={ticket.location.split(", ")[0]} /></div>
                 <div><Label className="text-xs">Estado</Label><Input className="h-8 text-sm" defaultValue={ticket.location.split(", ")[1]} /></div>
               </div>
-              <Button size="sm" className="w-full" onClick={() => toast.success("Dados pessoais salvos com sucesso")}>Salvar Alterações</Button>
+              <Button size="sm" className="w-full" onClick={handleSavePersonalData}>Salvar Alterações</Button>
             </div>
           </TabsContent>
           <TabsContent value="clinical">

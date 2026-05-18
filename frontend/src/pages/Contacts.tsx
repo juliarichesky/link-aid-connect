@@ -17,7 +17,7 @@ const typeColors: Record<string, string> = {
   Solicitante: "bg-warning/15 text-warning",
   Beneficiário: "bg-warning/15 text-warning",
   Doador: "bg-primary/15 text-primary",
-  "Dentista voluntário": "bg-success/15 text-success",
+  Dentista: "bg-success/15 text-success",
   Parceiro: "bg-info/15 text-info",
 };
 

@@ -118,6 +118,7 @@ public final class LinkAidDtos {
     }
 
     public record TicketUpdateRequest(
+            String nomeContato,
             String canalCodigo,
             String statusCodigo,
             String prioridadeCodigo,

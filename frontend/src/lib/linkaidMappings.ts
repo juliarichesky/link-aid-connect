@@ -21,7 +21,7 @@ export const TIPO_CONTATO_LABELS = {
   BENEFICIARIO: "Beneficiário",
   DOADOR: "Doador",
   PARCEIRO: "Parceiro",
-  VOLUNTARIO: "Dentista voluntário",
+  VOLUNTARIO: "Dentista",
 } as const;
 
 export const CANAL_LABELS = {
@@ -40,7 +40,7 @@ export const CLASSIFICACAO_LABELS = {
   DOACAO: "Doação",
   PARCERIA: "Parceria",
   SOCIAL: "Social",
-  VOLUNTARIADO: "Voluntariado odontológico",
+  VOLUNTARIADO: "Voluntariado",
   FEEDBACK: "Feedback",
   GERAL: "Geral",
 } as const;
@@ -141,6 +141,9 @@ export const tipoContatoRegistroLabel = (codigo?: string | null, nome?: string |
 
   if (normalizedCode === "BENEFICIARIO" || (!normalizedCode && normalizedName === legacyBeneficiarioName)) {
     return TIPO_CONTATO_LABELS.SOLICITANTE;
+  }
+  if (normalizedCode === "VOLUNTARIO" || normalizedName === normalize("Dentista voluntário")) {
+    return TIPO_CONTATO_LABELS.VOLUNTARIO;
   }
 
   return tipoContatoLabel(codigo) || nome || "";

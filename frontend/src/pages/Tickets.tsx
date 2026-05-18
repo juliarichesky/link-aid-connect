@@ -1,5 +1,16 @@
-import { useState } from "react";
-import { Search, Plus, Archive, MessageCircle, Instagram, Mail, MoreHorizontal } from "lucide-react";
+import { useMemo, useState } from "react";
+import {
+  Search,
+  Plus,
+  Archive,
+  MessageCircle,
+  Instagram,
+  Mail,
+  MoreHorizontal,
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +51,13 @@ const priorityClasses: Record<Priority, string> = {
   [PRIORIDADE_LABELS.BAIXA]: "bg-status-low text-status-low-foreground",
 };
 
+const prioritySortValue: Record<Priority, number> = {
+  [PRIORIDADE_LABELS.BAIXA]: 1,
+  [PRIORIDADE_LABELS.MEDIA]: 2,
+  [PRIORIDADE_LABELS.ALTA]: 3,
+  [PRIORIDADE_LABELS.CRITICA]: 4,
+};
+
 const typeColors: Record<string, string> = {
   [TIPO_CONTATO_LABELS.SOLICITANTE]: "bg-warning/15 text-warning",
   [TIPO_CONTATO_LABELS.BENEFICIARIO]: "bg-warning/15 text-warning",
@@ -50,6 +68,23 @@ const typeColors: Record<string, string> = {
 
 const ITEMS_PER_PAGE = 10;
 const FILTER_SELECT_CLASS = "w-56";
+
+type SortKey =
+  | "id"
+  | "channel"
+  | "sender"
+  | "type"
+  | "subject"
+  | "classification"
+  | "priority"
+  | "status"
+  | "responsible"
+  | "updated";
+type SortDirection = "asc" | "desc";
+type SortConfig = {
+  key: SortKey;
+  direction: SortDirection;
+} | null;
 
 type StatusFilterOptionValue = "em-triagem" | "aguardando-atendimento" | "em-andamento" | "finalizados";
 type StatusFilterValue = "all" | StatusFilterOptionValue;
@@ -148,7 +183,7 @@ const CLASSIFICATION_FILTER_OPTIONS: ClassificationFilterOption[] = [
   {
     value: "voluntariado",
     label: "Voluntariado",
-    classifications: ["Voluntariado", "Voluntariado odontológico"],
+    classifications: ["Voluntariado"],
   },
   {
     value: "doacao",
@@ -171,6 +206,98 @@ const normalizeForFilter = (value: string) =>
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
+
+const ticketTypeLabel = (type: string) =>
+  normalizeForFilter(type) === "dentista voluntario" ? TIPO_CONTATO_LABELS.VOLUNTARIO : type;
+
+const ticketClassificationLabel = (classification: string) =>
+  normalizeForFilter(classification) === "voluntariado odontologico" ? "Voluntariado" : classification;
+
+const parseSortableDate = (value: string) => {
+  const normalized = normalizeForFilter(value);
+  if (!normalized) return 0;
+  if (normalized.includes("agora")) return Number.MAX_SAFE_INTEGER;
+
+  const minutesAgo = normalized.match(/^(\d+)\s*min/);
+  if (minutesAgo) return Date.now() - Number(minutesAgo[1]) * 60_000;
+
+  const hoursAgo = normalized.match(/^(\d+)\s*h/);
+  if (hoursAgo) return Date.now() - Number(hoursAgo[1]) * 60 * 60_000;
+
+  const brDate = value.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:,?\s+(\d{2}):(\d{2}))?/);
+  if (brDate) {
+    const [, day, month, year, hour = "0", minute = "0"] = brDate;
+    return new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute)).getTime();
+  }
+
+  const parsed = new Date(value).getTime();
+  return Number.isNaN(parsed) ? 0 : parsed;
+};
+
+const sortValueForTicket = (ticket: Ticket, key: SortKey) => {
+  switch (key) {
+    case "id":
+      return ticketDisplayProtocol(ticket);
+    case "channel":
+      return ticketChannelLabel(ticket.channel);
+    case "sender":
+      return ticket.sender;
+    case "type":
+      return ticketTypeLabel(ticket.type);
+    case "subject":
+      return ticket.subject;
+    case "classification":
+      return ticketClassificationLabel(ticket.classification);
+    case "priority":
+      return prioritySortValue[ticket.priority] ?? 0;
+    case "status":
+      return ticket.status;
+    case "responsible":
+      return ticket.responsible;
+    case "updated":
+      return parseSortableDate(ticket.updated);
+    default:
+      return "";
+  }
+};
+
+const compareSortValues = (left: string | number, right: string | number) => {
+  if (typeof left === "number" && typeof right === "number") {
+    return left - right;
+  }
+
+  return String(left).localeCompare(String(right), "pt-BR", {
+    numeric: true,
+    sensitivity: "base",
+  });
+};
+
+type SortableHeaderProps = {
+  label: string;
+  column: SortKey;
+  widthClass: string;
+  sortConfig: SortConfig;
+  onSort: (column: SortKey) => void;
+};
+
+const SortableHeader = ({ label, column, widthClass, sortConfig, onSort }: SortableHeaderProps) => {
+  const isActive = sortConfig?.key === column;
+  const Icon = isActive ? (sortConfig.direction === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
+  const ariaSort = isActive ? (sortConfig.direction === "asc" ? "ascending" : "descending") : "none";
+
+  return (
+    <TableHead className={cn(widthClass, "p-0 text-center")} aria-sort={ariaSort}>
+      <button
+        type="button"
+        className="inline-flex h-10 w-full items-center justify-center gap-1.5 px-2 text-center text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        onClick={() => onSort(column)}
+      >
+        <span className="truncate">{label}</span>
+        <Icon className={cn("h-3.5 w-3.5 shrink-0", isActive && "text-foreground")} />
+      </button>
+    </TableHead>
+  );
+};
 
 const ticketChannelLabel = (channel: string) => {
   const normalizedChannel = normalizeForFilter(channel);
@@ -199,21 +326,21 @@ const ticketMatchesClassificationFilter = (ticket: Ticket, option: Classificatio
     );
   }
 
-  if (option.classifications.includes(ticket.classification)) return true;
+  if (option.classifications.includes(ticketClassificationLabel(ticket.classification))) return true;
 
   const subject = normalizeForFilter(ticket.subject);
   if (option.value === "voluntariado") {
-    return ticket.type === TIPO_CONTATO_LABELS.VOLUNTARIO ||
+    return ticketTypeLabel(ticket.type) === TIPO_CONTATO_LABELS.VOLUNTARIO ||
       subject.includes("voluntariado") ||
       subject.includes("dentista voluntario");
   }
   if (option.value === "doacao") {
-    return ticket.type === TIPO_CONTATO_LABELS.DOADOR ||
+    return ticketTypeLabel(ticket.type) === TIPO_CONTATO_LABELS.DOADOR ||
       subject.includes("doacao") ||
       subject.includes("doar");
   }
   if (option.value === "parceria") {
-    return ticket.type === TIPO_CONTATO_LABELS.PARCEIRO ||
+    return ticketTypeLabel(ticket.type) === TIPO_CONTATO_LABELS.PARCEIRO ||
       subject.includes("parceria") ||
       subject.includes("convenio");
   }
@@ -235,6 +362,7 @@ export default function Tickets() {
   const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [classificationFilter, setClassificationFilter] = useState<ClassificationFilterValue>("all");
+  const [sortConfig, setSortConfig] = useState<SortConfig>(null);
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
 
@@ -258,11 +386,31 @@ export default function Tickets() {
     return matchSearch && matchStatus && matchPriority && matchClassification && matchChannel;
   });
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const sorted = useMemo(() => {
+    if (!sortConfig) return filtered;
+
+    return [...filtered].sort((left, right) => {
+      const result = compareSortValues(
+        sortValueForTicket(left, sortConfig.key),
+        sortValueForTicket(right, sortConfig.key),
+      );
+      return sortConfig.direction === "asc" ? result : -result;
+    });
+  }, [filtered, sortConfig]);
+
+  const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
+  const paginated = sorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   const handleChannelFilterChange = (value: ChannelFilterValue) => {
     setChannelFilter(value);
+    setPage(1);
+  };
+
+  const handleSort = (column: SortKey) => {
+    setSortConfig((current) => ({
+      key: column,
+      direction: current?.key === column && current.direction === "asc" ? "desc" : "asc",
+    }));
     setPage(1);
   };
 
@@ -350,17 +498,17 @@ export default function Tickets() {
         <Table className="min-w-[1380px] table-fixed">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead className="w-[160px]">ID</TableHead>
-              <TableHead className="w-[64px]">Canal</TableHead>
-              <TableHead className="w-[180px]">Remetente</TableHead>
-              <TableHead className="w-[132px]">Tipo</TableHead>
-              <TableHead className="w-[220px]">Assunto (IA)</TableHead>
-              <TableHead className="w-[132px]">Classificação</TableHead>
-              <TableHead className="w-[112px]">Prioridade</TableHead>
-              <TableHead className="w-[152px]">Status</TableHead>
-              <TableHead className="w-[156px]">Responsável</TableHead>
-              <TableHead className="w-[140px]">Atualização</TableHead>
-              <TableHead className="w-12"></TableHead>
+              <SortableHeader label="ID" column="id" widthClass="w-[160px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Canal" column="channel" widthClass="w-[84px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Remetente" column="sender" widthClass="w-[180px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Tipo" column="type" widthClass="w-[112px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Assunto (IA)" column="subject" widthClass="w-[220px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Classificação" column="classification" widthClass="w-[132px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Prioridade" column="priority" widthClass="w-[112px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Status" column="status" widthClass="w-[152px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Responsável" column="responsible" widthClass="w-[156px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Atualização" column="updated" widthClass="w-[140px]" sortConfig={sortConfig} onSort={handleSort} />
+              <TableHead className="w-12 text-center"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -368,6 +516,8 @@ export default function Tickets() {
               const channelLabel = ticketChannelLabel(t.channel);
               const ChIcon = channelIcon[channelLabel] || MoreHorizontal;
               const chColor = channelColors[channelLabel] || "text-muted-foreground";
+              const typeLabel = ticketTypeLabel(t.type);
+              const classificationLabel = ticketClassificationLabel(t.classification);
               return (
                 <TableRow
                   key={t.id}
@@ -377,24 +527,26 @@ export default function Tickets() {
                   }}
                 >
                   <TableCell className="font-mono text-xs whitespace-nowrap">{ticketDisplayProtocol(t)}</TableCell>
-                  <TableCell title={channelLabel} aria-label={channelLabel}><ChIcon className={cn("w-4 h-4", chColor)} /></TableCell>
-                  <TableCell className="font-medium text-sm truncate" title={t.sender}>{t.sender}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={cn("text-[10px] min-w-[80px] flex items-center justify-center text-center", typeColors[t.type] || "")}>{t.type}</Badge>
+                  <TableCell className="text-center" title={channelLabel} aria-label={channelLabel}>
+                    <ChIcon className={cn("mx-auto w-4 h-4", chColor)} />
                   </TableCell>
-                  <TableCell className="text-sm">
+                  <TableCell className="font-medium text-xs truncate" title={t.sender}>{t.sender}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className={cn("text-xs min-w-[80px] flex items-center justify-center text-center font-medium", typeColors[typeLabel] || "")}>{typeLabel}</Badge>
+                  </TableCell>
+                  <TableCell className="text-xs">
                     <span className="block max-w-[188px] truncate" title={t.subject}>{t.subject}</span>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="secondary" className="text-xs min-w-[80px] flex items-center justify-center text-center">{t.classification}</Badge>
+                    <Badge variant="secondary" className="text-xs min-w-[80px] flex items-center justify-center text-center">{classificationLabel}</Badge>
                   </TableCell>
                   <TableCell>
                     <span className={cn("inline-flex items-center justify-center text-xs font-medium px-2.5 py-0.5 rounded-full min-w-[72px]", priorityClasses[t.priority])}>
                       {t.priority}
                     </span>
                   </TableCell>
-                  <TableCell className="text-sm truncate" title={t.status}>{t.status}</TableCell>
-                  <TableCell className="text-sm truncate" title={t.responsible}>{t.responsible}</TableCell>
+                  <TableCell className="text-xs truncate" title={t.status}>{t.status}</TableCell>
+                  <TableCell className="text-xs truncate" title={t.responsible}>{t.responsible}</TableCell>
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{t.updated}</TableCell>
                   <TableCell>
                     <button className="text-muted-foreground hover:text-foreground transition-colors" onClick={(e) => handleArchive(e, t.id)}>

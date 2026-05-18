@@ -94,6 +94,12 @@ public class TicketBO {
     public LinkAidDtos.TicketResponse atualizar(Long id, LinkAidDtos.TicketUpdateRequest request) {
         Ticket ticket = buscarEntidade(id);
 
+        if (request.nomeContato() != null) {
+            if (ticket.getContato() == null) {
+                throw new BusinessException("Ticket sem contato vinculado.");
+            }
+            ticket.getContato().setNome(normalizarObrigatorio(request.nomeContato(), "Nome do contato e obrigatorio."));
+        }
         if (request.canalCodigo() != null) {
             ticket.setCanal(buscarCanal(request.canalCodigo()));
         }
