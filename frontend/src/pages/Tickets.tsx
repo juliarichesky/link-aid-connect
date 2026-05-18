@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Search, Plus, Archive, MessageCircle, Instagram, Mail, MoreHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import {
   Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/classnames";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTickets, type Priority, type Ticket } from "@/contexts/TicketsContext";
 import { CANAL_LABELS, PRIORIDADE_LABELS, TIPO_CONTATO_LABELS } from "@/lib/linkaidMappings";
 import { toast } from "sonner";
@@ -190,18 +190,6 @@ const matchesChannelOption = (channel: string, option: ChannelFilterOption) => {
   return option.channels.some((candidate) => normalizeForFilter(ticketChannelLabel(candidate)) === normalizedChannel);
 };
 
-const channelFilterFromParam = (value: string | null): ChannelFilterValue => {
-  if (!value) return "all";
-  const normalizedValue = normalizeForFilter(value);
-  return CHANNEL_FILTER_OPTIONS.find((option) =>
-    option.channels.some((channel) =>
-      normalizeForFilter(channel) === normalizedValue ||
-      normalizeForFilter(ticketChannelLabel(channel)) === normalizedValue,
-    ) ||
-    normalizeForFilter(option.label) === normalizedValue,
-  )?.value || "all";
-};
-
 const ticketDateStamp = (ticket: Ticket) => {
   const protocolDate = (ticket.protocol || ticket.id).match(/TKT-(\d{8})/)?.[1];
   if (protocolDate) return protocolDate;
@@ -277,19 +265,12 @@ const ticketMatchesClassificationFilter = (ticket: Ticket, option: Classificatio
 export default function Tickets() {
   const { tickets, archiveTicket } = useTickets();
   const [search, setSearch] = useState("");
-  const [searchParams] = useSearchParams();
-  const [channelFilter, setChannelFilter] = useState<ChannelFilterValue>(() =>
-    channelFilterFromParam(searchParams.get("channel")),
-  );
+  const [channelFilter, setChannelFilter] = useState<ChannelFilterValue>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [classificationFilter, setClassificationFilter] = useState<ClassificationFilterValue>("all");
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    setChannelFilter(channelFilterFromParam(searchParams.get("channel")));
-  }, [searchParams]);
 
   const filtered = tickets.filter((t) => {
     const selectedChannel = CHANNEL_FILTER_OPTIONS.find((option) => option.value === channelFilter);
@@ -314,14 +295,9 @@ export default function Tickets() {
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-  const selectedChannelOption = CHANNEL_FILTER_OPTIONS.find((option) => option.value === channelFilter);
-
   const handleChannelFilterChange = (value: ChannelFilterValue) => {
     setChannelFilter(value);
     setPage(1);
-
-    const option = CHANNEL_FILTER_OPTIONS.find((item) => item.value === value);
-    navigate(option ? `/tickets?channel=${encodeURIComponent(option.channels[0])}` : "/tickets");
   };
 
   const handleArchive = async (e: React.MouseEvent, id: string) => {
@@ -339,7 +315,7 @@ export default function Tickets() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-display font-bold">
-            Tickets {selectedChannelOption && <span className="text-primary">— {selectedChannelOption.label}</span>}
+            Tickets
           </h1>
           <p className="text-sm text-muted-foreground">Visão geral de atendimentos</p>
         </div>
@@ -397,7 +373,6 @@ export default function Tickets() {
               setClassificationFilter("all");
               setChannelFilter("all");
               setPage(1);
-              if (channelFilter !== "all") navigate("/tickets");
             }}
           >
             Limpar filtros
@@ -432,8 +407,7 @@ export default function Tickets() {
                   key={t.id}
                   className="cursor-pointer hover:bg-accent/60 transition-colors"
                   onClick={() => {
-                    const backUrl = selectedChannelOption ? `/tickets?channel=${encodeURIComponent(selectedChannelOption.channels[0])}` : "/tickets";
-                    navigate(`/tickets/${t.id}`, { state: { backUrl } });
+                    navigate(`/tickets/${t.id}`, { state: { backUrl: "/tickets" } });
                   }}
                 >
                   <TableCell className="font-mono text-xs whitespace-nowrap">{ticketDisplayProtocol(t)}</TableCell>

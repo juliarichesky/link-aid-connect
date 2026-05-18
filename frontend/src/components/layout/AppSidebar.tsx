@@ -1,4 +1,4 @@
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import {
   LayoutDashboard,
   Inbox,
@@ -6,20 +6,18 @@ import {
   BarChart3,
   Settings,
   MessageCircle,
-  Instagram,
-  Mail,
-  MoreHorizontal,
   Stethoscope,
   DollarSign,
   ChevronLeft,
   ChevronRight,
   History,
+  type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/classnames";
 import { useState } from "react";
 import { useAuth, Role } from "@/contexts/AuthContext";
 
-type MenuItem = { title: string; url: string; icon: any; roles?: Role[] };
+type MenuItem = { title: string; url: string; icon: LucideIcon; roles?: Role[] };
 
 const mainMenu: MenuItem[] = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard, roles: ["admin"] },
@@ -30,13 +28,6 @@ const mainMenu: MenuItem[] = [
   { title: "Configurações", url: "/settings", icon: Settings, roles: ["admin"] },
 ];
 
-const channels = [
-  { title: "WhatsApp", icon: MessageCircle, count: 12, filter: "WhatsApp", color: "text-green-500" },
-  { title: "Instagram", icon: Instagram, count: 5, filter: "Instagram", color: "text-pink-500" },
-  { title: "E-mail", icon: Mail, count: 8, filter: "E-mail", color: "text-blue-500" },
-  { title: "Outros", icon: MoreHorizontal, count: 2, filter: "Outro", color: "text-muted-foreground" },
-];
-
 const extra: MenuItem[] = [
   { title: "Dentistas", url: "/dentists", icon: Stethoscope },
   { title: "Comunicação Dentistas", url: "/dentist-comms", icon: MessageCircle },
@@ -45,7 +36,6 @@ const extra: MenuItem[] = [
 
 export function AppSidebar() {
   const location = useLocation();
-  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const { user } = useAuth();
 
@@ -97,37 +87,6 @@ export function AppSidebar() {
               <item.icon className="w-4 h-4 shrink-0" />
               {!collapsed && <span>{item.title}</span>}
             </Link>
-          ))}
-        </div>
-
-        {/* Channels */}
-        <div className="space-y-1 px-2">
-          {!collapsed && (
-            <p className="text-[11px] uppercase tracking-wider text-sidebar-muted px-2 mb-2 font-medium">
-              Canais
-            </p>
-          )}
-          {channels.map((ch) => (
-            <button
-              key={ch.title}
-              onClick={() => navigate(`/tickets?channel=${encodeURIComponent(ch.filter)}`)}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-md text-sm w-full text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors",
-                location.pathname === "/tickets" && new URLSearchParams(location.search).get("channel") === ch.filter
-                  ? "bg-sidebar-accent text-sidebar-primary-foreground font-medium"
-                  : ""
-              )}
-            >
-              <ch.icon className={cn("w-4 h-4 shrink-0", ch.color)} />
-              {!collapsed && (
-                <>
-                  <span className="flex-1 text-left">{ch.title}</span>
-                  <span className="text-[11px] bg-sidebar-primary/20 text-sidebar-primary px-1.5 py-0.5 rounded-full font-medium">
-                    {ch.count}
-                  </span>
-                </>
-              )}
-            </button>
           ))}
         </div>
 
