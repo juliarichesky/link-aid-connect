@@ -1,4 +1,4 @@
-import { Search, ArrowLeft, Save } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpDown, Save, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,22 +15,30 @@ import {
 } from "@/components/ui/pagination";
 import { useEffect, useState, useMemo } from "react";
 import { useTickets, type Contact } from "@/contexts/TicketsContext";
+import { cn } from "@/lib/classnames";
 import { EDITABLE_CONTACT_TYPE_LABELS, editableContactTypeLabel, TIPO_CONTATO_LABELS } from "@/lib/linkaidMappings";
 import { maskCNPJ, maskCPF, maskPhone } from "@/lib/masks";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const typeColors: Record<string, string> = {
-  Solicitante: "bg-warning/15 text-warning",
-  Beneficiário: "bg-warning/15 text-warning",
-  Doador: "bg-primary/15 text-primary",
-  Dentista: "bg-success/15 text-success",
-  Parceiro: "bg-info/15 text-info",
+  [TIPO_CONTATO_LABELS.SOLICITANTE]: "bg-warning/15 text-warning",
+  [TIPO_CONTATO_LABELS.BENEFICIARIO]: "bg-warning/15 text-warning",
+  [TIPO_CONTATO_LABELS.DOADOR]: "bg-primary/15 text-primary",
+  [TIPO_CONTATO_LABELS.VOLUNTARIO]: "bg-success/15 text-success",
+  [TIPO_CONTATO_LABELS.PARCEIRO]: "bg-pink-500/15 text-pink-600",
 };
 
 const ITEMS_PER_PAGE = 10;
 
 const typeOptions = [...EDITABLE_CONTACT_TYPE_LABELS];
+
+type SortKey = "name" | "type" | "location" | "ticketCount" | "registrationDate";
+type SortDirection = "asc" | "desc";
+type SortConfig = {
+  key: SortKey;
+  direction: SortDirection;
+} | null;
 
 interface DerivedContact {
   id?: number;
@@ -43,6 +51,7 @@ interface DerivedContact {
   ticketCount: number;
   lastInteraction: string;
   observation?: string;
+  registrationDate?: string;
   linkedTickets: { id: string; protocol?: string; subject: string; date: string; status: string }[];
 }
 
@@ -63,12 +72,91 @@ const maskDocument = (value: string) => {
   return digits.length > 11 ? maskCNPJ(value) : maskCPF(value);
 };
 
+const formatRegistrationDate = (value?: string) => {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
+const registrationTimestamp = (value?: string) => {
+  if (!value) return 0;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+};
+
+const sortValueForContact = (contact: DerivedContact, key: SortKey) => {
+  switch (key) {
+    case "name":
+      return contact.name;
+    case "type":
+      return contact.type;
+    case "location":
+      return contact.location;
+    case "ticketCount":
+      return contact.ticketCount;
+    case "registrationDate":
+      return registrationTimestamp(contact.registrationDate);
+    default:
+      return "";
+  }
+};
+
+const compareSortValues = (left: string | number, right: string | number) => {
+  if (typeof left === "number" && typeof right === "number") {
+    return left - right;
+  }
+
+  return String(left).localeCompare(String(right), "pt-BR", {
+    numeric: true,
+    sensitivity: "base",
+  });
+};
+
+type SortableHeaderProps = {
+  label: string;
+  column: SortKey;
+  className?: string;
+  sortConfig: SortConfig;
+  onSort: (column: SortKey) => void;
+};
+
+const SortableHeader = ({ label, column, className, sortConfig, onSort }: SortableHeaderProps) => {
+  const isActive = sortConfig?.key === column;
+  const Icon = isActive ? (sortConfig.direction === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
+  const ariaSort = isActive ? (sortConfig.direction === "asc" ? "ascending" : "descending") : "none";
+
+  return (
+    <TableHead className={cn("p-0", className)} aria-sort={ariaSort}>
+      <button
+        type="button"
+        className={cn(
+          "inline-flex h-10 w-full items-center gap-1.5 px-4 text-left text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          className?.includes("text-right") && "justify-end text-right",
+        )}
+        onClick={() => onSort(column)}
+      >
+        <span className="truncate">{label}</span>
+        <Icon className={cn("h-3.5 w-3.5 shrink-0", isActive && "text-foreground")} />
+      </button>
+    </TableHead>
+  );
+};
+
+const contactTypeBadgeClass = (type: string) =>
+  cn("flex w-28 justify-center text-center font-medium", typeColors[type] || "");
+
 export default function Contacts() {
   const { tickets, contacts, loading, updateContact } = useTickets();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<DerivedContact | null>(null);
   const [page, setPage] = useState(1);
+  const [sortConfig, setSortConfig] = useState<SortConfig>(null);
   const [detailSearch, setDetailSearch] = useState("");
   const [saving, setSaving] = useState(false);
   const [contactForm, setContactForm] = useState({
@@ -99,6 +187,7 @@ export default function Contacts() {
         ticketCount: 0,
         lastInteraction: "-",
         observation: c.observation,
+        registrationDate: c.registrationDate,
         linkedTickets: [],
       });
     });
@@ -116,6 +205,7 @@ export default function Contacts() {
           cpf: t.cpf,
           ticketCount: 0,
           lastInteraction: t.openedAt,
+          registrationDate: "",
           linkedTickets: [],
         });
       }
@@ -132,8 +222,28 @@ export default function Contacts() {
     c.name.toLowerCase().includes(search.toLowerCase()) || c.type.toLowerCase().includes(search.toLowerCase()) || c.cpf.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const sorted = useMemo(() => {
+    if (!sortConfig) return filtered;
+
+    return [...filtered].sort((left, right) => {
+      const result = compareSortValues(
+        sortValueForContact(left, sortConfig.key),
+        sortValueForContact(right, sortConfig.key),
+      );
+      return sortConfig.direction === "asc" ? result : -result;
+    });
+  }, [filtered, sortConfig]);
+
+  const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
+  const paginated = sorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
+  const handleSort = (column: SortKey) => {
+    setSortConfig((current) => ({
+      key: column,
+      direction: current?.key === column && current.direction === "asc" ? "desc" : "asc",
+    }));
+    setPage(1);
+  };
 
   useEffect(() => {
     if (!selected) return;
@@ -179,6 +289,7 @@ export default function Contacts() {
       email: contactForm.email.trim(),
       location: [contactForm.city.trim(), contactForm.uf.trim().toUpperCase().slice(0, 2)].filter(Boolean).join(", "),
       observation: contactForm.observation.trim(),
+      registrationDate: selected.registrationDate,
     };
 
     setSaving(true);
@@ -189,6 +300,7 @@ export default function Contacts() {
         ...(saved || updatedContact),
         ticketCount: selected.ticketCount,
         lastInteraction: selected.lastInteraction,
+        registrationDate: saved?.registrationDate || updatedContact.registrationDate,
         linkedTickets: selected.linkedTickets,
       };
       setSelected(nextSelected);
@@ -221,7 +333,7 @@ export default function Contacts() {
                 </div>
                 <div>
                   <p className="font-semibold">{contactForm.name || "Contato"}</p>
-                  <Badge variant="secondary" className={typeColors[contactForm.type]}>{contactForm.type}</Badge>
+                  <Badge variant="secondary" className={contactTypeBadgeClass(contactForm.type)}>{contactForm.type}</Badge>
                 </div>
               </div>
               <div className="space-y-3">
@@ -329,30 +441,32 @@ export default function Contacts() {
         <Input placeholder="Buscar contatos..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
       </div>
 
-      <div className="border border-border rounded-lg overflow-hidden shadow-sm">
-        <Table>
+      <div className="border border-border rounded-lg overflow-auto shadow-sm">
+        <Table className="min-w-[980px]">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead>Nome</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Localização</TableHead>
+              <SortableHeader label="Nome" column="name" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Tipo" column="type" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Localização" column="location" sortConfig={sortConfig} onSort={handleSort} />
               <TableHead>CPF/CNPJ</TableHead>
-              <TableHead className="text-right">Tickets</TableHead>
+              <SortableHeader label="Tickets" column="ticketCount" className="text-right" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Data de cadastro" column="registrationDate" sortConfig={sortConfig} onSort={handleSort} />
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginated.map((c) => (
               <TableRow key={contactKey(c)} className="cursor-pointer hover:bg-accent/60 transition-colors" onClick={() => setSelected(c)}>
                 <TableCell className="font-medium">{c.name}</TableCell>
-                <TableCell><Badge variant="secondary" className={typeColors[c.type]}>{c.type}</Badge></TableCell>
+                <TableCell><Badge variant="secondary" className={contactTypeBadgeClass(c.type)}>{c.type}</Badge></TableCell>
                 <TableCell className="text-sm">{c.location}</TableCell>
                 <TableCell className="text-sm text-muted-foreground">{c.cpf}</TableCell>
                 <TableCell className="text-right font-medium">{c.ticketCount}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">{formatRegistrationDate(c.registrationDate)}</TableCell>
               </TableRow>
             ))}
             {paginated.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                   {loading ? "Carregando contatos..." : "Nenhum contato encontrado"}
                 </TableCell>
               </TableRow>

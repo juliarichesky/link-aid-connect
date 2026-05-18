@@ -128,6 +128,7 @@ export interface Contact {
   location: string;
   type: string;
   observation?: string;
+  registrationDate?: string;
 }
 
 interface TicketsContextType {
@@ -249,6 +250,7 @@ const apiContatoToContact = (contato: ApiContatoResponse): Contact => ({
   location: [contato.cidade, contato.uf].filter(Boolean).join(", "),
   type: tipoContatoRegistroLabel(contato.tipoContatoCodigo, contato.tipoContatoNome) || "Solicitante",
   observation: contato.observacao || "",
+  registrationDate: contato.dataCadastro || "",
 });
 
 const apiDentistaToDentist = (dentista: ApiDentistaResponse): Dentist => ({
