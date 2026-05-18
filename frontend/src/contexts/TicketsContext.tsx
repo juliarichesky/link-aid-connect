@@ -179,6 +179,20 @@ const messageSenderFromApi = (tipoRemetente: string) => {
   return "agent";
 };
 
+const legacyAiReply = (ticket: ApiTicketResponse) => {
+  const base = "Recebemos sua mensagem e abrimos uma triagem no LinkAid. Nossa equipe vai analisar e continuar o atendimento.";
+  return ticket.protocolo ? `${base}\n\nProtocolo LinkAid: ${ticket.protocolo}` : base;
+};
+
+const apiMessageText = (ticket: ApiTicketResponse, mensagem: { tipoRemetente: string; mensagem: string }) => {
+  const isLegacyAiSummary =
+    mensagem.tipoRemetente.toUpperCase() === "IA" &&
+    ticket.resumoIa?.trim() &&
+    mensagem.mensagem.trim() === ticket.resumoIa.trim();
+
+  return isLegacyAiSummary ? legacyAiReply(ticket) : mensagem.mensagem;
+};
+
 const apiTicketToTicket = (ticket: ApiTicketResponse, messagesLoaded = true): Ticket => {
   const contato = ticket.contato;
   const cidadeUf = [contato?.cidade, contato?.uf].filter(Boolean).join(", ");
@@ -207,7 +221,7 @@ const apiTicketToTicket = (ticket: ApiTicketResponse, messagesLoaded = true): Ti
     messagesLoaded,
     chatMessages: messagesLoaded ? (ticket.mensagens ?? []).map((mensagem) => ({
       from: messageSenderFromApi(mensagem.tipoRemetente),
-      text: mensagem.mensagem,
+      text: apiMessageText(ticket, mensagem),
       time: formatTime(mensagem.dataMensagem),
     })) : undefined,
   };

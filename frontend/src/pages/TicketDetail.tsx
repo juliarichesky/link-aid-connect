@@ -334,7 +334,7 @@ export default function TicketDetail() {
                       <User className="w-3 h-3" /><span className="text-[10px] font-medium uppercase opacity-70">Você</span>
                     </div>
                   )}
-                  <p>{m.text}</p>
+                  <p className="whitespace-pre-line">{m.text}</p>
                   <p className={`text-[10px] mt-1 ${m.from === "agent" ? "opacity-70" : "text-muted-foreground"}`}>{m.time}</p>
                 </div>
               </div>

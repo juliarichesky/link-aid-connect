@@ -182,6 +182,7 @@ class QuarkusTicketClient:
             "prioridadeCodigo": triage.priority_code,
             "classificacaoCodigo": triage.classification_code,
             "intent": triage.intent,
+            "respostaIa": triage.reply_text,
             "confiancaIa": triage.confidence,
             "payload": json.dumps(
                 {

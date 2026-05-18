@@ -264,6 +264,7 @@ public final class LinkAidDtos {
             String prioridadeCodigo,
             String classificacaoCodigo,
             String intent,
+            String respostaIa,
             @DecimalMin("0.00") @DecimalMax("100.00") BigDecimal confiancaIa,
             String payload
     ) {

@@ -53,7 +53,7 @@ public class WebhookBO {
 
         Ticket ticket = ticketBO.criarEntidade(ticketRequest);
         ticketBO.registrarMensagem(ticket, "CONTATO", request.body(), null);
-        ticketBO.registrarMensagem(ticket, "IA", ticket.getResumoIa(), null);
+        ticketBO.registrarMensagem(ticket, "IA", respostaIaComProtocolo(request.respostaIa(), ticket.getProtocolo()), null);
 
         WebhookEvento evento = new WebhookEvento();
         evento.setTicket(ticket);
@@ -118,6 +118,17 @@ public class WebhookBO {
 
     private String payloadBasico(LinkAidDtos.WebhookTicketRequest request) {
         return "from=" + primeiroValor(request.from(), "") + "; body=" + request.body();
+    }
+
+    private String respostaIaComProtocolo(String respostaIa, String protocolo) {
+        String resposta = primeiroValor(
+                respostaIa,
+                "Recebemos sua mensagem e abrimos uma triagem no LinkAid. Nossa equipe vai analisar e continuar o atendimento."
+        );
+        if (protocolo == null || protocolo.isBlank() || resposta.contains("Protocolo LinkAid:")) {
+            return resposta;
+        }
+        return resposta + "\n\nProtocolo LinkAid: " + protocolo;
     }
 
     private String primeiroValor(String... valores) {
