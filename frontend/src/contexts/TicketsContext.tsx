@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   linkAidApi,
   type ApiContatoResponse,
+  type ApiContatoRequest,
   type ApiDentistaResponse,
   type ApiTicketRequest,
   type ApiTicketResponse,
@@ -116,7 +117,7 @@ const initialTickets: Ticket[] = [
   { id: "TKT-012", channel: "E-mail", sender: "Prefeitura Municipal", subject: "Convênio público", classification: "Parceria", priority: "Alta", status: "Aberto", responsible: "Ana Costa", updated: "1h", openedAt: "05/04/2025 13:00", phone: "(31) 3333-2222", email: "prefeitura@gov.br", location: "Belo Horizonte, MG", type: "Parceiro", cpf: "18.720.000/0001-55" },
 ];
 
-interface Contact {
+export interface Contact {
   id?: number;
   name: string;
   phone: string;
@@ -124,6 +125,7 @@ interface Contact {
   cpf: string;
   location: string;
   type: string;
+  observation?: string;
 }
 
 interface TicketsContextType {
@@ -136,6 +138,7 @@ interface TicketsContextType {
   refresh: () => Promise<void>;
   loadTicket: (id: string) => Promise<Ticket | void>;
   updateTicket: (id: string, updates: Partial<Ticket>) => Promise<void>;
+  updateContact: (contact: Contact, previousContact?: Contact) => Promise<Contact | void>;
   addTicket: (ticket: Ticket) => Promise<Ticket | void>;
   archiveTicket: (id: string) => Promise<void>;
   releasePhoneForTesting: (id: string) => Promise<Ticket | void>;
@@ -243,6 +246,7 @@ const apiContatoToContact = (contato: ApiContatoResponse): Contact => ({
   cpf: contato.documento || "-",
   location: [contato.cidade, contato.uf].filter(Boolean).join(", "),
   type: tipoContatoRegistroLabel(contato.tipoContatoCodigo, contato.tipoContatoNome) || "Solicitante",
+  observation: contato.observacao || "",
 });
 
 const apiDentistaToDentist = (dentista: ApiDentistaResponse): Dentist => ({
@@ -401,6 +405,70 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
     status: dentistaStatusCodigo(dentist.status) || "A",
   });
 
+  const buildContactRequest = (contact: Contact): ApiContatoRequest => {
+    const { city, uf } = splitLocation(contact.location);
+    return {
+      nome: contact.name,
+      documento: onlyDigits(contact.cpf),
+      email: contact.email || undefined,
+      telefone: onlyDigits(contact.phone),
+      tipoContatoCodigo: tipoContatoCodigo(contact.type) || "SOLICITANTE",
+      cidade: city,
+      uf,
+      observacao: contact.observation || undefined,
+    };
+  };
+
+  const sameContactIdentity = (contact: Contact, reference?: Contact) => {
+    if (!reference) return false;
+    if (contact.id && reference.id && contact.id === reference.id) return true;
+    if (contact.cpf && contact.cpf !== "-" && reference.cpf && reference.cpf !== "-") {
+      return onlyDigits(contact.cpf) === onlyDigits(reference.cpf);
+    }
+    return contact.name === reference.name;
+  };
+
+  const ticketBelongsToContact = (ticket: Ticket, contact: Contact, previousContact?: Contact) => {
+    if (contact.id && ticket.idContato === contact.id) return true;
+    if (previousContact?.id && ticket.idContato === previousContact.id) return true;
+
+    const ticketDocument = onlyDigits(ticket.cpf);
+    const currentDocument = onlyDigits(contact.cpf);
+    const previousDocument = onlyDigits(previousContact?.cpf);
+    if (ticketDocument && ticketDocument !== onlyDigits("-")) {
+      return ticketDocument === currentDocument || ticketDocument === previousDocument;
+    }
+
+    return ticket.sender === previousContact?.name || ticket.sender === contact.name;
+  };
+
+  const applyContactLocally = (contact: Contact, previousContact?: Contact) => {
+    setContacts((prev) => {
+      const exists = prev.some((item) => sameContactIdentity(item, previousContact || contact));
+      if (!exists) return [...prev, contact];
+
+      return prev.map((item) =>
+        sameContactIdentity(item, previousContact || contact) ? { ...item, ...contact } : item,
+      );
+    });
+    setTickets((prev) =>
+      prev.map((ticket) =>
+        ticketBelongsToContact(ticket, contact, previousContact)
+          ? {
+              ...ticket,
+              idContato: contact.id ?? ticket.idContato,
+              sender: contact.name,
+              type: contact.type,
+              location: contact.location,
+              phone: contact.phone,
+              email: contact.email,
+              cpf: contact.cpf,
+            }
+          : ticket,
+      ),
+    );
+  };
+
   const updateTicket = async (id: string, updates: Partial<Ticket>) => {
     setTickets((prev) =>
       prev.map((t) => {
@@ -433,6 +501,23 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
       setError(updateError instanceof Error ? updateError.message : "Falha ao atualizar ticket.");
       throw updateError;
     }
+  };
+
+  const updateContact = async (contact: Contact, previousContact?: Contact) => {
+    if (token && contact.id) {
+      try {
+        const saved = await linkAidApi.atualizarContato(token, contact.id, buildContactRequest(contact));
+        const mapped = apiContatoToContact(saved);
+        applyContactLocally(mapped, previousContact || contact);
+        return mapped;
+      } catch (contactError) {
+        setError(contactError instanceof Error ? contactError.message : "Falha ao atualizar contato.");
+        throw contactError;
+      }
+    }
+
+    applyContactLocally(contact, previousContact);
+    return contact;
   };
 
   const addTicket = async (ticket: Ticket) => {
@@ -573,7 +658,7 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <TicketsContext.Provider value={{ tickets, contacts, teamMembers, dentists, loading, error, refresh, loadTicket, updateTicket, addTicket, archiveTicket, releasePhoneForTesting, addChatMessage, addDentist, updateDentist }}>
+    <TicketsContext.Provider value={{ tickets, contacts, teamMembers, dentists, loading, error, refresh, loadTicket, updateTicket, updateContact, addTicket, archiveTicket, releasePhoneForTesting, addChatMessage, addDentist, updateDentist }}>
       {children}
     </TicketsContext.Provider>
   );

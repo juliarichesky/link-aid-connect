@@ -30,6 +30,17 @@ export interface ApiContatoResponse {
   dataCadastro?: string;
 }
 
+export interface ApiContatoRequest {
+  nome: string;
+  documento?: string;
+  email?: string;
+  telefone?: string;
+  tipoContatoCodigo: string;
+  cidade?: string;
+  uf?: string;
+  observacao?: string;
+}
+
 export interface ApiDentistaResponse {
   idDentista: number;
   nome: string;
@@ -271,6 +282,13 @@ export const linkAidApi = {
 
   listarContatos: (token: string) =>
     request<ApiContatoResponse[]>("/contatos", { token }),
+
+  atualizarContato: (token: string, idContato: string | number, body: ApiContatoRequest) =>
+    request<ApiContatoResponse>(`/contatos/${idContato}`, {
+      method: "PUT",
+      token,
+      body,
+    }),
 
   buscarDashboard: (token: string) =>
     request<ApiDashboardResponse>("/dashboard", { token }),

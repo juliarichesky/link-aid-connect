@@ -1,17 +1,24 @@
-import { Search, ArrowLeft } from "lucide-react";
+import { Search, ArrowLeft, Save } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
   Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useState, useMemo } from "react";
-import { useTickets } from "@/contexts/TicketsContext";
+import { useEffect, useState, useMemo } from "react";
+import { useTickets, type Contact } from "@/contexts/TicketsContext";
+import { TIPO_CONTATO_LABELS } from "@/lib/linkaidMappings";
+import { maskCNPJ, maskCPF, maskPhone } from "@/lib/masks";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const typeColors: Record<string, string> = {
   Solicitante: "bg-warning/15 text-warning",
@@ -23,7 +30,16 @@ const typeColors: Record<string, string> = {
 
 const ITEMS_PER_PAGE = 10;
 
+const typeOptions = [
+  TIPO_CONTATO_LABELS.SOLICITANTE,
+  TIPO_CONTATO_LABELS.BENEFICIARIO,
+  TIPO_CONTATO_LABELS.DOADOR,
+  TIPO_CONTATO_LABELS.VOLUNTARIO,
+  TIPO_CONTATO_LABELS.PARCEIRO,
+];
+
 interface DerivedContact {
+  id?: number;
   name: string;
   type: string;
   location: string;
@@ -32,25 +48,72 @@ interface DerivedContact {
   cpf: string;
   ticketCount: number;
   lastInteraction: string;
+  observation?: string;
   linkedTickets: { id: string; protocol?: string; subject: string; date: string; status: string }[];
 }
 
+const contactKey = (contact: Pick<DerivedContact, "id" | "cpf" | "name">) => {
+  if (contact.id) return `id:${contact.id}`;
+  const document = contact.cpf?.replace(/\D/g, "");
+  if (document) return `doc:${document}`;
+  return `name:${contact.name}`;
+};
+
+const splitLocation = (location: string) => {
+  const [city = "", uf = ""] = location.split(",").map((part) => part.trim());
+  return { city, uf };
+};
+
+const maskDocument = (value: string) => {
+  const digits = value.replace(/\D/g, "");
+  return digits.length > 11 ? maskCNPJ(value) : maskCPF(value);
+};
+
 export default function Contacts() {
-  const { tickets, contacts } = useTickets();
+  const { tickets, contacts, updateContact } = useTickets();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<DerivedContact | null>(null);
   const [page, setPage] = useState(1);
   const [detailSearch, setDetailSearch] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [contactForm, setContactForm] = useState({
+    name: "",
+    type: TIPO_CONTATO_LABELS.SOLICITANTE,
+    cpf: "",
+    phone: "",
+    email: "",
+    city: "",
+    uf: "",
+    observation: "",
+  });
 
   // Build contacts from all tickets + manually added contacts
   const allContacts = useMemo(() => {
     const map = new Map<string, DerivedContact>();
 
+    contacts.forEach((c) => {
+      const key = contactKey(c);
+      map.set(key, {
+        id: c.id,
+        name: c.name,
+        type: c.type,
+        location: c.location,
+        phone: c.phone,
+        email: c.email,
+        cpf: c.cpf,
+        ticketCount: 0,
+        lastInteraction: "-",
+        observation: c.observation,
+        linkedTickets: [],
+      });
+    });
+
     tickets.forEach((t) => {
-      const key = t.cpf && t.cpf !== "-" ? t.cpf : t.sender;
+      const key = contactKey({ id: t.idContato, cpf: t.cpf, name: t.sender });
       if (!map.has(key)) {
         map.set(key, {
+          id: t.idContato,
           name: t.sender,
           type: t.type,
           location: t.location,
@@ -64,25 +127,8 @@ export default function Contacts() {
       }
       const c = map.get(key)!;
       c.ticketCount++;
+      c.lastInteraction = c.lastInteraction === "-" ? t.openedAt : c.lastInteraction;
       c.linkedTickets.push({ id: t.id, protocol: t.protocol, subject: t.subject, date: t.openedAt, status: t.status });
-    });
-
-    // Add manually created contacts that may not have tickets yet
-    contacts.forEach((c) => {
-      const key = c.cpf && c.cpf !== "-" ? c.cpf : c.name;
-      if (!map.has(key)) {
-        map.set(key, {
-          name: c.name,
-          type: c.type,
-          location: c.location,
-          phone: c.phone,
-          email: c.email,
-          cpf: c.cpf,
-          ticketCount: 0,
-          lastInteraction: "-",
-          linkedTickets: [],
-        });
-      }
     });
 
     return Array.from(map.values());
@@ -94,6 +140,70 @@ export default function Contacts() {
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    if (!selected) return;
+    const current = allContacts.find((contact) => contactKey(contact) === contactKey(selected));
+    if (current && current !== selected) {
+      setSelected(current);
+    }
+  }, [allContacts, selected]);
+
+  useEffect(() => {
+    if (!selected) return;
+    const { city, uf } = splitLocation(selected.location);
+    setContactForm({
+      name: selected.name,
+      type: selected.type || TIPO_CONTATO_LABELS.SOLICITANTE,
+      cpf: selected.cpf === "-" ? "" : maskDocument(selected.cpf),
+      phone: selected.phone ? maskPhone(selected.phone) : "",
+      email: selected.email,
+      city,
+      uf,
+      observation: selected.observation || "",
+    });
+  }, [selected]);
+
+  const handleFormChange = (field: keyof typeof contactForm, value: string) => {
+    setContactForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const handleSaveContact = async () => {
+    if (!selected) return;
+    if (!contactForm.name.trim()) {
+      toast.error("Informe o nome do contato");
+      return;
+    }
+
+    const updatedContact: Contact = {
+      id: selected.id,
+      name: contactForm.name.trim(),
+      type: contactForm.type,
+      cpf: contactForm.cpf.trim() || "-",
+      phone: contactForm.phone.trim(),
+      email: contactForm.email.trim(),
+      location: [contactForm.city.trim(), contactForm.uf.trim().toUpperCase().slice(0, 2)].filter(Boolean).join(", "),
+      observation: contactForm.observation.trim(),
+    };
+
+    setSaving(true);
+    try {
+      const saved = await updateContact(updatedContact, selected);
+      const nextSelected = {
+        ...selected,
+        ...(saved || updatedContact),
+        ticketCount: selected.ticketCount,
+        lastInteraction: selected.lastInteraction,
+        linkedTickets: selected.linkedTickets,
+      };
+      setSelected(nextSelected);
+      toast.success(selected.id ? "Contato atualizado no frontend e no banco de dados" : "Contato atualizado no frontend");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao atualizar contato");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (selected) {
     const filteredTickets = selected.linkedTickets.filter((t) =>
@@ -109,21 +219,62 @@ export default function Contacts() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="lg:col-span-1 shadow-sm">
             <CardHeader><CardTitle className="text-base">Informações Pessoais</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-4">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                  {selected.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                  {contactForm.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                 </div>
                 <div>
-                  <p className="font-semibold">{selected.name}</p>
-                  <Badge variant="secondary" className={typeColors[selected.type]}>{selected.type}</Badge>
+                  <p className="font-semibold">{contactForm.name || "Contato"}</p>
+                  <Badge variant="secondary" className={typeColors[contactForm.type]}>{contactForm.type}</Badge>
                 </div>
               </div>
-              <div className="space-y-2 text-sm">
-                <div><p className="text-xs text-muted-foreground">CPF/CNPJ</p><p className="font-medium">{selected.cpf}</p></div>
-                <div><p className="text-xs text-muted-foreground">Telefone</p><p className="font-medium">{selected.phone}</p></div>
-                <div><p className="text-xs text-muted-foreground">E-mail</p><p className="font-medium">{selected.email}</p></div>
-                <div><p className="text-xs text-muted-foreground">Localização</p><p className="font-medium">{selected.location}</p></div>
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="contact-name">Nome</Label>
+                  <Input id="contact-name" value={contactForm.name} onChange={(e) => handleFormChange("name", e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="contact-type">Tipo</Label>
+                  <Select value={contactForm.type} onValueChange={(value) => handleFormChange("type", value)}>
+                    <SelectTrigger id="contact-type"><SelectValue placeholder="Tipo do contato" /></SelectTrigger>
+                    <SelectContent>
+                      {typeOptions.map((type) => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="contact-document">CPF/CNPJ</Label>
+                  <Input id="contact-document" value={contactForm.cpf} onChange={(e) => handleFormChange("cpf", maskDocument(e.target.value))} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="contact-phone">Telefone</Label>
+                  <Input id="contact-phone" value={contactForm.phone} onChange={(e) => handleFormChange("phone", maskPhone(e.target.value))} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="contact-email">E-mail</Label>
+                  <Input id="contact-email" type="email" value={contactForm.email} onChange={(e) => handleFormChange("email", e.target.value)} />
+                </div>
+                <div className="grid grid-cols-[1fr_72px] gap-2">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="contact-city">Cidade</Label>
+                    <Input id="contact-city" value={contactForm.city} onChange={(e) => handleFormChange("city", e.target.value)} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="contact-uf">UF</Label>
+                    <Input id="contact-uf" value={contactForm.uf} onChange={(e) => handleFormChange("uf", e.target.value.toUpperCase().slice(0, 2))} />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="contact-observation">Observações</Label>
+                  <Input id="contact-observation" value={contactForm.observation} onChange={(e) => handleFormChange("observation", e.target.value)} />
+                </div>
+                <Button className="w-full" onClick={handleSaveContact} disabled={saving}>
+                  <Save className="w-4 h-4 mr-2" />
+                  {saving ? "Salvando..." : "Salvar alterações"}
+                </Button>
               </div>
             </CardContent>
           </Card>
