@@ -11,7 +11,9 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
-import { useTickets } from "@/contexts/TicketsContext";
+import { useTickets, type Contact, type Ticket } from "@/contexts/TicketsContext";
+import { TIPO_CONTATO_LABELS } from "@/lib/linkaidMappings";
+import { maskCNPJ, maskCPF, maskPhone } from "@/lib/masks";
 import { ticketDisplayProtocol } from "@/lib/ticketDisplay";
 import { toast } from "sonner";
 
@@ -23,6 +25,47 @@ const typeColors: Record<string, string> = {
   Parceiro: "bg-info/15 text-info border-info/30",
 };
 
+const contactTypeOptions = [
+  TIPO_CONTATO_LABELS.SOLICITANTE,
+  TIPO_CONTATO_LABELS.BENEFICIARIO,
+  TIPO_CONTATO_LABELS.DOADOR,
+  TIPO_CONTATO_LABELS.VOLUNTARIO,
+  TIPO_CONTATO_LABELS.PARCEIRO,
+];
+
+const splitLocation = (location: string) => {
+  const [city = "", uf = ""] = location.split(",").map((part) => part.trim());
+  return { city, uf };
+};
+
+const maskDocument = (value: string) => {
+  const digits = value.replace(/\D/g, "");
+  return digits.length > 11 ? maskCNPJ(value) : maskCPF(value);
+};
+
+const personalDataFromTicket = (ticket?: Ticket) => {
+  const { city, uf } = splitLocation(ticket?.location || "");
+  return {
+    name: ticket?.sender || "",
+    cpf: ticket?.cpf && ticket.cpf !== "-" ? maskDocument(ticket.cpf) : "",
+    phone: ticket?.phone ? maskPhone(ticket.phone) : "",
+    email: ticket?.email || "",
+    type: ticket?.type || TIPO_CONTATO_LABELS.SOLICITANTE,
+    city,
+    uf,
+  };
+};
+
+const contactFromTicket = (ticket: Ticket): Contact => ({
+  id: ticket.idContato,
+  name: ticket.sender,
+  cpf: ticket.cpf,
+  phone: ticket.phone,
+  email: ticket.email,
+  type: ticket.type,
+  location: ticket.location,
+});
+
 type TicketDetailLocationState = {
   backUrl?: string;
 };
@@ -31,7 +74,7 @@ export default function TicketDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { tickets, teamMembers, dentists, loadTicket, updateTicket, addChatMessage, releasePhoneForTesting } = useTickets();
+  const { tickets, teamMembers, dentists, loadTicket, updateTicket, updateContact, addChatMessage, releasePhoneForTesting } = useTickets();
   const [reply, setReply] = useState("");
   const [loadingDetail, setLoadingDetail] = useState(() => Boolean(id && /^\d+$/.test(id)));
   const [releasingPhone, setReleasingPhone] = useState(false);
@@ -45,8 +88,8 @@ export default function TicketDetail() {
   const [responsible, setResponsible] = useState(ticket?.responsible || "");
   const [dentistResp, setDentistResp] = useState(ticket?.dentistResponsible || "");
   const [channel, setChannel] = useState(ticket?.channel || "WhatsApp");
-  const [senderName, setSenderName] = useState(ticket?.sender || "");
-  const [senderNameDirty, setSenderNameDirty] = useState(false);
+  const [personalData, setPersonalData] = useState(() => personalDataFromTicket(ticket));
+  const [personalDataDirty, setPersonalDataDirty] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -67,8 +110,8 @@ export default function TicketDetail() {
   }, [id, loadTicket]);
 
   useEffect(() => {
-    setSenderName("");
-    setSenderNameDirty(false);
+    setPersonalData(personalDataFromTicket(undefined));
+    setPersonalDataDirty(false);
   }, [id]);
 
   useEffect(() => {
@@ -78,11 +121,11 @@ export default function TicketDetail() {
       setResponsible(ticket.responsible);
       setDentistResp(ticket.dentistResponsible || "");
       setChannel(ticket.channel);
-      if (!senderNameDirty) {
-        setSenderName(ticket.sender);
+      if (!personalDataDirty) {
+        setPersonalData(personalDataFromTicket(ticket));
       }
     }
-  }, [ticket, senderNameDirty]);
+  }, [ticket, personalDataDirty]);
 
   useEffect(() => {
     if (!id || !/^\d+$/.test(id)) return;
@@ -145,20 +188,44 @@ export default function TicketDetail() {
   };
 
   const handleSavePersonalData = async () => {
-    if (!id) return;
-    const normalizedName = senderName.trim();
+    if (!ticket) return;
+    if (!ticket.idContato && /^\d+$/.test(ticket.id)) {
+      toast.error("Ticket sem contato vinculado para atualizaÃ§Ã£o universal");
+      return;
+    }
+
+    const normalizedName = personalData.name.trim();
     if (!normalizedName) {
       toast.error("Informe o nome do remetente");
       return;
     }
 
+    const normalizedUf = personalData.uf.trim().toUpperCase().slice(0, 2);
+    const updatedContact: Contact = {
+      id: ticket.idContato,
+      name: normalizedName,
+      cpf: personalData.cpf.trim() || "-",
+      phone: personalData.phone.trim(),
+      email: personalData.email.trim(),
+      type: personalData.type,
+      location: [personalData.city.trim(), normalizedUf].filter(Boolean).join(", "),
+    };
+
     try {
-      await updateTicket(id, { sender: normalizedName });
-      setSenderName(normalizedName);
-      setSenderNameDirty(false);
-      toast.success("Nome do remetente salvo com sucesso");
+      const saved = await updateContact(updatedContact, contactFromTicket(ticket));
+      setPersonalData(personalDataFromTicket({
+        ...ticket,
+        sender: saved?.name || updatedContact.name,
+        cpf: saved?.cpf || updatedContact.cpf,
+        phone: saved?.phone || updatedContact.phone,
+        email: saved?.email || updatedContact.email,
+        type: saved?.type || updatedContact.type,
+        location: saved?.location || updatedContact.location,
+      }));
+      setPersonalDataDirty(false);
+      toast.success("Dados do contato salvos universalmente");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao salvar nome do remetente");
+      toast.error(error instanceof Error ? error.message : "Erro ao salvar dados do contato");
     }
   };
 
@@ -347,18 +414,96 @@ export default function TicketDetail() {
           <TabsContent value="personal">
             <div className="space-y-3 mt-2">
               <div className="grid grid-cols-2 gap-3">
-                <div><Label className="text-xs">Nome</Label><Input className="h-8 text-sm" value={senderName} onChange={(event) => { setSenderName(event.target.value); setSenderNameDirty(true); }} /></div>
-                <div><Label className="text-xs">CPF</Label><Input className="h-8 text-sm" defaultValue={ticket.cpf} /></div>
+                <div>
+                  <Label className="text-xs">Nome</Label>
+                  <Input
+                    className="h-8 text-sm"
+                    value={personalData.name}
+                    onChange={(event) => {
+                      setPersonalData((current) => ({ ...current, name: event.target.value }));
+                      setPersonalDataDirty(true);
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">CPF/CNPJ</Label>
+                  <Input
+                    className="h-8 text-sm"
+                    value={personalData.cpf}
+                    onChange={(event) => {
+                      setPersonalData((current) => ({ ...current, cpf: maskDocument(event.target.value) }));
+                      setPersonalDataDirty(true);
+                    }}
+                  />
+                </div>
+              </div>
+              <div>
+                <Label className="text-xs">E-mail</Label>
+                <Input
+                  className="h-8 text-sm"
+                  type="email"
+                  value={personalData.email}
+                  onChange={(event) => {
+                    setPersonalData((current) => ({ ...current, email: event.target.value }));
+                    setPersonalDataDirty(true);
+                  }}
+                />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div><Label className="text-xs">Telefone</Label><Input className="h-8 text-sm" defaultValue={ticket.phone} /></div>
-                <div><Label className="text-xs">Tipo</Label><Input className="h-8 text-sm" defaultValue={ticket.type} /></div>
+                <div>
+                  <Label className="text-xs">Telefone</Label>
+                  <Input
+                    className="h-8 text-sm"
+                    value={personalData.phone}
+                    onChange={(event) => {
+                      setPersonalData((current) => ({ ...current, phone: maskPhone(event.target.value) }));
+                      setPersonalDataDirty(true);
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Tipo</Label>
+                  <Select
+                    value={personalData.type}
+                    onValueChange={(value) => {
+                      setPersonalData((current) => ({ ...current, type: value }));
+                      setPersonalDataDirty(true);
+                    }}
+                  >
+                    <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {contactTypeOptions.map((type) => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div><Label className="text-xs">Cidade</Label><Input className="h-8 text-sm" defaultValue={ticket.location.split(", ")[0]} /></div>
-                <div><Label className="text-xs">Estado</Label><Input className="h-8 text-sm" defaultValue={ticket.location.split(", ")[1]} /></div>
+                <div>
+                  <Label className="text-xs">Cidade</Label>
+                  <Input
+                    className="h-8 text-sm"
+                    value={personalData.city}
+                    onChange={(event) => {
+                      setPersonalData((current) => ({ ...current, city: event.target.value }));
+                      setPersonalDataDirty(true);
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs">Estado</Label>
+                  <Input
+                    className="h-8 text-sm"
+                    value={personalData.uf}
+                    onChange={(event) => {
+                      setPersonalData((current) => ({ ...current, uf: event.target.value.toUpperCase().slice(0, 2) }));
+                      setPersonalDataDirty(true);
+                    }}
+                  />
+                </div>
               </div>
-              <Button size="sm" className="w-full" onClick={handleSavePersonalData}>Salvar Alterações</Button>
+              <Button size="sm" className="w-full" onClick={handleSavePersonalData}>Salvar Dados do Contato</Button>
             </div>
           </TabsContent>
           <TabsContent value="clinical">

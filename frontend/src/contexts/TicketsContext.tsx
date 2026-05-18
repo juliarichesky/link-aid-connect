@@ -379,7 +379,6 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
   const buildTicketUpdateRequest = (updates: Partial<Ticket>): ApiTicketUpdateRequest => {
     const body: ApiTicketUpdateRequest = {};
     if (updates.channel) body.canalCodigo = canalCodigo(updates.channel);
-    if (updates.sender) body.nomeContato = updates.sender;
     if (updates.status) body.statusCodigo = statusTicketCodigo(updates.status);
     if (updates.priority) body.prioridadeCodigo = prioridadeCodigo(updates.priority);
     if (updates.classification) body.classificacaoCodigo = classificacaoCodigo(updates.classification);

@@ -140,9 +140,18 @@ export interface ApiTicketRequest {
   confiancaIa?: number;
 }
 
-export type ApiTicketUpdateRequest = Partial<ApiTicketRequest> & {
+export interface ApiTicketUpdateRequest {
+  canalCodigo?: string;
   statusCodigo?: string;
-};
+  prioridadeCodigo?: string;
+  classificacaoCodigo?: string;
+  idUsuarioResponsavel?: number;
+  idDentistaResponsavel?: number;
+  assunto?: string;
+  descricao?: string;
+  resumoIa?: string;
+  confiancaIa?: number;
+}
 
 export interface ApiDentistaRequest {
   nome: string;
