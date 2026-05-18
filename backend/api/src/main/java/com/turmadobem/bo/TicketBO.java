@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @ApplicationScoped
 public class TicketBO {
@@ -149,6 +150,21 @@ public class TicketBO {
     @Transactional
     public LinkAidDtos.TicketResponse arquivar(Long id) {
         return atualizarStatus(id, "ARQUIVADO");
+    }
+
+    @Transactional
+    public LinkAidDtos.TicketResponse liberarTelefoneParaTeste(Long id) {
+        Ticket ticket = buscarEntidade(id);
+        Contato contato = ticket.getContato();
+        if (contato == null) {
+            throw new BusinessException("Ticket sem contato vinculado.");
+        }
+
+        String telefoneTeste = gerarTelefoneTeste(ticket.getIdTicket());
+        contato.setTelefone(telefoneTeste);
+        ticket.setDataAtualizacao(LocalDateTime.now());
+
+        return ApiMapper.ticket(ticket, mensagemDAO.listarPorTicket(id));
     }
 
     @Transactional
@@ -353,6 +369,13 @@ public class TicketBO {
 
     private String gerarProtocolo(Long idTicket, LocalDateTime dataHora) {
         return "TKT-" + dataHora.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "-" + String.format("%03d", idTicket);
+    }
+
+    private String gerarTelefoneTeste(Long idTicket) {
+        long idSegmento = idTicket == null ? 0 : Math.floorMod(idTicket, 1_000_000);
+        long tempoSegmento = Math.floorMod(System.currentTimeMillis(), 1_000_000);
+        int aleatorio = ThreadLocalRandom.current().nextInt(1_000);
+        return String.format("+55990%06d%06d%03d", idSegmento, tempoSegmento, aleatorio);
     }
 
     private String normalizarRemetente(String remetente) {

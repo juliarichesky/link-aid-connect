@@ -138,6 +138,7 @@ interface TicketsContextType {
   updateTicket: (id: string, updates: Partial<Ticket>) => Promise<void>;
   addTicket: (ticket: Ticket) => Promise<Ticket | void>;
   archiveTicket: (id: string) => Promise<void>;
+  releasePhoneForTesting: (id: string) => Promise<Ticket | void>;
   addChatMessage: (id: string, message: { from: string; text: string; time: string }) => Promise<void>;
   addDentist: (dentist: Dentist) => Promise<Dentist | void>;
   updateDentist: (id: number, updates: Partial<Dentist>) => Promise<void>;
@@ -146,6 +147,13 @@ interface TicketsContextType {
 const isRemoteId = (id: string | number) => /^\d+$/.test(String(id));
 
 const onlyDigits = (value?: string) => value?.replace(/\D/g, "") || undefined;
+
+const fakePhoneForTesting = (id: string) => {
+  const idSegment = onlyDigits(id)?.slice(-6).padStart(6, "0") || "000000";
+  const timeSegment = String(Date.now()).slice(-6);
+  const randomSegment = String(Math.floor(Math.random() * 1000)).padStart(3, "0");
+  return `+55990${idSegment}${timeSegment}${randomSegment}`;
+};
 
 const splitLocation = (location?: string) => {
   const [city, uf] = (location || "").split(",").map((part) => part.trim());
@@ -466,6 +474,37 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const releasePhoneForTesting = async (id: string) => {
+    if (token && isRemoteId(id)) {
+      try {
+        const updated = await linkAidApi.liberarTelefoneTeste(token, id);
+        const mapped = apiTicketToTicket(updated);
+        upsertTicket(mapped);
+        setContacts((prev) =>
+          prev.map((contact) =>
+            contact.id === mapped.idContato ? { ...contact, phone: mapped.phone } : contact
+          )
+        );
+        return mapped;
+      } catch (releaseError) {
+        setError(releaseError instanceof Error ? releaseError.message : "Falha ao liberar telefone para teste.");
+        throw releaseError;
+      }
+    }
+
+    const fakePhone = fakePhoneForTesting(id);
+    let updatedTicket: Ticket | undefined;
+    setTickets((prev) =>
+      prev.map((ticket) => {
+        if (ticket.id !== id) return ticket;
+        const nextTicket = { ...ticket, phone: fakePhone, updated: "agora" };
+        updatedTicket = nextTicket;
+        return nextTicket;
+      })
+    );
+    return updatedTicket;
+  };
+
   const addChatMessage = async (id: string, message: { from: string; text: string; time: string }) => {
     if (token && isRemoteId(id)) {
       try {
@@ -525,7 +564,7 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <TicketsContext.Provider value={{ tickets, contacts, teamMembers, dentists, loading, error, refresh, loadTicket, updateTicket, addTicket, archiveTicket, addChatMessage, addDentist, updateDentist }}>
+    <TicketsContext.Provider value={{ tickets, contacts, teamMembers, dentists, loading, error, refresh, loadTicket, updateTicket, addTicket, archiveTicket, releasePhoneForTesting, addChatMessage, addDentist, updateDentist }}>
       {children}
     </TicketsContext.Provider>
   );

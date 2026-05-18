@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Paperclip, Send, Bot, User, CalendarDays, Stethoscope } from "lucide-react";
+import { ArrowLeft, Paperclip, Send, Bot, User, CalendarDays, Stethoscope, PhoneOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,9 +31,10 @@ export default function TicketDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { tickets, teamMembers, dentists, loadTicket, updateTicket, addChatMessage } = useTickets();
+  const { tickets, teamMembers, dentists, loadTicket, updateTicket, addChatMessage, releasePhoneForTesting } = useTickets();
   const [reply, setReply] = useState("");
   const [loadingDetail, setLoadingDetail] = useState(() => Boolean(id && /^\d+$/.test(id)));
+  const [releasingPhone, setReleasingPhone] = useState(false);
 
   const ticket = tickets.find((t) => t.id === id);
   const locationState = location.state as TicketDetailLocationState | null;
@@ -114,6 +115,24 @@ export default function TicketDetail() {
     }
   };
 
+  const handleReleasePhoneForTesting = async () => {
+    if (!id || releasingPhone) return;
+    const confirmed = window.confirm(
+      "Liberar este numero para novo teste? O ticket continua salvo, mas o telefone do contato sera trocado por um numero ficticio."
+    );
+    if (!confirmed) return;
+
+    setReleasingPhone(true);
+    try {
+      const updated = await releasePhoneForTesting(id);
+      toast.success(`Numero liberado para novo teste${updated?.phone ? `: ${updated.phone}` : ""}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao liberar numero para teste");
+    } finally {
+      setReleasingPhone(false);
+    }
+  };
+
   // Related tickets by same CPF
   const relatedTickets = ticket ? tickets.filter((t) => t.cpf === ticket.cpf && t.id !== ticket.id) : [];
 
@@ -173,6 +192,17 @@ export default function TicketDetail() {
               </div>
               <div><p className="text-muted-foreground">Local</p><p className="font-medium">{ticket.location}</p></div>
             </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="w-full justify-center"
+              onClick={handleReleasePhoneForTesting}
+              disabled={releasingPhone}
+            >
+              <PhoneOff className="w-4 h-4 mr-2" />
+              {releasingPhone ? "Liberando..." : "Liberar numero para teste"}
+            </Button>
           </CardContent>
         </Card>
 

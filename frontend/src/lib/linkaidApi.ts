@@ -236,6 +236,12 @@ export const linkAidApi = {
       token,
     }),
 
+  liberarTelefoneTeste: (token: string, idTicket: string | number) =>
+    request<ApiTicketResponse>(`/tickets/${idTicket}/liberar-telefone-teste`, {
+      method: "POST",
+      token,
+    }),
+
   adicionarMensagem: (token: string, idTicket: string | number, mensagem: string, tipoRemetente = "ATENDENTE") =>
     request<ApiMensagemResponse>(`/tickets/${idTicket}/mensagens`, {
       method: "POST",

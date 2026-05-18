@@ -85,6 +85,12 @@ public class TicketResource {
         return ticketBO.arquivar(id);
     }
 
+    @POST
+    @Path("/{id}/liberar-telefone-teste")
+    public LinkAidDtos.TicketResponse liberarTelefoneParaTeste(@PathParam("id") Long id) {
+        return ticketBO.liberarTelefoneParaTeste(id);
+    }
+
     @GET
     @Path("/{id}/mensagens")
     public List<LinkAidDtos.MensagemResponse> listarMensagens(@PathParam("id") Long id) {
