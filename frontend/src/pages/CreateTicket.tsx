@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,7 +14,6 @@ import { useTickets, type Priority } from "@/contexts/TicketsContext";
 import { maskCPF, maskCNPJ, maskPhone } from "@/lib/masks";
 import {
   CANAL_LABELS,
-  DENTISTA_STATUS_LABELS,
   PRIORIDADE_LABELS,
   TIPO_CONTATO_LABELS,
 } from "@/lib/linkaidMappings";
@@ -36,7 +35,6 @@ const priorityMap: Record<string, Priority> = {
 
 const typeOptions = [
   { value: TIPO_CONTATO_LABELS.DOADOR, label: TIPO_CONTATO_LABELS.DOADOR },
-  { value: TIPO_CONTATO_LABELS.VOLUNTARIO, label: TIPO_CONTATO_LABELS.VOLUNTARIO },
   { value: TIPO_CONTATO_LABELS.PARCEIRO, label: TIPO_CONTATO_LABELS.PARCEIRO },
   { value: TIPO_CONTATO_LABELS.SOLICITANTE, label: TIPO_CONTATO_LABELS.SOLICITANTE },
   { value: TIPO_CONTATO_LABELS.BENEFICIARIO, label: TIPO_CONTATO_LABELS.BENEFICIARIO },
@@ -45,12 +43,12 @@ const typeOptions = [
 export default function CreateTicket() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { tickets, teamMembers, dentists, loading, addTicket, addDentist } = useTickets();
-  const [tab, setTab] = useState(searchParams.get("tab") || "pf");
+  const { tickets, teamMembers, loading, addTicket } = useTickets();
+  const [tab, setTab] = useState(() => searchParams.get("tab") === "pj" ? "pj" : "pf");
 
   useEffect(() => {
     const t = searchParams.get("tab");
-    if (t) setTab(t);
+    if (t === "pf" || t === "pj") setTab(t);
   }, [searchParams]);
   
 
@@ -65,43 +63,6 @@ export default function CreateTicket() {
   const [priority, setPriority] = useState("");
   const [responsible, setResponsible] = useState("");
   const [ticketType, setTicketType] = useState<string>(TIPO_CONTATO_LABELS.SOLICITANTE);
-
-  const [ndName, setNdName] = useState("");
-  const [ndSpecialty, setNdSpecialty] = useState("");
-  const [ndPhone, setNdPhone] = useState("");
-  const [ndEmail, setNdEmail] = useState("");
-  const [ndCrm, setNdCrm] = useState("");
-  const [ndCity, setNdCity] = useState("");
-  const [ndUf, setNdUf] = useState("");
-
-  const handleCreateDentist = async () => {
-    if (!ndName || !ndSpecialty) {
-      toast.error("Preencha nome e especialidade do dentista");
-      return;
-    }
-    const newId = dentists.length + 1;
-    try {
-      await addDentist({
-        id: newId,
-        name: ndName,
-        specialty: ndSpecialty,
-        status: DENTISTA_STATUS_LABELS.A,
-        totalSlots: 0,
-        openSlots: 0,
-        phone: ndPhone,
-        email: ndEmail,
-        crm: ndCrm,
-        location: ndCity,
-        uf: ndUf.toUpperCase().slice(0, 2),
-        country: "Brasil",
-        schedule: [],
-      });
-      toast.success("Dentista cadastrado com sucesso!");
-      setNdName(""); setNdSpecialty(""); setNdPhone(""); setNdEmail(""); setNdCrm(""); setNdCity(""); setNdUf("");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao cadastrar dentista");
-    }
-  };
 
   const handleCreate = async () => {
     if (!name || !subject || !priority || !channel) {
@@ -146,30 +107,6 @@ export default function CreateTicket() {
   };
 
   // Dentist tab: direct registration form
-  const renderDentistForm = () => (
-    <Card className="shadow-sm">
-      <CardHeader><CardTitle className="text-base">Cadastrar Novo Dentista Voluntário</CardTitle></CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div><Label>Nome Completo *</Label><Input placeholder="Nome completo do profissional" value={ndName} onChange={(e) => setNdName(e.target.value)} /></div>
-          <div><Label>Especialidade *</Label><Input placeholder="Ex: Ortodontia, Endodontia" value={ndSpecialty} onChange={(e) => setNdSpecialty(e.target.value)} /></div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div><Label>Telefone</Label><Input placeholder="(00) 00000-0000" value={ndPhone} onChange={(e) => setNdPhone(maskPhone(e.target.value))} /></div>
-          <div><Label>E-mail</Label><Input placeholder="email@exemplo.com" value={ndEmail} onChange={(e) => setNdEmail(e.target.value)} /></div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div><Label>CRO</Label><Input placeholder="CRO-XX 00000" value={ndCrm} onChange={(e) => setNdCrm(e.target.value)} /></div>
-          <div><Label>Cidade</Label><Input placeholder="Cidade" value={ndCity} onChange={(e) => setNdCity(e.target.value)} /></div>
-          <div><Label>UF</Label><Input placeholder="UF" value={ndUf} onChange={(e) => setNdUf(e.target.value.toUpperCase().slice(0, 2))} /></div>
-        </div>
-        <Button className="w-full" onClick={handleCreateDentist}>
-          <Plus className="w-4 h-4 mr-1" /> Cadastrar Dentista
-        </Button>
-      </CardContent>
-    </Card>
-  );
-
   const renderForm = () => (
     <Card className="shadow-sm">
       <CardHeader><CardTitle className="text-base">Dados do {tab === "pf" ? "Paciente" : "Empresa"}</CardTitle></CardHeader>
@@ -263,11 +200,9 @@ export default function CreateTicket() {
         <TabsList>
           <TabsTrigger value="pf">Pessoa Física</TabsTrigger>
           <TabsTrigger value="pj">Pessoa Jurídica</TabsTrigger>
-          <TabsTrigger value="dentist">Dentista</TabsTrigger>
         </TabsList>
         <TabsContent value="pf">{renderForm()}</TabsContent>
         <TabsContent value="pj">{renderForm()}</TabsContent>
-        <TabsContent value="dentist">{renderDentistForm()}</TabsContent>
       </Tabs>
     </div>
   );

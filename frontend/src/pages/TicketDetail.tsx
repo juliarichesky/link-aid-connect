@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Paperclip, Send, Bot, User, CalendarDays, Stethoscope, PhoneOff } from "lucide-react";
+import { ArrowLeft, Paperclip, Send, Bot, User, CalendarDays, PhoneOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -74,7 +74,7 @@ export default function TicketDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { tickets, teamMembers, dentists, loading, loadTicket, updateTicket, updateContact, addChatMessage, releasePhoneForTesting } = useTickets();
+  const { tickets, teamMembers, loading, loadTicket, updateTicket, updateContact, addChatMessage, releasePhoneForTesting } = useTickets();
   const [reply, setReply] = useState("");
   const [loadingDetail, setLoadingDetail] = useState(() => Boolean(id && /^\d+$/.test(id)));
   const [releasingPhone, setReleasingPhone] = useState(false);
@@ -86,7 +86,6 @@ export default function TicketDetail() {
   const [priority, setPriority] = useState<string>(ticket?.priority || "Alta");
   const [status, setStatus] = useState(ticket?.status || "Aberto");
   const [responsible, setResponsible] = useState(ticket?.responsible || "");
-  const [dentistResp, setDentistResp] = useState(ticket?.dentistResponsible || "");
   const [channel, setChannel] = useState(ticket?.channel || "WhatsApp");
   const [personalData, setPersonalData] = useState(() => personalDataFromTicket(ticket));
   const [personalDataDirty, setPersonalDataDirty] = useState(false);
@@ -119,7 +118,6 @@ export default function TicketDetail() {
       setPriority(ticket.priority);
       setStatus(ticket.status);
       setResponsible(ticket.responsible);
-      setDentistResp(ticket.dentistResponsible || "");
       setChannel(ticket.channel);
       if (!personalDataDirty) {
         setPersonalData(personalDataFromTicket(ticket));
@@ -358,18 +356,6 @@ export default function TicketDetail() {
               </Select>
             </div>
             <div>
-              <Label className="text-xs flex items-center gap-1"><Stethoscope className="w-3 h-3" /> Dentista Responsável</Label>
-              <Select value={dentistResp} onValueChange={(v) => { const val = v === "none" ? "" : v; setDentistResp(val); handleSave("dentistResponsible", val); }}>
-                <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Nenhum" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Nenhum</SelectItem>
-                  {dentists.filter((d) => d.status === "Ativo").map((d) => (
-                    <SelectItem key={d.id} value={d.name}>{d.name} — {d.specialty}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
               <Label className="text-xs">Canal</Label>
               <Select value={channel} onValueChange={(v) => { setChannel(v); handleSave("channel", v); }}>
                 <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
@@ -403,8 +389,7 @@ export default function TicketDetail() {
                     <span className="text-muted-foreground">{h.openedAt}</span>
                   </div>
                   <p>{h.subject}</p>
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>{h.dentistResponsible || "-"}</span>
+                  <div className="flex justify-end text-muted-foreground">
                     <Badge variant="secondary" className="text-[10px] h-4">{h.status}</Badge>
                   </div>
                 </div>

@@ -79,6 +79,7 @@ export interface Dentist {
   uf: string;
   country: string;
   schedule: { day: string; time: string }[];
+  registrationDate?: string;
 }
 
 const initialTeam: TeamMember[] = [
@@ -263,6 +264,7 @@ const apiDentistaToDentist = (dentista: ApiDentistaResponse): Dentist => ({
   uf: dentista.uf || "",
   country: "Brasil",
   schedule: [],
+  registrationDate: dentista.dataCadastro || "",
 });
 
 const apiUsuarioToTeamMember = (usuario: ApiUsuarioResponse): TeamMember => ({
@@ -648,8 +650,12 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    setDentists((prev) => [...prev, dentist]);
-    return dentist;
+    const localDentist = {
+      ...dentist,
+      registrationDate: dentist.registrationDate || new Date().toISOString(),
+    };
+    setDentists((prev) => [...prev, localDentist]);
+    return localDentist;
   };
 
   const updateDentist = async (id: number, updates: Partial<Dentist>) => {

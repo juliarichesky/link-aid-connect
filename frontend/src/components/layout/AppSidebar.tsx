@@ -51,7 +51,8 @@ export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const { user } = useAuth();
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) =>
+    location.pathname === path || (path !== "/" && location.pathname.startsWith(`${path}/`));
   const canSee = (item: MenuItem) =>
     !item.roles || (user && item.roles.includes(user.role));
 

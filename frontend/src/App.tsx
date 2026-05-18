@@ -17,6 +17,7 @@ import Settings from "./pages/Settings";
 import Financial from "./pages/Financial";
 import History from "./pages/History";
 import DentistComms from "./pages/DentistComms";
+import NewDentist from "./pages/NewDentist";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
@@ -70,6 +71,7 @@ const AppRoutes = () => (
               <Route path="/history" element={<History />} />
               <Route path="/settings" element={<ProtectedRoute roles={["admin"]}><Settings /></ProtectedRoute>} />
               <Route path="/dentists" element={<DentistComms />} />
+              <Route path="/dentists/new" element={<NewDentist />} />
               <Route path="/financial" element={<ProtectedRoute roles={["admin"]}><Financial /></ProtectedRoute>} />
               <Route path="/dentist-comms" element={<RedirectDentistComms />} />
               <Route path="*" element={<NotFound />} />
