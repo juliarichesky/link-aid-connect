@@ -326,7 +326,7 @@ export default function Contacts() {
     <div className="p-6 space-y-5 animate-fade-in">
       <div>
         <h1 className="text-2xl font-display font-bold">Contatos</h1>
-        <p className="text-sm text-muted-foreground">Gestão de relacionamentos (CRM)</p>
+        <p className="text-sm text-muted-foreground">Gestão de relacionamentos</p>
       </div>
 
       <div className="relative max-w-sm">
