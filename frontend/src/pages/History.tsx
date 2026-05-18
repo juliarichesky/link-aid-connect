@@ -1,5 +1,21 @@
-import { useState } from "react";
-import { Search, ArrowLeft, Clock, User, FileText, ChevronRight, Stethoscope, RotateCcw } from "lucide-react";
+import { useMemo, useState } from "react";
+import {
+  Search,
+  ArrowLeft,
+  Clock,
+  User,
+  FileText,
+  ChevronRight,
+  Stethoscope,
+  RotateCcw,
+  MessageCircle,
+  Instagram,
+  Mail,
+  MoreHorizontal,
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +32,8 @@ import {
   Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useTickets } from "@/contexts/TicketsContext";
+import { cn } from "@/lib/classnames";
+import { CANAL_LABELS, PRIORIDADE_LABELS } from "@/lib/linkaidMappings";
 import { toast } from "sonner";
 
 interface HistoryTicket {
@@ -56,12 +74,202 @@ const staticHistoryTickets: HistoryTicket[] = [
 ];
 
 const ITEMS_PER_PAGE = 10;
+const FILTER_SELECT_CLASS = "w-56";
+
+const channelIcon: Record<string, React.ElementType> = {
+  [CANAL_LABELS.WHATSAPP]: MessageCircle,
+  [CANAL_LABELS.INSTAGRAM]: Instagram,
+  [CANAL_LABELS.EMAIL]: Mail,
+  [CANAL_LABELS.MANUAL]: MoreHorizontal,
+};
+
+const channelColors: Record<string, string> = {
+  [CANAL_LABELS.WHATSAPP]: "text-green-500",
+  [CANAL_LABELS.INSTAGRAM]: "text-pink-500",
+  [CANAL_LABELS.EMAIL]: "text-blue-500",
+  [CANAL_LABELS.MANUAL]: "text-muted-foreground",
+};
+
+const priorityClasses: Record<string, string> = {
+  [PRIORIDADE_LABELS.CRITICA]: "bg-status-critical text-status-critical-foreground",
+  [PRIORIDADE_LABELS.ALTA]: "bg-status-high text-status-high-foreground",
+  [PRIORIDADE_LABELS.MEDIA]: "bg-status-medium text-status-medium-foreground",
+  [PRIORIDADE_LABELS.BAIXA]: "bg-status-low text-status-low-foreground",
+};
+
+const prioritySortValue: Record<string, number> = {
+  [PRIORIDADE_LABELS.BAIXA]: 1,
+  [PRIORIDADE_LABELS.MEDIA]: 2,
+  [PRIORIDADE_LABELS.ALTA]: 3,
+  [PRIORIDADE_LABELS.CRITICA]: 4,
+};
+
+type SortKey =
+  | "id"
+  | "channel"
+  | "sender"
+  | "subject"
+  | "classification"
+  | "priority"
+  | "status"
+  | "dentist"
+  | "date";
+type SortDirection = "asc" | "desc";
+type SortConfig = {
+  key: SortKey;
+  direction: SortDirection;
+} | null;
+
+type ChannelFilterOptionValue = "whatsapp" | "instagram" | "email" | "outros";
+type ChannelFilterValue = "all" | ChannelFilterOptionValue;
+
+type ChannelFilterOption = {
+  value: ChannelFilterOptionValue;
+  label: string;
+  channels: string[];
+};
+
+const CHANNEL_FILTER_OPTIONS: ChannelFilterOption[] = [
+  {
+    value: "whatsapp",
+    label: "WhatsApp",
+    channels: [
+      CANAL_LABELS.WHATSAPP,
+      CANAL_LABELS.WATSON_SANDBOX,
+      "WATSON_SANDBOX",
+      "Twilio",
+      "Twilio Sandbox",
+      "Twilio WhatsApp",
+      "TWILIO_WATSON",
+    ],
+  },
+  {
+    value: "instagram",
+    label: "Instagram",
+    channels: [CANAL_LABELS.INSTAGRAM],
+  },
+  {
+    value: "email",
+    label: "Email",
+    channels: [CANAL_LABELS.EMAIL, "Email"],
+  },
+  {
+    value: "outros",
+    label: "Outros",
+    channels: [CANAL_LABELS.MANUAL, "Manual", "Cadastro manual", "Outro", "Outros"],
+  },
+];
+
+const normalizeForFilter = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+const ticketChannelLabel = (channel: string) => {
+  const normalizedChannel = normalizeForFilter(channel);
+  if (
+    normalizedChannel.includes("whatsapp") ||
+    normalizedChannel.includes("twilio") ||
+    normalizedChannel.includes("watson")
+  ) {
+    return CANAL_LABELS.WHATSAPP;
+  }
+  if (normalizedChannel === "email") {
+    return CANAL_LABELS.EMAIL;
+  }
+  return channel;
+};
+
+const matchesChannelOption = (channel: string, option: ChannelFilterOption) => {
+  const normalizedChannel = normalizeForFilter(ticketChannelLabel(channel));
+  return option.channels.some((candidate) => normalizeForFilter(ticketChannelLabel(candidate)) === normalizedChannel);
+};
+
+const parseSortableDate = (value: string) => {
+  const normalized = normalizeForFilter(value);
+  if (!normalized) return 0;
+  if (normalized.includes("agora")) return Number.MAX_SAFE_INTEGER;
+
+  const brDate = value.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:,?\s+(\d{2}):(\d{2}))?/);
+  if (brDate) {
+    const [, day, month, year, hour = "0", minute = "0"] = brDate;
+    return new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute)).getTime();
+  }
+
+  const parsed = new Date(value).getTime();
+  return Number.isNaN(parsed) ? 0 : parsed;
+};
+
+const sortValueForHistoryTicket = (ticket: HistoryTicket, key: SortKey) => {
+  switch (key) {
+    case "id":
+      return ticket.protocol || ticket.id;
+    case "channel":
+      return ticketChannelLabel(ticket.channel);
+    case "sender":
+      return ticket.sender;
+    case "subject":
+      return ticket.subject;
+    case "classification":
+      return ticket.classification;
+    case "priority":
+      return prioritySortValue[ticket.priority] ?? 0;
+    case "status":
+      return ticket.status;
+    case "dentist":
+      return ticket.dentist;
+    case "date":
+      return parseSortableDate(ticket.openedAt || ticket.date);
+    default:
+      return "";
+  }
+};
+
+const compareSortValues = (left: string | number, right: string | number) => {
+  if (typeof left === "number" && typeof right === "number") {
+    return left - right;
+  }
+
+  return String(left).localeCompare(String(right), "pt-BR", {
+    numeric: true,
+    sensitivity: "base",
+  });
+};
+
+type SortableHeaderProps = {
+  label: string;
+  column: SortKey;
+  widthClass: string;
+  sortConfig: SortConfig;
+  onSort: (column: SortKey) => void;
+};
+
+const SortableHeader = ({ label, column, widthClass, sortConfig, onSort }: SortableHeaderProps) => {
+  const isActive = sortConfig?.key === column;
+  const Icon = isActive ? (sortConfig.direction === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
+  const ariaSort = isActive ? (sortConfig.direction === "asc" ? "ascending" : "descending") : "none";
+
+  return (
+    <TableHead className={cn(widthClass, "p-0 text-center")} aria-sort={ariaSort}>
+      <button
+        type="button"
+        className="inline-flex h-10 w-full items-center justify-center gap-1.5 px-2 text-center text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        onClick={() => onSort(column)}
+      >
+        <span className="truncate">{label}</span>
+        <Icon className={cn("h-3.5 w-3.5 shrink-0", isActive && "text-foreground")} />
+      </button>
+    </TableHead>
+  );
+};
 
 export default function History() {
   const { tickets: globalTickets, updateTicket } = useTickets();
   const [search, setSearch] = useState("");
-  const [channelFilter, setChannelFilter] = useState("all");
+  const [channelFilter, setChannelFilter] = useState<ChannelFilterValue>("all");
   const [dentistFilter, setDentistFilter] = useState("all");
+  const [sortConfig, setSortConfig] = useState<SortConfig>(null);
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<HistoryTicket | null>(null);
 
@@ -100,22 +308,43 @@ export default function History() {
   const merged = [...staticHistoryTickets, ...resolvedFromGlobal.filter((t) => !existingIds.has(t.id))];
 
   // Sort: Resolvido first, then Fechado
-  const sorted = [...merged].sort((a, b) => {
+  const defaultSorted = [...merged].sort((a, b) => {
     const statusOrder: Record<string, number> = { "Resolvido": 0, "Fechado": 1 };
     return (statusOrder[a.status] ?? 2) - (statusOrder[b.status] ?? 2);
   });
 
-  const filtered = sorted.filter((t) => {
+  const filtered = defaultSorted.filter((t) => {
+    const selectedChannel = CHANNEL_FILTER_OPTIONS.find((option) => option.value === channelFilter);
     const ticketCode = t.protocol || t.id;
     const matchSearch = t.sender.toLowerCase().includes(search.toLowerCase()) || ticketCode.toLowerCase().includes(search.toLowerCase()) || t.subject.toLowerCase().includes(search.toLowerCase());
-    const matchChannel = channelFilter === "all" || t.channel === channelFilter;
+    const matchChannel = channelFilter === "all" || Boolean(selectedChannel && matchesChannelOption(t.channel, selectedChannel));
     const matchDentist = dentistFilter === "all" || t.dentist === dentistFilter;
     return matchSearch && matchChannel && matchDentist;
   });
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const sorted = useMemo(() => {
+    if (!sortConfig) return filtered;
+
+    return [...filtered].sort((left, right) => {
+      const result = compareSortValues(
+        sortValueForHistoryTicket(left, sortConfig.key),
+        sortValueForHistoryTicket(right, sortConfig.key),
+      );
+      return sortConfig.direction === "asc" ? result : -result;
+    });
+  }, [filtered, sortConfig]);
+
+  const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
+  const paginated = sorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
   const dentists = [...new Set(merged.map((t) => t.dentist).filter((d) => d !== "-"))];
+
+  const handleSort = (column: SortKey) => {
+    setSortConfig((current) => ({
+      key: column,
+      direction: current?.key === column && current.direction === "asc" ? "desc" : "asc",
+    }));
+    setPage(1);
+  };
 
   const handleRevert = async (ticketId: string) => {
     try {
@@ -275,17 +504,16 @@ export default function History() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Buscar por nome, ID ou assunto..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
-        <Select value={channelFilter} onValueChange={(v) => { setChannelFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Canal" /></SelectTrigger>
+        <Select value={channelFilter} onValueChange={(v) => { setChannelFilter(v as ChannelFilterValue); setPage(1); }}>
+          <SelectTrigger className={FILTER_SELECT_CLASS}><SelectValue placeholder="Canal" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="WhatsApp">WhatsApp</SelectItem>
-            <SelectItem value="Instagram">Instagram</SelectItem>
-            <SelectItem value="E-mail">E-mail</SelectItem>
-            <SelectItem value="Outro">Outros</SelectItem>
+            {CHANNEL_FILTER_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Select value={dentistFilter} onValueChange={(v) => { setDentistFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-48"><SelectValue placeholder="Dentista" /></SelectTrigger>
+          <SelectTrigger className={FILTER_SELECT_CLASS}><SelectValue placeholder="Dentista" /></SelectTrigger>
           <SelectContent>
             {dentists.map((d) => (
               <SelectItem key={d} value={d}>{d}</SelectItem>
@@ -303,46 +531,66 @@ export default function History() {
         )}
       </div>
 
-      <div className="border border-border rounded-lg overflow-hidden">
-        <Table>
+      <div className="border border-border rounded-lg shadow-sm max-h-[calc(100vh-18rem)] overflow-auto [&>div]:overflow-visible">
+        <Table className="min-w-[1380px] table-fixed">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead>ID</TableHead>
-              <TableHead>Remetente</TableHead>
-              <TableHead>Assunto</TableHead>
-              <TableHead>Canal</TableHead>
-              <TableHead>Dentista</TableHead>
-              <TableHead>Data</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-12"></TableHead>
+              <SortableHeader label="ID" column="id" widthClass="w-[160px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Canal" column="channel" widthClass="w-[84px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Remetente" column="sender" widthClass="w-[180px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Assunto" column="subject" widthClass="w-[240px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Classificação" column="classification" widthClass="w-[132px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Prioridade" column="priority" widthClass="w-[112px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Status" column="status" widthClass="w-[152px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Dentista" column="dentist" widthClass="w-[180px]" sortConfig={sortConfig} onSort={handleSort} />
+              <SortableHeader label="Data" column="date" widthClass="w-[140px]" sortConfig={sortConfig} onSort={handleSort} />
+              <TableHead className="w-12 text-center"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginated.map((t) => (
-              <TableRow key={t.id} className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setSelected(t)}>
-                <TableCell className="font-mono text-xs">{t.protocol || t.id}</TableCell>
-                <TableCell className="font-medium text-sm">{t.sender}</TableCell>
-                <TableCell className="text-sm">{t.subject}</TableCell>
-                <TableCell className="text-sm">{t.channel}</TableCell>
-                <TableCell className="text-sm text-muted-foreground">{t.dentist}</TableCell>
-                <TableCell className="text-sm text-muted-foreground">{t.date}</TableCell>
-                <TableCell><Badge variant="secondary">{t.status}</Badge></TableCell>
-                <TableCell>
-                  {t.isFromGlobal && (
-                    <button
-                      className="text-muted-foreground hover:text-foreground transition-colors"
-                      onClick={(e) => { e.stopPropagation(); handleRevert(t.id); }}
-                      title="Reverter para ativo"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                    </button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+            {paginated.map((t) => {
+              const channelLabel = ticketChannelLabel(t.channel);
+              const ChIcon = channelIcon[channelLabel] || MoreHorizontal;
+              const chColor = channelColors[channelLabel] || "text-muted-foreground";
+              return (
+                <TableRow key={t.id} className="cursor-pointer hover:bg-accent/60 transition-colors" onClick={() => setSelected(t)}>
+                  <TableCell className="font-mono text-xs whitespace-nowrap">{t.protocol || t.id}</TableCell>
+                  <TableCell className="text-center" title={channelLabel} aria-label={channelLabel}>
+                    <ChIcon className={cn("mx-auto w-4 h-4", chColor)} />
+                  </TableCell>
+                  <TableCell className="font-medium text-xs truncate" title={t.sender}>{t.sender}</TableCell>
+                  <TableCell className="text-xs">
+                    <span className="block max-w-[208px] truncate" title={t.subject}>{t.subject}</span>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" className="text-xs min-w-[80px] flex items-center justify-center text-center">{t.classification}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <span className={cn("inline-flex items-center justify-center text-xs font-medium px-2.5 py-0.5 rounded-full min-w-[72px]", priorityClasses[t.priority] || "bg-muted text-muted-foreground")}>
+                      {t.priority}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-xs truncate" title={t.status}>{t.status}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground truncate" title={t.dentist}>{t.dentist}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{t.date}</TableCell>
+                  <TableCell>
+                    {t.isFromGlobal && (
+                      <button
+                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        onClick={(e) => { e.stopPropagation(); handleRevert(t.id); }}
+                        title="Reverter para ativo"
+                        aria-label="Reverter para ativo"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                      </button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
             {paginated.length === 0 && (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Nenhum resultado encontrado</TableCell>
+                <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">Nenhum resultado encontrado</TableCell>
               </TableRow>
             )}
           </TableBody>
