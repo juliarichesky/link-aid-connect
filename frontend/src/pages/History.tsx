@@ -75,6 +75,7 @@ const staticHistoryTickets: HistoryTicket[] = [
 
 const ITEMS_PER_PAGE = 10;
 const FILTER_SELECT_CLASS = "w-56";
+const selectFilterValue = (value: string) => (value === "all" ? undefined : value);
 
 const channelIcon: Record<string, React.ElementType> = {
   [CANAL_LABELS.WHATSAPP]: MessageCircle,
@@ -112,7 +113,6 @@ type SortKey =
   | "classification"
   | "priority"
   | "status"
-  | "dentist"
   | "date";
 type SortDirection = "asc" | "desc";
 type SortConfig = {
@@ -217,8 +217,6 @@ const sortValueForHistoryTicket = (ticket: HistoryTicket, key: SortKey) => {
       return prioritySortValue[ticket.priority] ?? 0;
     case "status":
       return ticket.status;
-    case "dentist":
-      return ticket.dentist;
     case "date":
       return parseSortableDate(ticket.openedAt || ticket.date);
     default:
@@ -268,7 +266,6 @@ export default function History() {
   const { tickets: globalTickets, loading, updateTicket } = useTickets();
   const [search, setSearch] = useState("");
   const [channelFilter, setChannelFilter] = useState<ChannelFilterValue>("all");
-  const [dentistFilter, setDentistFilter] = useState("all");
   const [sortConfig, setSortConfig] = useState<SortConfig>(null);
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<HistoryTicket | null>(null);
@@ -320,8 +317,7 @@ export default function History() {
     const ticketCode = t.protocol || t.id;
     const matchSearch = t.sender.toLowerCase().includes(search.toLowerCase()) || ticketCode.toLowerCase().includes(search.toLowerCase()) || t.subject.toLowerCase().includes(search.toLowerCase());
     const matchChannel = channelFilter === "all" || Boolean(selectedChannel && matchesChannelOption(t.channel, selectedChannel));
-    const matchDentist = dentistFilter === "all" || t.dentist === dentistFilter;
-    return matchSearch && matchChannel && matchDentist;
+    return matchSearch && matchChannel;
   });
 
   const sorted = useMemo(() => {
@@ -338,7 +334,6 @@ export default function History() {
 
   const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE);
   const paginated = sorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
-  const dentists = [...new Set(merged.map((t) => t.dentist).filter((d) => d !== "-"))];
 
   const handleSort = (column: SortKey) => {
     setSortConfig((current) => ({
@@ -402,7 +397,6 @@ export default function History() {
                 <div><p className="text-xs text-muted-foreground">Canal</p><p className="font-medium">{selected.channel}</p></div>
                 <div><p className="text-xs text-muted-foreground">Abertura</p><p className="font-medium">{selected.openedAt}</p></div>
                 <div><p className="text-xs text-muted-foreground">Responsável</p><p className="font-medium">{selected.responsible}</p></div>
-                <div><p className="text-xs text-muted-foreground">Dentista</p><p className="font-medium">{selected.dentist}</p></div>
               </div>
               <Separator />
               <div><p className="text-xs text-muted-foreground">Assunto</p><p className="text-sm font-medium">{selected.subject}</p></div>
@@ -506,27 +500,20 @@ export default function History() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Buscar por nome, ID ou assunto..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
-        <Select value={channelFilter} onValueChange={(v) => { setChannelFilter(v as ChannelFilterValue); setPage(1); }}>
+        <Select value={selectFilterValue(channelFilter)} onValueChange={(v) => { setChannelFilter(v as ChannelFilterValue); setPage(1); }}>
           <SelectTrigger className={FILTER_SELECT_CLASS}><SelectValue placeholder="Canal" /></SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
             {CHANNEL_FILTER_OPTIONS.map((option) => (
               <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Select value={dentistFilter} onValueChange={(v) => { setDentistFilter(v); setPage(1); }}>
-          <SelectTrigger className={FILTER_SELECT_CLASS}><SelectValue placeholder="Dentista" /></SelectTrigger>
-          <SelectContent>
-            {dentists.map((d) => (
-              <SelectItem key={d} value={d}>{d}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {(channelFilter !== "all" || dentistFilter !== "all") && (
+        {channelFilter !== "all" && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => { setChannelFilter("all"); setDentistFilter("all"); setPage(1); }}
+            onClick={() => { setChannelFilter("all"); setPage(1); }}
           >
             Limpar filtros
           </Button>
@@ -534,7 +521,7 @@ export default function History() {
       </div>
 
       <div className="border border-border rounded-lg shadow-sm max-h-[calc(100vh-18rem)] overflow-auto [&>div]:overflow-visible">
-        <Table className="min-w-[1380px] table-fixed">
+        <Table className="min-w-[1200px] table-fixed">
           <TableHeader>
             <TableRow className="bg-muted/50">
               <SortableHeader label="ID" column="id" widthClass="w-[160px]" sortConfig={sortConfig} onSort={handleSort} />
@@ -544,7 +531,6 @@ export default function History() {
               <SortableHeader label="Classificação" column="classification" widthClass="w-[132px]" sortConfig={sortConfig} onSort={handleSort} />
               <SortableHeader label="Prioridade" column="priority" widthClass="w-[112px]" sortConfig={sortConfig} onSort={handleSort} />
               <SortableHeader label="Status" column="status" widthClass="w-[152px]" sortConfig={sortConfig} onSort={handleSort} />
-              <SortableHeader label="Dentista" column="dentist" widthClass="w-[180px]" sortConfig={sortConfig} onSort={handleSort} />
               <SortableHeader label="Data" column="date" widthClass="w-[140px]" sortConfig={sortConfig} onSort={handleSort} />
               <TableHead className="w-12 text-center"></TableHead>
             </TableRow>
@@ -573,7 +559,6 @@ export default function History() {
                     </span>
                   </TableCell>
                   <TableCell className="text-xs truncate" title={t.status}>{t.status}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground truncate" title={t.dentist}>{t.dentist}</TableCell>
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{t.date}</TableCell>
                   <TableCell>
                     {t.isFromGlobal && (
@@ -592,7 +577,7 @@ export default function History() {
             })}
             {paginated.length === 0 && (
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
                   {loading ? "Carregando histórico..." : "Nenhum resultado encontrado"}
                 </TableCell>
               </TableRow>

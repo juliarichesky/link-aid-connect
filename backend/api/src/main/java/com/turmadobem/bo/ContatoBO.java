@@ -39,7 +39,7 @@ public class ContatoBO {
     @Transactional
     public LinkAidDtos.ContatoResponse criar(LinkAidDtos.ContatoRequest request) {
         Contato contato = new Contato();
-        preencher(contato, request);
+        preencher(contato, request, false);
         contato.setDataCadastro(LocalDateTime.now());
         contatoDAO.persist(contato);
         return ApiMapper.contato(contato);
@@ -48,7 +48,7 @@ public class ContatoBO {
     @Transactional
     public LinkAidDtos.ContatoResponse atualizar(Long id, LinkAidDtos.ContatoRequest request) {
         Contato contato = buscarEntidade(id);
-        preencher(contato, request);
+        preencher(contato, request, true);
         return ApiMapper.contato(contato);
     }
 
@@ -102,7 +102,7 @@ public class ContatoBO {
         return contato;
     }
 
-    private void preencher(Contato contato, LinkAidDtos.ContatoRequest request) {
+    private void preencher(Contato contato, LinkAidDtos.ContatoRequest request, boolean preservarTipoAtual) {
         String documento = normalizarDocumento(request.documento());
         if (documento != null) {
             Contato existente = contatoDAO.buscarPorDocumento(documento);
@@ -114,7 +114,7 @@ public class ContatoBO {
         contato.setDocumento(documento);
         contato.setEmail(normalizarEmail(request.email()));
         contato.setTelefone(normalizarTexto(request.telefone()));
-        contato.setTipoContato(buscarTipo(request.tipoContatoCodigo()));
+        contato.setTipoContato(buscarTipo(request.tipoContatoCodigo(), preservarTipoAtual ? contato.getTipoContato() : null));
         contato.setCidade(normalizarTexto(request.cidade()));
         contato.setUf(normalizarUf(request.uf()));
         contato.setObservacao(normalizarTexto(request.observacao()));
@@ -129,8 +129,15 @@ public class ContatoBO {
     }
 
     private TipoContato buscarTipo(String codigo) {
+        return buscarTipo(codigo, null);
+    }
+
+    private TipoContato buscarTipo(String codigo, TipoContato tipoAtual) {
         TipoContato tipo = tipoContatoDAO.buscarPorCodigo(codigo);
         if (tipo == null) {
+            if (tipoAtual != null) {
+                return tipoAtual;
+            }
             throw new BusinessException("Tipo de contato invalido.");
         }
         return tipo;

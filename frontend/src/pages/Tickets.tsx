@@ -68,6 +68,7 @@ const typeColors: Record<string, string> = {
 
 const ITEMS_PER_PAGE = 10;
 const FILTER_SELECT_CLASS = "w-56";
+const selectFilterValue = (value: string) => (value === "all" ? undefined : value);
 
 type SortKey =
   | "id"
@@ -445,34 +446,38 @@ export default function Tickets() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Buscar por nome, assunto ou ID..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
-        <Select value={channelFilter} onValueChange={(v) => handleChannelFilterChange(v as ChannelFilterValue)}>
+        <Select value={selectFilterValue(channelFilter)} onValueChange={(v) => handleChannelFilterChange(v as ChannelFilterValue)}>
           <SelectTrigger className={FILTER_SELECT_CLASS}><SelectValue placeholder="Canais" /></SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
             {CHANNEL_FILTER_OPTIONS.map((option) => (
               <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Select value={classificationFilter} onValueChange={(v) => { setClassificationFilter(v as ClassificationFilterValue); setPage(1); }}>
+        <Select value={selectFilterValue(classificationFilter)} onValueChange={(v) => { setClassificationFilter(v as ClassificationFilterValue); setPage(1); }}>
           <SelectTrigger className={FILTER_SELECT_CLASS}><SelectValue placeholder="Classificação" /></SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
             {CLASSIFICATION_FILTER_OPTIONS.map((option) => (
               <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <Select value={priorityFilter} onValueChange={(v) => { setPriorityFilter(v); setPage(1); }}>
+        <Select value={selectFilterValue(priorityFilter)} onValueChange={(v) => { setPriorityFilter(v); setPage(1); }}>
           <SelectTrigger className={FILTER_SELECT_CLASS}><SelectValue placeholder="Prioridade" /></SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="Crítica">Crítica</SelectItem>
             <SelectItem value="Alta">Alta</SelectItem>
             <SelectItem value="Média">Média</SelectItem>
             <SelectItem value="Baixa">Baixa</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v as StatusFilterValue); setPage(1); }}>
+        <Select value={selectFilterValue(statusFilter)} onValueChange={(v) => { setStatusFilter(v as StatusFilterValue); setPage(1); }}>
           <SelectTrigger className={FILTER_SELECT_CLASS}><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
             {STATUS_FILTER_OPTIONS.map((option) => (
               <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
             ))}
