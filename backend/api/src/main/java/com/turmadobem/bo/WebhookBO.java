@@ -1,6 +1,7 @@
 package com.turmadobem.bo;
 
 import com.turmadobem.dao.TicketDAO;
+import com.turmadobem.dao.TicketMensagemDAO;
 import com.turmadobem.dao.WebhookEventoDAO;
 import com.turmadobem.dto.LinkAidDtos;
 import com.turmadobem.exception.BusinessException;
@@ -22,10 +23,13 @@ public class WebhookBO {
     TicketDAO ticketDAO;
 
     @Inject
+    TicketMensagemDAO ticketMensagemDAO;
+
+    @Inject
     WebhookEventoDAO webhookEventoDAO;
 
     @Transactional
-    public LinkAidDtos.TicketResponse criarTicketViaWatson(LinkAidDtos.WebhookTicketRequest request) {
+    public LinkAidDtos.WebhookTicketResponse criarTicketViaWatson(LinkAidDtos.WebhookTicketRequest request) {
         if (request.body() == null || request.body().isBlank()) {
             throw new BusinessException("Corpo da mensagem do webhook e obrigatorio.");
         }
@@ -36,10 +40,13 @@ public class WebhookBO {
         String nome = primeiroValor(request.nome(), request.from(), "Contato WhatsApp");
         Ticket ticketAberto = ticketDAO.buscarAbertoPorTelefone(request.from());
         if (ticketAberto != null) {
+            boolean atendimentoHumanoIniciado = ticketMensagemDAO.existeAtendentePorTicket(ticketAberto.getIdTicket());
             ticketBO.registrarMensagem(ticketAberto, "CONTATO", request.body(), null);
-            ticketBO.registrarMensagem(ticketAberto, "IA", respostaIaComProtocolo(request.respostaIa(), ticketAberto.getProtocolo()), null);
+            if (!atendimentoHumanoIniciado) {
+                ticketBO.registrarMensagem(ticketAberto, "IA", respostaIaComProtocolo(request.respostaIa(), ticketAberto.getProtocolo()), null);
+            }
             registrarEvento(ticketAberto, request, origem, "PROCESSADO");
-            return ticketBO.buscar(ticketAberto.getIdTicket());
+            return respostaWebhook(ticketBO.buscar(ticketAberto.getIdTicket()), !atendimentoHumanoIniciado);
         }
 
         LinkAidDtos.TicketRequest ticketRequest = new LinkAidDtos.TicketRequest(
@@ -67,7 +74,16 @@ public class WebhookBO {
         ticketBO.registrarMensagem(ticket, "IA", respostaIaComProtocolo(request.respostaIa(), ticket.getProtocolo()), null);
         registrarEvento(ticket, request, origem, "PROCESSADO");
 
-        return ticketBO.buscar(ticket.getIdTicket());
+        return respostaWebhook(ticketBO.buscar(ticket.getIdTicket()), true);
+    }
+
+    private LinkAidDtos.WebhookTicketResponse respostaWebhook(LinkAidDtos.TicketResponse ticket, boolean responderIa) {
+        return new LinkAidDtos.WebhookTicketResponse(
+                ticket.idTicket(),
+                ticket.protocolo(),
+                responderIa,
+                ticket
+        );
     }
 
     private void registrarEvento(Ticket ticket, LinkAidDtos.WebhookTicketRequest request, String origem, String status) {

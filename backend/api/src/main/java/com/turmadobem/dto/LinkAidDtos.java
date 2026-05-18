@@ -269,4 +269,12 @@ public final class LinkAidDtos {
             String payload
     ) {
     }
+
+    public record WebhookTicketResponse(
+            Long idTicket,
+            String protocolo,
+            boolean responderIa,
+            TicketResponse ticket
+    ) {
+    }
 }

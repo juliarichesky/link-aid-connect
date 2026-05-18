@@ -101,9 +101,13 @@ async def receive_whatsapp_message(request: Request) -> Response:
         logger.exception("Could not reach Quarkus API.")
         raise HTTPException(status_code=502, detail="Could not reach Quarkus API.") from error
 
-    protocol = ticket.get("protocolo") or f"#{ticket.get('idTicket', '')}".strip("#")
-    reply = _build_twilio_reply(triage.reply_text, protocol)
     twiml = MessagingResponse()
+    if not _should_send_auto_reply(ticket):
+        logger.info("Automatic WhatsApp reply skipped because human handoff is active.")
+        return Response(content=str(twiml), media_type="application/xml")
+
+    protocol = _ticket_protocol(ticket)
+    reply = _build_twilio_reply(triage.reply_text, protocol)
     twiml.message(reply)
 
     return Response(content=str(twiml), media_type="application/xml")
@@ -159,6 +163,22 @@ def _whatsapp_address(value: str) -> str:
     if cleaned.startswith("whatsapp:"):
         return cleaned
     return f"whatsapp:{cleaned}"
+
+
+def _should_send_auto_reply(ticket: dict[str, Any]) -> bool:
+    if "responderIa" in ticket:
+        return bool(ticket.get("responderIa"))
+    return True
+
+
+def _ticket_protocol(ticket: dict[str, Any]) -> str | None:
+    ticket_data = ticket.get("ticket") if isinstance(ticket.get("ticket"), dict) else ticket
+    protocol = ticket.get("protocolo") or ticket_data.get("protocolo")
+    if protocol:
+        return str(protocol)
+
+    ticket_id = ticket.get("idTicket") or ticket_data.get("idTicket")
+    return f"#{ticket_id}".strip("#") if ticket_id else None
 
 
 def _public_request_url(request: Request) -> str:
