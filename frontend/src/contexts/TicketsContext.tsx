@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useState, ReactNode } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   linkAidApi,
@@ -275,11 +275,12 @@ const TicketsContext = createContext<TicketsContextType | undefined>(undefined);
 
 export function TicketsProvider({ children }: { children: ReactNode }) {
   const { token } = useAuth();
-  const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
+  const hasApiSession = Boolean(token);
+  const [tickets, setTickets] = useState<Ticket[]>(() => (hasApiSession ? [] : initialTickets));
   const [contacts, setContacts] = useState<Contact[]>([]);
-  const [dentists, setDentists] = useState<Dentist[]>(initialDentists);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialTeam);
-  const [loading, setLoading] = useState(false);
+  const [dentists, setDentists] = useState<Dentist[]>(() => (hasApiSession ? [] : initialDentists));
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(() => (hasApiSession ? [] : initialTeam));
+  const [loading, setLoading] = useState(hasApiSession);
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
@@ -288,6 +289,7 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
       setContacts([]);
       setDentists(initialDentists);
       setTeamMembers(initialTeam);
+      setLoading(false);
       setError(null);
       return;
     }
@@ -323,6 +325,16 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
+  }, [token]);
+
+  useLayoutEffect(() => {
+    if (!token) return;
+    setLoading(true);
+    setError(null);
+    setTickets([]);
+    setContacts([]);
+    setDentists([]);
+    setTeamMembers([]);
   }, [token]);
 
   useEffect(() => {

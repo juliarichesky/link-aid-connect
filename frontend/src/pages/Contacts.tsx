@@ -70,7 +70,7 @@ const maskDocument = (value: string) => {
 };
 
 export default function Contacts() {
-  const { tickets, contacts, updateContact } = useTickets();
+  const { tickets, contacts, loading, updateContact } = useTickets();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<DerivedContact | null>(null);
@@ -346,8 +346,8 @@ export default function Contacts() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginated.map((c, i) => (
-              <TableRow key={i} className="cursor-pointer hover:bg-accent/60 transition-colors" onClick={() => setSelected(c)}>
+            {paginated.map((c) => (
+              <TableRow key={contactKey(c)} className="cursor-pointer hover:bg-accent/60 transition-colors" onClick={() => setSelected(c)}>
                 <TableCell className="font-medium">{c.name}</TableCell>
                 <TableCell><Badge variant="secondary" className={typeColors[c.type]}>{c.type}</Badge></TableCell>
                 <TableCell className="text-sm">{c.location}</TableCell>
@@ -355,6 +355,13 @@ export default function Contacts() {
                 <TableCell className="text-right font-medium">{c.ticketCount}</TableCell>
               </TableRow>
             ))}
+            {paginated.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  {loading ? "Carregando contatos..." : "Nenhum contato encontrado"}
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
