@@ -37,6 +37,8 @@ export interface Ticket {
   sender: string;
   subject: string;
   description?: string;
+  aiSummary?: string;
+  aiConfidence?: number;
   classification: string;
   priority: Priority;
   status: string;
@@ -52,6 +54,7 @@ export interface Ticket {
   procedureDescription?: string;
   medications?: string;
   surgeryHistory?: string;
+  messagesLoaded?: boolean;
   chatMessages?: { from: string; text: string; time: string }[];
 }
 
@@ -131,6 +134,7 @@ interface TicketsContextType {
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
+  loadTicket: (id: string) => Promise<Ticket | void>;
   updateTicket: (id: string, updates: Partial<Ticket>) => Promise<void>;
   addTicket: (ticket: Ticket) => Promise<Ticket | void>;
   archiveTicket: (id: string) => Promise<void>;
@@ -175,7 +179,7 @@ const messageSenderFromApi = (tipoRemetente: string) => {
   return "agent";
 };
 
-const apiTicketToTicket = (ticket: ApiTicketResponse): Ticket => {
+const apiTicketToTicket = (ticket: ApiTicketResponse, messagesLoaded = true): Ticket => {
   const contato = ticket.contato;
   const cidadeUf = [contato?.cidade, contato?.uf].filter(Boolean).join(", ");
   return {
@@ -186,6 +190,8 @@ const apiTicketToTicket = (ticket: ApiTicketResponse): Ticket => {
     sender: contato?.nome || "Contato sem nome",
     subject: ticket.assunto,
     description: ticket.descricao,
+    aiSummary: ticket.resumoIa,
+    aiConfidence: ticket.confiancaIa,
     classification: classificacaoLabel(ticket.classificacaoCodigo) || ticket.classificacaoNome || "Geral",
     priority: (prioridadeLabel(ticket.prioridadeCodigo) || PRIORIDADE_LABELS.MEDIA) as Priority,
     status: statusTicketLabel(ticket.statusCodigo) || ticket.statusNome || "Novo",
@@ -198,11 +204,12 @@ const apiTicketToTicket = (ticket: ApiTicketResponse): Ticket => {
     location: cidadeUf,
     type: tipoContatoRegistroLabel(contato?.tipoContatoCodigo, contato?.tipoContatoNome) || "Solicitante",
     cpf: contato?.documento || "-",
-    chatMessages: ticket.mensagens?.map((mensagem) => ({
+    messagesLoaded,
+    chatMessages: messagesLoaded ? (ticket.mensagens ?? []).map((mensagem) => ({
       from: messageSenderFromApi(mensagem.tipoRemetente),
       text: mensagem.mensagem,
       time: formatTime(mensagem.dataMensagem),
-    })),
+    })) : undefined,
   };
 };
 
@@ -269,7 +276,19 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
         linkAidApi.listarContatos(token),
       ]);
 
-      setTickets(apiTickets.map(apiTicketToTicket));
+      const listedTickets = apiTickets.map((ticket) => apiTicketToTicket(ticket, false));
+      setTickets((previousTickets) =>
+        listedTickets.map((ticket) => {
+          const previous = previousTickets.find((item) => item.id === ticket.id);
+          if (!previous?.messagesLoaded) return ticket;
+
+          return {
+            ...ticket,
+            messagesLoaded: true,
+            chatMessages: previous.chatMessages,
+          };
+        }),
+      );
       setDentists(apiDentists.map(apiDentistaToDentist));
       setTeamMembers(apiUsuarios.map(apiUsuarioToTeamMember));
       setContacts(apiContatos.map(apiContatoToContact));
@@ -284,14 +303,28 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
     void refresh();
   }, [refresh]);
 
-  const upsertTicket = (ticket: Ticket) => {
+  const upsertTicket = useCallback((ticket: Ticket) => {
     setTickets((prev) => {
       const exists = prev.some((item) => item.id === ticket.id);
       return exists
         ? prev.map((item) => (item.id === ticket.id ? ticket : item))
         : [ticket, ...prev];
     });
-  };
+  }, []);
+
+  const loadTicket = useCallback(async (id: string) => {
+    if (!token || !isRemoteId(id)) return;
+
+    try {
+      const apiTicket = await linkAidApi.buscarTicket(token, id);
+      const mapped = apiTicketToTicket(apiTicket, true);
+      upsertTicket(mapped);
+      return mapped;
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : "Falha ao carregar ticket.");
+      throw loadError;
+    }
+  }, [token, upsertTicket]);
 
   const buildTicketRequest = (ticket: Ticket): ApiTicketRequest => {
     const { city, uf } = splitLocation(ticket.location);
@@ -438,7 +471,7 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
     setTickets((prev) =>
       prev.map((t) =>
         t.id === id
-          ? { ...t, chatMessages: [...(t.chatMessages || []), message] }
+          ? { ...t, messagesLoaded: true, chatMessages: [...(t.chatMessages || []), message] }
           : t
       )
     );
@@ -478,7 +511,7 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <TicketsContext.Provider value={{ tickets, contacts, teamMembers, dentists, loading, error, refresh, updateTicket, addTicket, archiveTicket, addChatMessage, addDentist, updateDentist }}>
+    <TicketsContext.Provider value={{ tickets, contacts, teamMembers, dentists, loading, error, refresh, loadTicket, updateTicket, addTicket, archiveTicket, addChatMessage, addDentist, updateDentist }}>
       {children}
     </TicketsContext.Provider>
   );

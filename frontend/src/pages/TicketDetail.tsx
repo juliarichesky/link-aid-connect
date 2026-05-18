@@ -12,14 +12,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
 import { useTickets } from "@/contexts/TicketsContext";
+import { ticketDisplayProtocol } from "@/lib/ticketDisplay";
 import { toast } from "sonner";
-
-const defaultMessages = [
-  { from: "client", text: "Olá, gostaria de saber sobre o tratamento odontológico gratuito.", time: "14:30" },
-  { from: "ai", text: "Classificação automática: Saúde — Prioridade: Alta. Resumo: Solicitante buscando informações sobre tratamento gratuito.", time: "14:30" },
-  { from: "agent", text: "Olá Maria! Obrigado por entrar em contato. Vou verificar as vagas disponíveis para você.", time: "14:35" },
-  { from: "client", text: "Muito obrigada! Preciso para meu filho de 8 anos.", time: "14:37" },
-];
 
 const typeColors: Record<string, string> = {
   Solicitante: "bg-warning/15 text-warning border-warning/30",
@@ -37,8 +31,9 @@ export default function TicketDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { tickets, teamMembers, dentists, updateTicket, addChatMessage } = useTickets();
+  const { tickets, teamMembers, dentists, loadTicket, updateTicket, addChatMessage } = useTickets();
   const [reply, setReply] = useState("");
+  const [loadingDetail, setLoadingDetail] = useState(() => Boolean(id && /^\d+$/.test(id)));
 
   const ticket = tickets.find((t) => t.id === id);
   const locationState = location.state as TicketDetailLocationState | null;
@@ -49,6 +44,24 @@ export default function TicketDetail() {
   const [responsible, setResponsible] = useState(ticket?.responsible || "");
   const [dentistResp, setDentistResp] = useState(ticket?.dentistResponsible || "");
   const [channel, setChannel] = useState(ticket?.channel || "WhatsApp");
+
+  useEffect(() => {
+    if (!id) return;
+
+    let active = true;
+    setLoadingDetail(true);
+    loadTicket(id)
+      .catch((error) => {
+        toast.error(error instanceof Error ? error.message : "Erro ao carregar ticket");
+      })
+      .finally(() => {
+        if (active) setLoadingDetail(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [id, loadTicket]);
 
   useEffect(() => {
     if (ticket) {
@@ -81,6 +94,7 @@ export default function TicketDetail() {
     const time = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
     try {
       await addChatMessage(id, { from: "agent", text: reply, time });
+      await loadTicket(id);
       setReply("");
       toast.success("Mensagem enviada");
     } catch (error) {
@@ -91,12 +105,14 @@ export default function TicketDetail() {
   // Related tickets by same CPF
   const relatedTickets = ticket ? tickets.filter((t) => t.cpf === ticket.cpf && t.id !== ticket.id) : [];
 
-  const allMessages = ticket?.chatMessages?.length ? ticket.chatMessages : defaultMessages;
+  const allMessages = ticket?.chatMessages || [];
+  const loadingMessages = loadingDetail && !ticket?.messagesLoaded;
+  const aiSummary = ticket?.aiSummary || ticket?.description || "Nenhum resumo registrado para este ticket.";
 
   if (!ticket) {
     return (
       <div className="p-6 text-center text-muted-foreground">
-        <p>Ticket não encontrado</p>
+        <p>{loadingDetail ? "Carregando ticket..." : "Ticket não encontrado"}</p>
         <Button variant="ghost" className="mt-4" onClick={() => navigate(backUrl)}>
           <ArrowLeft className="w-4 h-4 mr-1" /> Voltar
         </Button>
@@ -115,7 +131,7 @@ export default function TicketDetail() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs text-muted-foreground mb-1">Ticket</p>
-            <p className="font-mono font-semibold">{ticket.protocol || id}</p>
+            <p className="font-mono font-semibold">{ticketDisplayProtocol(ticket)}</p>
           </div>
           <div className="text-right">
             <p className="text-xs text-muted-foreground flex items-center gap-1 justify-end">
@@ -157,7 +173,10 @@ export default function TicketDetail() {
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div><p className="text-xs text-muted-foreground">Classificação</p><Badge className="mt-1">{ticket.classification}</Badge></div>
-            <div><p className="text-xs text-muted-foreground">Resumo</p><p className="text-xs mt-1">Solicitante busca tratamento odontológico gratuito para filho de 8 anos.</p></div>
+            <div><p className="text-xs text-muted-foreground">Resumo</p><p className="text-xs mt-1">{aiSummary}</p></div>
+            {typeof ticket.aiConfidence === "number" && (
+              <div><p className="text-xs text-muted-foreground">Confiança</p><p className="text-xs mt-1">{ticket.aiConfidence.toFixed(0)}%</p></div>
+            )}
           </CardContent>
         </Card>
 
@@ -202,7 +221,7 @@ export default function TicketDetail() {
             </div>
             <div>
               <Label className="text-xs flex items-center gap-1"><Stethoscope className="w-3 h-3" /> Dentista Responsável</Label>
-              <Select value={dentistResp || "none"} onValueChange={(v) => { const val = v === "none" ? "" : v; setDentistResp(val); handleSave("dentistResponsible", val); }}>
+              <Select value={dentistResp} onValueChange={(v) => { const val = v === "none" ? "" : v; setDentistResp(val); handleSave("dentistResponsible", val); }}>
                 <SelectTrigger className="h-8 text-sm"><SelectValue placeholder="Nenhum" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Nenhum</SelectItem>
@@ -242,7 +261,7 @@ export default function TicketDetail() {
               {relatedTickets.map((h) => (
                 <div key={h.id} className="text-xs px-3 py-2 bg-muted rounded-md space-y-1 cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => navigate(`/tickets/${h.id}`, { state: { backUrl } })}>
                   <div className="flex justify-between">
-                    <span className="font-mono font-medium">{h.protocol || h.id}</span>
+                    <span className="font-mono font-medium">{ticketDisplayProtocol(h)}</span>
                     <span className="text-muted-foreground">{h.openedAt}</span>
                   </div>
                   <p>{h.subject}</p>
@@ -293,35 +312,45 @@ export default function TicketDetail() {
       {/* Right — Chat */}
       <div className="flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin">
-          {allMessages.map((m, i) => (
-            <div key={i} className={`flex ${m.from === "client" ? "justify-start" : "justify-end"}`}>
-              <div className={`max-w-md px-4 py-2.5 rounded-xl text-sm ${
-                m.from === "client" ? "bg-muted text-foreground rounded-tl-none"
-                : m.from === "ai" ? "bg-primary/10 text-primary border border-primary/20 rounded-tr-none"
-                : "bg-primary text-primary-foreground rounded-tr-none"
-              }`}>
-                {m.from === "ai" && (
-                  <div className="flex items-center gap-1 mb-1">
-                    <Bot className="w-3 h-3" /><span className="text-[10px] font-medium uppercase">IA</span>
-                  </div>
-                )}
-                {m.from === "agent" && (
-                  <div className="flex items-center gap-1 mb-1">
-                    <User className="w-3 h-3" /><span className="text-[10px] font-medium uppercase opacity-70">Você</span>
-                  </div>
-                )}
-                <p>{m.text}</p>
-                <p className={`text-[10px] mt-1 ${m.from === "agent" ? "opacity-70" : "text-muted-foreground"}`}>{m.time}</p>
-              </div>
+          {loadingMessages ? (
+            <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+              Carregando conversa...
             </div>
-          ))}
+          ) : allMessages.length > 0 ? (
+            allMessages.map((m, i) => (
+              <div key={i} className={`flex ${m.from === "client" ? "justify-start" : "justify-end"}`}>
+                <div className={`max-w-md px-4 py-2.5 rounded-xl text-sm ${
+                  m.from === "client" ? "bg-muted text-foreground rounded-tl-none"
+                  : m.from === "ai" ? "bg-primary/10 text-primary border border-primary/20 rounded-tr-none"
+                  : "bg-primary text-primary-foreground rounded-tr-none"
+                }`}>
+                  {m.from === "ai" && (
+                    <div className="flex items-center gap-1 mb-1">
+                      <Bot className="w-3 h-3" /><span className="text-[10px] font-medium uppercase">IA</span>
+                    </div>
+                  )}
+                  {m.from === "agent" && (
+                    <div className="flex items-center gap-1 mb-1">
+                      <User className="w-3 h-3" /><span className="text-[10px] font-medium uppercase opacity-70">Você</span>
+                    </div>
+                  )}
+                  <p>{m.text}</p>
+                  <p className={`text-[10px] mt-1 ${m.from === "agent" ? "opacity-70" : "text-muted-foreground"}`}>{m.time}</p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+              Nenhuma mensagem registrada para este ticket.
+            </div>
+          )}
         </div>
 
         <div className="border-t border-border p-4 bg-card">
           <div className="flex items-end gap-2">
             <Button variant="ghost" size="icon" className="shrink-0"><Paperclip className="w-4 h-4" /></Button>
-            <Textarea placeholder="Digite sua resposta..." value={reply} onChange={(e) => setReply(e.target.value)} className="min-h-[44px] max-h-32 resize-none" rows={1} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendReply(); } }} />
-            <Button size="icon" className="shrink-0" onClick={handleSendReply}><Send className="w-4 h-4" /></Button>
+            <Textarea disabled={loadingMessages} placeholder="Digite sua resposta..." value={reply} onChange={(e) => setReply(e.target.value)} className="min-h-[44px] max-h-32 resize-none" rows={1} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendReply(); } }} />
+            <Button size="icon" className="shrink-0" onClick={handleSendReply} disabled={loadingMessages || !reply.trim()}><Send className="w-4 h-4" /></Button>
           </div>
         </div>
       </div>

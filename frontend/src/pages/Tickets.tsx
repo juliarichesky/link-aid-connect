@@ -13,6 +13,7 @@ import {
   Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/classnames";
+import { ticketDisplayProtocol } from "@/lib/ticketDisplay";
 import { useNavigate } from "react-router-dom";
 import { useTickets, type Priority, type Ticket } from "@/contexts/TicketsContext";
 import { CANAL_LABELS, PRIORIDADE_LABELS, TIPO_CONTATO_LABELS } from "@/lib/linkaidMappings";
@@ -190,42 +191,6 @@ const matchesChannelOption = (channel: string, option: ChannelFilterOption) => {
   const normalizedChannel = normalizeForFilter(ticketChannelLabel(channel));
   return option.channels.some((candidate) => normalizeForFilter(ticketChannelLabel(candidate)) === normalizedChannel);
 };
-
-const ticketDateStamp = (ticket: Ticket) => {
-  const protocolDate = (ticket.protocol || ticket.id).match(/TKT-(\d{8})/)?.[1];
-  if (protocolDate) return protocolDate;
-
-  const openedDate = ticket.openedAt.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-  if (openedDate) {
-    const [, day, month, year] = openedDate;
-    return `${year}${month}${day}`;
-  }
-
-  const today = new Date();
-  return [
-    today.getFullYear(),
-    String(today.getMonth() + 1).padStart(2, "0"),
-    String(today.getDate()).padStart(2, "0"),
-  ].join("");
-};
-
-const ticketSequence = (ticket: Ticket) => {
-  const rawProtocol = ticket.protocol || ticket.id;
-  const standardSequence = rawProtocol.match(/^TKT-\d{8}-(\d+)$/)?.[1];
-  if (standardSequence) return standardSequence.padStart(3, "0");
-
-  const generatedSequence = rawProtocol.match(/^TKT-\d{8}-\d{4}-(\d+)$/)?.[1];
-  if (generatedSequence) return generatedSequence.padStart(3, "0");
-
-  const simpleSequence = rawProtocol.match(/^TKT-(\d+)$/)?.[1];
-  if (simpleSequence) return simpleSequence.padStart(3, "0");
-
-  const numericId = ticket.id.match(/\d+$/)?.[0];
-  return (numericId || "0").padStart(3, "0");
-};
-
-const ticketDisplayProtocol = (ticket: Ticket) =>
-  `TKT-${ticketDateStamp(ticket)}-${ticketSequence(ticket)}`;
 
 const ticketMatchesClassificationFilter = (ticket: Ticket, option: ClassificationFilterOption): boolean => {
   if (option.value === "geral") {
