@@ -266,7 +266,6 @@ export default function Financial() {
         </Pagination>
       )}
 
-      {/* Transaction Detail Modal */}
       <Dialog open={!!selectedTx} onOpenChange={(open) => !open && setSelectedTx(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -310,7 +309,6 @@ export default function Financial() {
         </DialogContent>
       </Dialog>
 
-      {/* New Transaction Dialog */}
       <Dialog open={showNewTx} onOpenChange={setShowNewTx}>
         <DialogContent className="max-w-lg">
           <DialogHeader>

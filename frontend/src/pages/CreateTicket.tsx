@@ -106,7 +106,6 @@ export default function CreateTicket() {
     }
   };
 
-  // Dentist tab: direct registration form
   const renderForm = () => (
     <Card className="shadow-sm">
       <CardHeader><CardTitle className="text-base">Dados do {tab === "pf" ? "Paciente" : "Empresa"}</CardTitle></CardHeader>

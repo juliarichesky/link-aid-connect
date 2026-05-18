@@ -137,9 +137,6 @@ export const prioridadeCodigo = (label?: string | null) =>
 export const tipoContatoLabel = (codigo?: string | null) =>
   labelPorCodigo(TIPO_CONTATO_LABELS, codigo);
 
-// Dados antigos foram gravados como BENEFICIARIO antes da separacao entre
-// solicitantes e beneficiarios. Mantemos BENEFICIARIO como opcao manual, mas
-// exibimos esses registros legados da API como Solicitante nas telas.
 export const tipoContatoRegistroLabel = (codigo?: string | null, nome?: string | null) => {
   const normalizedCode = codigo?.trim().toUpperCase();
   const normalizedName = nome ? normalize(nome) : "";

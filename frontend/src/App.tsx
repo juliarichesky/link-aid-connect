@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, Navigate, useLocation } from "react-router-dom";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/feedback/Toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { TicketsProvider } from "@/contexts/TicketsContext";
@@ -23,7 +22,6 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Routes allowed for "colaborador" role
 const COLAB_ALLOWED = [
   "/tickets",
   "/history",
@@ -90,7 +88,6 @@ const App = () => (
         <AuthProvider>
           <TicketsProvider>
             <Toaster />
-            <Sonner />
             <BrowserRouter>
               <AppRoutes />
             </BrowserRouter>

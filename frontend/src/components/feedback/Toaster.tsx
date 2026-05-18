@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Toaster as Sonner, toast } from "sonner";
 

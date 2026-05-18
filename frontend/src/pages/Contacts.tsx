@@ -170,7 +170,6 @@ export default function Contacts() {
     observation: "",
   });
 
-  // Build contacts from all tickets + manually added contacts
   const allContacts = useMemo(() => {
     const map = new Map<string, DerivedContact>();
 

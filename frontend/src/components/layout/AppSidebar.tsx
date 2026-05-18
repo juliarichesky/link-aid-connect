@@ -66,7 +66,6 @@ export function AppSidebar() {
         collapsed ? "w-16" : "w-60"
       )}
     >
-      {/* Logo */}
       <div className="flex items-center gap-2 px-4 h-16 border-b border-sidebar-border">
         <div className="w-8 h-8 rounded-lg bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground font-display font-bold text-sm shrink-0">
           LA
@@ -79,7 +78,6 @@ export function AppSidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto scrollbar-thin py-3 space-y-6">
-        {/* Main */}
         <div className="space-y-1 px-2">
           {!collapsed && (
             <p className="text-[11px] uppercase tracking-wider text-sidebar-muted px-2 mb-2 font-medium">
@@ -103,7 +101,6 @@ export function AppSidebar() {
           ))}
         </div>
 
-        {/* Extra */}
         {visibleExtra.length > 0 && (
           <div className="space-y-1 px-2">
             {!collapsed && (
@@ -130,7 +127,6 @@ export function AppSidebar() {
         )}
       </nav>
 
-      {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
         className="flex items-center justify-center h-12 border-t border-sidebar-border text-sidebar-muted hover:text-sidebar-foreground transition-colors"

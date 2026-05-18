@@ -207,9 +207,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     try {
       const errorBody = await response.json();
       message = errorBody?.message || message;
-    } catch {
-      // Mantem a mensagem padrao quando a resposta nao for JSON.
-    }
+    } catch {}
     throw new ApiError(message, response.status);
   }
 

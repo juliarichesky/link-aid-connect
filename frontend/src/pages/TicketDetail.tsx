@@ -123,9 +123,7 @@ export default function TicketDetail() {
     if (!id || !/^\d+$/.test(id)) return;
 
     const intervalId = window.setInterval(() => {
-      loadTicket(id).catch(() => {
-        // A toast a cada polling deixaria a conversa barulhenta; o carregamento inicial ja mostra erro.
-      });
+      loadTicket(id).catch(() => undefined);
     }, 5000);
 
     return () => window.clearInterval(intervalId);
@@ -222,7 +220,6 @@ export default function TicketDetail() {
     }
   };
 
-  // Related tickets by same CPF
   const relatedTickets = ticket ? tickets.filter((t) => t.cpf === ticket.cpf && t.id !== ticket.id) : [];
 
   const allMessages = ticket?.chatMessages || [];
@@ -242,7 +239,6 @@ export default function TicketDetail() {
 
   return (
     <div className="h-[calc(100vh-3.5rem)] flex animate-fade-in">
-      {/* Left Panel */}
       <div className="w-96 border-r border-border p-5 space-y-5 overflow-y-auto scrollbar-thin bg-card">
         <Button variant="ghost" size="sm" onClick={() => navigate(backUrl)} className="mb-2">
           <ArrowLeft className="w-4 h-4 mr-1" /> Voltar
@@ -261,7 +257,6 @@ export default function TicketDetail() {
           </div>
         </div>
 
-        {/* Sender Card */}
         <Card className="shadow-sm">
           <CardHeader className="pb-2"><CardTitle className="text-sm">Remetente</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
@@ -295,7 +290,6 @@ export default function TicketDetail() {
           </CardContent>
         </Card>
 
-        {/* AI Panel */}
         <Card className="border-primary/20 bg-primary/5 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
@@ -311,7 +305,6 @@ export default function TicketDetail() {
           </CardContent>
         </Card>
 
-        {/* Management Fields */}
         <Card className="shadow-sm">
           <CardHeader className="pb-2"><CardTitle className="text-sm">Gerenciamento</CardTitle></CardHeader>
           <CardContent className="space-y-3">
@@ -365,7 +358,6 @@ export default function TicketDetail() {
           </CardContent>
         </Card>
 
-        {/* Tabs: History, Personal Data, Clinical */}
         <Tabs defaultValue="history" className="w-full">
           <TabsList className="w-full">
             <TabsTrigger value="history" className="flex-1 text-xs">Histórico</TabsTrigger>
@@ -505,7 +497,6 @@ export default function TicketDetail() {
         </Tabs>
       </div>
 
-      {/* Right — Chat */}
       <div className="flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin">
           {loadingMessages ? (

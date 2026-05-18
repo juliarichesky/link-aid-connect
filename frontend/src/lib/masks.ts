@@ -1,5 +1,3 @@
-// Input mask utilities — digits only, auto-formatted
-
 export function maskCPF(value: string): string {
   const digits = value.replace(/\D/g, "").slice(0, 11);
   return digits

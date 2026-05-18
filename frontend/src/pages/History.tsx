@@ -306,7 +306,6 @@ export default function History() {
     ? []
     : [...staticHistoryTickets, ...resolvedFromGlobal.filter((t) => !existingIds.has(t.id))];
 
-  // Sort: Resolvido first, then Fechado
   const defaultSorted = [...merged].sort((a, b) => {
     const statusOrder: Record<string, number> = { "Resolvido": 0, "Fechado": 1 };
     return (statusOrder[a.status] ?? 2) - (statusOrder[b.status] ?? 2);

@@ -83,11 +83,9 @@ export function TeamPanel({ open, onClose }: TeamPanelProps) {
   const onlineTeammates = teammates.filter((t) => t.online);
   const offlineTeammates = teammates.filter((t) => !t.online);
 
-  // Chat view — modern Slack-style
   if (chatTarget) {
     return (
       <aside className="w-80 border-l border-border bg-card h-screen sticky top-0 flex flex-col animate-slide-in-right">
-        {/* Chat Header */}
         <div className="flex items-center gap-2 px-4 h-14 border-b border-border bg-muted/30">
           <button onClick={() => setChatTarget(null)} className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-4 h-4" />
@@ -121,7 +119,6 @@ export function TeamPanel({ open, onClose }: TeamPanelProps) {
           </button>
         </div>
 
-        {/* Messages */}
         <div className="flex-1 overflow-y-auto p-3 space-y-4 scrollbar-thin">
           {currentMessages.map((m, i) => {
             const isMe = m.from === "Você";
@@ -156,7 +153,6 @@ export function TeamPanel({ open, onClose }: TeamPanelProps) {
           )}
         </div>
 
-        {/* Input */}
         <div className="border-t border-border p-2 bg-muted/20">
           <div className="flex gap-1.5">
             <Input
@@ -175,7 +171,6 @@ export function TeamPanel({ open, onClose }: TeamPanelProps) {
     );
   }
 
-  // List view — Slack-style with sidebar tabs
   return (
     <aside className="w-72 border-l border-border bg-card h-screen sticky top-0 flex flex-col animate-slide-in-right">
       <div className="flex items-center justify-between px-4 h-14 border-b border-border">
@@ -185,7 +180,6 @@ export function TeamPanel({ open, onClose }: TeamPanelProps) {
         </button>
       </div>
 
-      {/* Tab switcher */}
       <div className="flex border-b border-border">
         <button
           className={cn("flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium transition-colors",
@@ -245,7 +239,6 @@ export function TeamPanel({ open, onClose }: TeamPanelProps) {
           </>
         ) : (
           <>
-            {/* Online */}
             <div>
               <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
                 Online ({onlineTeammates.length})
@@ -274,7 +267,6 @@ export function TeamPanel({ open, onClose }: TeamPanelProps) {
 
             <Separator />
 
-            {/* Offline */}
             <div>
               <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-medium">
                 Offline ({offlineTeammates.length})

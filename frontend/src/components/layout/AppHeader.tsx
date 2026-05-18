@@ -216,7 +216,6 @@ export function AppHeader({ onToggleTeam }: AppHeaderProps) {
           <Users className="w-4 h-4" />
         </Button>
 
-        {/* Notifications */}
         <div className="relative" ref={notifRef}>
           <Button variant="ghost" size="icon" className="relative" onClick={() => setNotifOpen(!notifOpen)}>
             <Bell className="w-4 h-4" />
@@ -293,7 +292,6 @@ export function AppHeader({ onToggleTeam }: AppHeaderProps) {
           {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
         </Button>
 
-        {/* Profile dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-2 ml-2 sm:ml-3 pl-2 sm:pl-3 border-l border-border hover:opacity-80 transition-opacity outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md py-1">
@@ -329,7 +327,6 @@ export function AppHeader({ onToggleTeam }: AppHeaderProps) {
         </DropdownMenu>
       </div>
 
-      {/* Profile dialog */}
       <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
