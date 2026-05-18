@@ -40,7 +40,7 @@ public class WebhookBO {
                 primeiroValor(request.tipoContatoCodigo(), "BENEFICIARIO"),
                 null,
                 null,
-                "WATSON_SANDBOX",
+                canalPorOrigem(origem),
                 prioridade,
                 classificacao,
                 null,
@@ -107,6 +107,13 @@ public class WebhookBO {
             case "VOLUNTARIADO" -> "Contato de dentista voluntario";
             default -> "Solicitacao de atendimento";
         };
+    }
+
+    private String canalPorOrigem(String origem) {
+        if (origem != null && (origem.contains("TWILIO") || origem.contains("WHATSAPP"))) {
+            return "WHATSAPP";
+        }
+        return "WATSON_SANDBOX";
     }
 
     private String payloadBasico(LinkAidDtos.WebhookTicketRequest request) {

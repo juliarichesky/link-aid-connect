@@ -96,7 +96,15 @@ const CHANNEL_FILTER_OPTIONS: ChannelFilterOption[] = [
   {
     value: "whatsapp",
     label: "WhatsApp",
-    channels: [CANAL_LABELS.WHATSAPP],
+    channels: [
+      CANAL_LABELS.WHATSAPP,
+      CANAL_LABELS.WATSON_SANDBOX,
+      "WATSON_SANDBOX",
+      "Twilio",
+      "Twilio Sandbox",
+      "Twilio WhatsApp",
+      "TWILIO_WATSON",
+    ],
   },
   {
     value: "instagram",
@@ -111,7 +119,7 @@ const CHANNEL_FILTER_OPTIONS: ChannelFilterOption[] = [
   {
     value: "outros",
     label: "Outros",
-    channels: [CANAL_LABELS.MANUAL, "Manual", "Cadastro manual", "Outros"],
+    channels: [CANAL_LABELS.MANUAL, "Manual", "Cadastro manual", "Outro", "Outros"],
   },
 ];
 
@@ -162,14 +170,73 @@ const normalizeForFilter = (value: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
+const ticketChannelLabel = (channel: string) => {
+  const normalizedChannel = normalizeForFilter(channel);
+  if (
+    normalizedChannel.includes("whatsapp") ||
+    normalizedChannel.includes("twilio") ||
+    normalizedChannel.includes("watson")
+  ) {
+    return CANAL_LABELS.WHATSAPP;
+  }
+  if (normalizedChannel === "email") {
+    return CANAL_LABELS.EMAIL;
+  }
+  return channel;
+};
+
+const matchesChannelOption = (channel: string, option: ChannelFilterOption) => {
+  const normalizedChannel = normalizeForFilter(ticketChannelLabel(channel));
+  return option.channels.some((candidate) => normalizeForFilter(ticketChannelLabel(candidate)) === normalizedChannel);
+};
+
 const channelFilterFromParam = (value: string | null): ChannelFilterValue => {
   if (!value) return "all";
   const normalizedValue = normalizeForFilter(value);
   return CHANNEL_FILTER_OPTIONS.find((option) =>
-    option.channels.some((channel) => normalizeForFilter(channel) === normalizedValue) ||
+    option.channels.some((channel) =>
+      normalizeForFilter(channel) === normalizedValue ||
+      normalizeForFilter(ticketChannelLabel(channel)) === normalizedValue,
+    ) ||
     normalizeForFilter(option.label) === normalizedValue,
   )?.value || "all";
 };
+
+const ticketDateStamp = (ticket: Ticket) => {
+  const protocolDate = (ticket.protocol || ticket.id).match(/TKT-(\d{8})/)?.[1];
+  if (protocolDate) return protocolDate;
+
+  const openedDate = ticket.openedAt.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  if (openedDate) {
+    const [, day, month, year] = openedDate;
+    return `${year}${month}${day}`;
+  }
+
+  const today = new Date();
+  return [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, "0"),
+    String(today.getDate()).padStart(2, "0"),
+  ].join("");
+};
+
+const ticketSequence = (ticket: Ticket) => {
+  const rawProtocol = ticket.protocol || ticket.id;
+  const standardSequence = rawProtocol.match(/^TKT-\d{8}-(\d+)$/)?.[1];
+  if (standardSequence) return standardSequence.padStart(3, "0");
+
+  const generatedSequence = rawProtocol.match(/^TKT-\d{8}-\d{4}-(\d+)$/)?.[1];
+  if (generatedSequence) return generatedSequence.padStart(3, "0");
+
+  const simpleSequence = rawProtocol.match(/^TKT-(\d+)$/)?.[1];
+  if (simpleSequence) return simpleSequence.padStart(3, "0");
+
+  const numericId = ticket.id.match(/\d+$/)?.[0];
+  return (numericId || "0").padStart(3, "0");
+};
+
+const ticketDisplayProtocol = (ticket: Ticket) =>
+  `TKT-${ticketDateStamp(ticket)}-${ticketSequence(ticket)}`;
 
 const ticketMatchesClassificationFilter = (ticket: Ticket, option: ClassificationFilterOption): boolean => {
   if (option.value === "geral") {
@@ -234,13 +301,13 @@ export default function Tickets() {
 
     if (isFinalized && statusFilter !== FINALIZED_STATUS_FILTER) return false;
 
-    const ticketCode = t.protocol || t.id;
+    const ticketCode = ticketDisplayProtocol(t);
     const matchSearch = t.sender.toLowerCase().includes(search.toLowerCase()) || t.subject.toLowerCase().includes(search.toLowerCase()) || ticketCode.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "all" || Boolean(selectedStatus?.statuses.includes(t.status));
     const matchPriority = priorityFilter === "all" || t.priority === priorityFilter;
     const matchClassification = classificationFilter === "all" ||
       Boolean(selectedClassification && ticketMatchesClassificationFilter(t, selectedClassification));
-    const matchChannel = channelFilter === "all" || Boolean(selectedChannel?.channels.includes(t.channel));
+    const matchChannel = channelFilter === "all" || Boolean(selectedChannel && matchesChannelOption(t.channel, selectedChannel));
     return matchSearch && matchStatus && matchPriority && matchClassification && matchChannel;
   });
 
@@ -338,27 +405,28 @@ export default function Tickets() {
         )}
       </div>
 
-      <div className="border border-border rounded-lg overflow-hidden shadow-sm">
-        <Table>
+      <div className="border border-border rounded-lg shadow-sm max-h-[calc(100vh-18rem)] overflow-auto [&>div]:overflow-visible">
+        <Table className="min-w-[1380px] table-fixed">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead className="w-24">ID</TableHead>
-              <TableHead className="w-12">Canal</TableHead>
-              <TableHead>Remetente</TableHead>
-              <TableHead>Assunto (IA)</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Classificação</TableHead>
-              <TableHead className="w-24">Prioridade</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Responsável</TableHead>
-              <TableHead className="w-20">Atualiz.</TableHead>
+              <TableHead className="w-[160px]">ID</TableHead>
+              <TableHead className="w-[64px]">Canal</TableHead>
+              <TableHead className="w-[180px]">Remetente</TableHead>
+              <TableHead className="w-[132px]">Tipo</TableHead>
+              <TableHead className="w-[220px]">Assunto (IA)</TableHead>
+              <TableHead className="w-[132px]">Classificação</TableHead>
+              <TableHead className="w-[112px]">Prioridade</TableHead>
+              <TableHead className="w-[152px]">Status</TableHead>
+              <TableHead className="w-[156px]">Responsável</TableHead>
+              <TableHead className="w-[140px]">Atualização</TableHead>
               <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginated.map((t) => {
-              const ChIcon = channelIcon[t.channel] || MoreHorizontal;
-              const chColor = channelColors[t.channel] || "text-muted-foreground";
+              const channelLabel = ticketChannelLabel(t.channel);
+              const ChIcon = channelIcon[channelLabel] || MoreHorizontal;
+              const chColor = channelColors[channelLabel] || "text-muted-foreground";
               return (
                 <TableRow
                   key={t.id}
@@ -368,12 +436,14 @@ export default function Tickets() {
                     navigate(`/tickets/${t.id}`, { state: { backUrl } });
                   }}
                 >
-                  <TableCell className="font-mono text-xs">{t.protocol || t.id}</TableCell>
-                  <TableCell><ChIcon className={cn("w-4 h-4", chColor)} /></TableCell>
-                  <TableCell className="font-medium text-sm">{t.sender}</TableCell>
-                  <TableCell className="text-sm">{t.subject}</TableCell>
+                  <TableCell className="font-mono text-xs whitespace-nowrap">{ticketDisplayProtocol(t)}</TableCell>
+                  <TableCell title={channelLabel} aria-label={channelLabel}><ChIcon className={cn("w-4 h-4", chColor)} /></TableCell>
+                  <TableCell className="font-medium text-sm truncate" title={t.sender}>{t.sender}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className={cn("text-[10px] min-w-[80px] flex items-center justify-center text-center", typeColors[t.type] || "")}>{t.type}</Badge>
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    <span className="block max-w-[188px] truncate" title={t.subject}>{t.subject}</span>
                   </TableCell>
                   <TableCell>
                     <Badge variant="secondary" className="text-xs min-w-[80px] flex items-center justify-center text-center">{t.classification}</Badge>
@@ -383,9 +453,9 @@ export default function Tickets() {
                       {t.priority}
                     </span>
                   </TableCell>
-                  <TableCell className="text-sm">{t.status}</TableCell>
-                  <TableCell className="text-sm">{t.responsible}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{t.updated}</TableCell>
+                  <TableCell className="text-sm truncate" title={t.status}>{t.status}</TableCell>
+                  <TableCell className="text-sm truncate" title={t.responsible}>{t.responsible}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{t.updated}</TableCell>
                   <TableCell>
                     <button className="text-muted-foreground hover:text-foreground transition-colors" onClick={(e) => handleArchive(e, t.id)}>
                       <Archive className="w-4 h-4" />

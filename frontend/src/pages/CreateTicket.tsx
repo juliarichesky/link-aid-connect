@@ -115,8 +115,13 @@ export default function CreateTicket() {
       return;
     }
 
-    const newId = `TKT-${String(tickets.length + 1).padStart(3, "0")}`;
     const now = new Date();
+    const dateStamp = [
+      now.getFullYear(),
+      String(now.getMonth() + 1).padStart(2, "0"),
+      String(now.getDate()).padStart(2, "0"),
+    ].join("");
+    const newId = `TKT-${dateStamp}-${String(tickets.length + 1).padStart(3, "0")}`;
     const openedAt = `${now.toLocaleDateString("pt-BR")} ${now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
 
     try {

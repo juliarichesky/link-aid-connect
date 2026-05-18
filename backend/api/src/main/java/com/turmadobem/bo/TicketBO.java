@@ -325,7 +325,7 @@ public class TicketBO {
     }
 
     private String gerarProtocolo(Long idTicket, LocalDateTime dataHora) {
-        return "TKT-" + dataHora.format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmm")) + "-" + idTicket;
+        return "TKT-" + dataHora.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "-" + String.format("%03d", idTicket);
     }
 
     private String normalizarRemetente(String remetente) {
