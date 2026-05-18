@@ -156,7 +156,7 @@ export default function DentistComms() {
   return (
     <div className="p-6 space-y-5 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-display font-bold">Comunicação com Dentistas</h1>
+        <h1 className="text-2xl font-display font-bold">Dentistas</h1>
         <p className="text-sm text-muted-foreground">Chat direto e ações rápidas de contato</p>
       </div>
 
@@ -185,6 +185,7 @@ export default function DentistComms() {
               <TableHead>Especialidade</TableHead>
               <TableHead>Localização</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead className="text-center">Vagas</TableHead>
               <TableHead className="text-center">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -195,6 +196,9 @@ export default function DentistComms() {
                 <TableCell className="text-sm">{d.specialty}</TableCell>
                 <TableCell className="text-sm text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3" /> {d.location}{d.uf ? `, ${d.uf}` : ""}</TableCell>
                 <TableCell><Badge variant={d.status === "Ativo" ? "default" : "secondary"}>{d.status}</Badge></TableCell>
+                <TableCell className="text-center font-medium">
+                  <span className={d.openSlots === 0 ? "text-destructive" : "text-success"}>{d.openSlots}</span>
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center justify-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <Tooltip>
@@ -230,7 +234,7 @@ export default function DentistComms() {
               </TableRow>
             ))}
             {filtered.length === 0 && (
-              <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Nenhum dentista encontrado</TableCell></TableRow>
+              <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Nenhum dentista encontrado</TableCell></TableRow>
             )}
           </TableBody>
         </Table>

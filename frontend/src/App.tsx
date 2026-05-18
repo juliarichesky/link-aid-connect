@@ -14,7 +14,6 @@ import CreateTicket from "./pages/CreateTicket";
 import Contacts from "./pages/Contacts";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
-import Dentists from "./pages/Dentists";
 import Financial from "./pages/Financial";
 import History from "./pages/History";
 import DentistComms from "./pages/DentistComms";
@@ -48,6 +47,11 @@ function ProtectedRoute({ children, roles }: { children: React.ReactNode; roles?
   return <>{children}</>;
 }
 
+function RedirectDentistComms() {
+  const location = useLocation();
+  return <Navigate to={{ pathname: "/dentists", search: location.search }} replace />;
+}
+
 const AppRoutes = () => (
   <Routes>
     <Route path="/login" element={<Login />} />
@@ -65,9 +69,9 @@ const AppRoutes = () => (
               <Route path="/reports" element={<ProtectedRoute roles={["admin"]}><Reports /></ProtectedRoute>} />
               <Route path="/history" element={<History />} />
               <Route path="/settings" element={<ProtectedRoute roles={["admin"]}><Settings /></ProtectedRoute>} />
-              <Route path="/dentists" element={<Dentists />} />
+              <Route path="/dentists" element={<DentistComms />} />
               <Route path="/financial" element={<ProtectedRoute roles={["admin"]}><Financial /></ProtectedRoute>} />
-              <Route path="/dentist-comms" element={<DentistComms />} />
+              <Route path="/dentist-comms" element={<RedirectDentistComms />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLayout>

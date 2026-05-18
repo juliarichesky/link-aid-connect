@@ -5,8 +5,6 @@ import {
   Users,
   BarChart3,
   Settings,
-  MessageCircle,
-  Stethoscope,
   DollarSign,
   ChevronLeft,
   ChevronRight,
@@ -19,6 +17,21 @@ import { useAuth, Role } from "@/contexts/AuthContext";
 
 type MenuItem = { title: string; url: string; icon: LucideIcon; roles?: Role[] };
 
+const ToothIcon = (({ className }: { className?: string }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <path d="M8.5 3.5c1.2 0 2.1.5 3.5.5s2.3-.5 3.5-.5c2.5 0 4 2.1 4 5.1 0 2.8-1.1 5-2.1 7.2-.8 1.8-1.4 4.2-3.1 4.2-1.2 0-1.3-1.9-1.7-3.4-.2-.8-.4-1.6-.6-1.6s-.4.8-.6 1.6c-.4 1.5-.5 3.4-1.7 3.4-1.7 0-2.3-2.4-3.1-4.2-1-2.2-2.1-4.4-2.1-7.2 0-3 1.5-5.1 4-5.1Z" />
+  </svg>
+)) as LucideIcon;
+
 const mainMenu: MenuItem[] = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard, roles: ["admin"] },
   { title: "Tickets", url: "/tickets", icon: Inbox },
@@ -29,8 +42,7 @@ const mainMenu: MenuItem[] = [
 ];
 
 const extra: MenuItem[] = [
-  { title: "Dentistas", url: "/dentists", icon: Stethoscope },
-  { title: "Comunicação Dentistas", url: "/dentist-comms", icon: MessageCircle },
+  { title: "Dentistas", url: "/dentists", icon: ToothIcon },
   { title: "Financeiro", url: "/financial", icon: DollarSign, roles: ["admin"] },
 ];
 
