@@ -107,7 +107,7 @@ async def receive_whatsapp_message(request: Request) -> Response:
         return Response(content=str(twiml), media_type="application/xml")
 
     protocol = _ticket_protocol(ticket)
-    reply = _build_twilio_reply(triage.reply_text, protocol)
+    reply = _build_twilio_reply(triage.reply_text, protocol, triage.human_handoff_required)
     twiml.message(reply)
 
     return Response(content=str(twiml), media_type="application/xml")
@@ -191,7 +191,7 @@ def _public_request_url(request: Request) -> str:
     return url
 
 
-def _build_twilio_reply(reply_text: str, protocol: str | None) -> str:
-    if protocol:
+def _build_twilio_reply(reply_text: str, protocol: str | None, include_protocol: bool = True) -> str:
+    if include_protocol and protocol:
         return f"{reply_text}\n\nProtocolo LinkAid: {protocol}"
     return reply_text

@@ -188,7 +188,7 @@
             "selection_policy": "sequential",
             "values": [
               {
-                "text": "Obrigada pelo interesse em participar como dentista voluntario. Vou registrar seu contato para que a equipe envie as orientacoes e o formulario de cadastro de dentistas voluntarios."
+                "text": "Obrigada pelo interesse em ser Dentista do Bem. Para se cadastrar como dentista voluntario, acesse o formulario oficial da Turma do Bem: https://turmadobem.org.br/como-ser-dentista-voluntario/"
               }
             ]
           }
@@ -212,7 +212,7 @@
             "selection_policy": "sequential",
             "values": [
               {
-                "text": "Entendi. Vou registrar sua proposta como parceria institucional para que a equipe LinkAid avalie e retorne com os proximos passos."
+                "text": "Obrigada pelo interesse em parceria. Me conte por aqui o nome da instituicao, a cidade e o tipo de parceria para eu organizar as informacoes."
               }
             ]
           }
@@ -356,7 +356,7 @@
             "selection_policy": "sequential",
             "values": [
               {
-                "text": "Nao consegui identificar totalmente sua solicitacao. Vou registrar o contato para que a equipe LinkAid possa analisar e responder com seguranca."
+                "text": "Ainda nao consegui identificar totalmente sua solicitacao. Me conte um pouco mais para eu te orientar pelo canal correto."
               }
             ]
           }

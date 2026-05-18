@@ -54,6 +54,7 @@ class TriageResult(BaseModel):
     classification_code: str
     summary: str
     source: str
+    human_handoff_required: bool = False
 
 
 def _safe_int(value: str | None) -> int:

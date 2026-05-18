@@ -10,6 +10,29 @@ from app.models import TriageResult, TwilioInboundMessage
 
 logger = logging.getLogger(__name__)
 
+DENTIST_VOLUNTEER_URL = "https://turmadobem.org.br/como-ser-dentista-voluntario/"
+DENTIST_VOLUNTEER_REPLY = (
+    "Obrigada pelo interesse em ser Dentista do Bem. "
+    "Para se cadastrar como dentista voluntario, acesse o formulario oficial da Turma do Bem: "
+    f"{DENTIST_VOLUNTEER_URL}"
+)
+DONATION_REPLY = (
+    "Que bom saber que voce quer apoiar a Turma do Bem. "
+    "Posso te orientar por aqui sobre formas de doacao e direcionar para os canais oficiais da organizacao."
+)
+PARTNERSHIP_REPLY = (
+    "Obrigada pelo interesse em parceria. "
+    "Me conte por aqui o nome da instituicao, a cidade e o tipo de parceria para eu organizar as informacoes."
+)
+HUMAN_HANDOFF_REPLY = (
+    "Recebemos sua mensagem e abrimos uma triagem no LinkAid. "
+    "Nossa equipe vai analisar e continuar o atendimento."
+)
+AI_CONTINUATION_REPLY = (
+    "Ainda nao consegui identificar totalmente sua solicitacao. "
+    "Me conte um pouco mais para eu te orientar pelo canal correto."
+)
+
 
 class ConversationMemory:
     def __init__(self, max_size: int = 500):
@@ -38,7 +61,9 @@ class LocalTriageService:
         classification = "SAUDE"
         intent = "saude"
 
-        if any(word in text for word in ["dor", "urgente", "sangramento", "inchado", "emergencia"]):
+        if _is_explicit_human_request(text):
+            intent = "falar_atendente"
+        elif any(word in text for word in ["dor", "urgente", "sangramento", "inchado", "emergencia"]):
             priority = "CRITICA"
             classification = "EMERGENCIA"
             intent = "emergencia"
@@ -71,17 +96,17 @@ class LocalTriageService:
             classification = "VOLUNTARIADO"
             intent = "voluntariado_dentista"
 
+        human_handoff_required = _requires_human_handoff(intent, classification, message)
+        reply_text = _reply_for_automated_audience(intent, classification) or _default_reply(human_handoff_required)
         return TriageResult(
-            reply_text=(
-                "Recebemos sua mensagem e abrimos uma triagem no LinkAid. "
-                "Nossa equipe vai analisar e continuar o atendimento."
-            ),
+            reply_text=reply_text,
             intent=intent,
             confidence=85.0,
             priority_code=priority,
             classification_code=classification,
             summary=_triage_summary("Triagem automatica", classification, priority),
             source="LOCAL_FALLBACK",
+            human_handoff_required=human_handoff_required,
         )
 
 
@@ -135,18 +160,19 @@ class WatsonAssistantService:
         classification = _classification_from_intent_or_text(intent, inbound.body)
         priority = _priority_from_intent_or_text(intent, inbound.body)
 
+        human_handoff_required = _requires_human_handoff(intent, classification, inbound.body)
+        fallback_reply = _default_reply(human_handoff_required)
+        policy_reply = _reply_for_automated_audience(intent, classification)
+
         return TriageResult(
-            reply_text=reply_text
-            or (
-                "Recebemos sua mensagem e abrimos uma triagem no LinkAid. "
-                "Nossa equipe vai continuar o atendimento."
-            ),
+            reply_text=policy_reply or reply_text or fallback_reply,
             intent=intent,
             confidence=confidence,
             priority_code=priority,
             classification_code=classification,
             summary=_triage_summary("Triagem Watson", classification, priority),
             source="WATSON",
+            human_handoff_required=human_handoff_required,
         )
 
     def _get_assistant(self):
@@ -184,6 +210,7 @@ class QuarkusTicketClient:
             "intent": triage.intent,
             "respostaIa": triage.reply_text,
             "confiancaIa": triage.confidence,
+            "encaminharHumano": triage.human_handoff_required,
             "payload": json.dumps(
                 {
                     "twilio": inbound.raw,
@@ -260,6 +287,59 @@ def _classification_from_intent_or_text(intent: str | None, message: str) -> str
     if "feedback" in base:
         return "FEEDBACK"
     return "SAUDE"
+
+
+def _reply_for_automated_audience(intent: str | None, classification: str) -> str | None:
+    intent_value = (intent or "").lower()
+    classification_value = (classification or "").upper()
+    base = f"{intent_value} {classification_value}".upper()
+    if intent_value == "voluntariado_dentista" or "VOLUNTARIADO" in base or "VOLUNTARIO" in base:
+        return DENTIST_VOLUNTEER_REPLY
+    if "DOACAO" in base or "DOADOR" in base:
+        return DONATION_REPLY
+    if "PARCERIA" in base or "PARCEIRO" in base:
+        return PARTNERSHIP_REPLY
+    return None
+
+
+def _default_reply(human_handoff_required: bool) -> str:
+    return HUMAN_HANDOFF_REPLY if human_handoff_required else AI_CONTINUATION_REPLY
+
+
+def _is_explicit_human_request(text: str) -> bool:
+    return any(
+        term in text
+        for term in [
+            "atendente",
+            "humano",
+            "falar com uma pessoa",
+            "conversar com uma pessoa",
+            "colaborador",
+            "equipe",
+        ]
+    )
+
+
+def _requires_human_handoff(intent: str | None, classification: str, message: str) -> bool:
+    intent_value = (intent or "").lower()
+    classification_value = (classification or "").upper()
+    if intent_value == "falar_atendente" or _is_explicit_human_request(message.lower()):
+        return True
+
+    if classification_value in {"DOACAO", "PARCERIA", "VOLUNTARIADO", "FEEDBACK"}:
+        return False
+
+    if intent_value in {"ajuda_apolonias", "ajuda_dentistas_do_bem", "emergencia_odontologica", "emergencia", "agendamento"}:
+        return True
+
+    if classification_value in {"EMERGENCIA", "AGENDAMENTO"}:
+        return True
+
+    text = message.lower()
+    if any(term in text for term in ["triagem", "pedido de ajuda", "preciso de atendimento", "preciso de ajuda"]):
+        return True
+
+    return False
 
 
 def _contact_type_from_triage(triage: TriageResult) -> str:

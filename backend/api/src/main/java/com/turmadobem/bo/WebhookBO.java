@@ -38,12 +38,13 @@ public class WebhookBO {
         String classificacao = primeiroValor(request.classificacaoCodigo(), inferirClassificacao(request.body(), request.intent()));
         String origem = primeiroValor(request.origem(), "WATSON_SANDBOX").toUpperCase();
         String nome = primeiroValor(request.nome(), request.from(), "Contato WhatsApp");
+        boolean encaminharHumano = deveEncaminharHumano(request, classificacao);
         Ticket ticketAberto = ticketDAO.buscarAbertoPorTelefone(request.from());
         if (ticketAberto != null) {
             boolean atendimentoHumanoIniciado = ticketMensagemDAO.existeAtendentePorTicket(ticketAberto.getIdTicket());
             ticketBO.registrarMensagem(ticketAberto, "CONTATO", request.body(), null);
             if (!atendimentoHumanoIniciado) {
-                ticketBO.registrarMensagem(ticketAberto, "IA", respostaIaComProtocolo(request.respostaIa(), ticketAberto.getProtocolo()), null);
+                ticketBO.registrarMensagem(ticketAberto, "IA", respostaIa(request.respostaIa(), ticketAberto.getProtocolo(), encaminharHumano), null);
             }
             registrarEvento(ticketAberto, request, origem, "PROCESSADO");
             return respostaWebhook(ticketBO.buscar(ticketAberto.getIdTicket()), !atendimentoHumanoIniciado);
@@ -71,7 +72,7 @@ public class WebhookBO {
 
         Ticket ticket = ticketBO.criarEntidade(ticketRequest);
         ticketBO.registrarMensagem(ticket, "CONTATO", request.body(), null);
-        ticketBO.registrarMensagem(ticket, "IA", respostaIaComProtocolo(request.respostaIa(), ticket.getProtocolo()), null);
+        ticketBO.registrarMensagem(ticket, "IA", respostaIa(request.respostaIa(), ticket.getProtocolo(), encaminharHumano), null);
         registrarEvento(ticket, request, origem, "PROCESSADO");
 
         return respostaWebhook(ticketBO.buscar(ticket.getIdTicket()), true);
@@ -150,12 +151,34 @@ public class WebhookBO {
         return "from=" + primeiroValor(request.from(), "") + "; body=" + request.body();
     }
 
-    private String respostaIaComProtocolo(String respostaIa, String protocolo) {
+    private boolean deveEncaminharHumano(LinkAidDtos.WebhookTicketRequest request, String classificacao) {
+        if (request.encaminharHumano() != null) {
+            return request.encaminharHumano();
+        }
+
+        String intent = request.intent() == null ? "" : request.intent().toLowerCase();
+        String codigoClassificacao = classificacao == null ? "" : classificacao.toUpperCase();
+        if ("falar_atendente".equals(intent)) {
+            return true;
+        }
+        if (codigoClassificacao.equals("DOACAO")
+                || codigoClassificacao.equals("PARCERIA")
+                || codigoClassificacao.equals("VOLUNTARIADO")
+                || codigoClassificacao.equals("FEEDBACK")) {
+            return false;
+        }
+        return codigoClassificacao.equals("EMERGENCIA")
+                || codigoClassificacao.equals("AGENDAMENTO")
+                || intent.startsWith("ajuda_")
+                || intent.contains("emergencia");
+    }
+
+    private String respostaIa(String respostaIa, String protocolo, boolean incluirProtocolo) {
         String resposta = primeiroValor(
                 respostaIa,
                 "Recebemos sua mensagem e abrimos uma triagem no LinkAid. Nossa equipe vai analisar e continuar o atendimento."
         );
-        if (protocolo == null || protocolo.isBlank() || resposta.contains("Protocolo LinkAid:")) {
+        if (!incluirProtocolo || protocolo == null || protocolo.isBlank() || resposta.contains("Protocolo LinkAid:")) {
             return resposta;
         }
         return resposta + "\n\nProtocolo LinkAid: " + protocolo;
