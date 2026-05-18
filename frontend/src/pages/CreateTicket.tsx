@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Plus, UserPlus } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,9 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle,
-} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTickets, type Priority } from "@/contexts/TicketsContext";
 import { maskCPF, maskCNPJ, maskPhone } from "@/lib/masks";
@@ -67,11 +64,8 @@ export default function CreateTicket() {
   const [desc, setDesc] = useState("");
   const [priority, setPriority] = useState("");
   const [responsible, setResponsible] = useState("");
-  const [dentistResp, setDentistResp] = useState("");
   const [ticketType, setTicketType] = useState<string>(TIPO_CONTATO_LABELS.SOLICITANTE);
 
-  // New dentist modal
-  const [newDentistOpen, setNewDentistOpen] = useState(false);
   const [ndName, setNdName] = useState("");
   const [ndSpecialty, setNdSpecialty] = useState("");
   const [ndPhone, setNdPhone] = useState("");
@@ -103,7 +97,6 @@ export default function CreateTicket() {
         schedule: [],
       });
       toast.success("Dentista cadastrado com sucesso!");
-      setNewDentistOpen(false);
       setNdName(""); setNdSpecialty(""); setNdPhone(""); setNdEmail(""); setNdCrm(""); setNdCity(""); setNdUf("");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Erro ao cadastrar dentista");
@@ -136,7 +129,6 @@ export default function CreateTicket() {
       priority: priorityMap[priority] || PRIORIDADE_LABELS.MEDIA,
       status: "Novo",
       responsible: responsible || "Sem responsável",
-      dentistResponsible: dentistResp && dentistResp !== "none" ? dentistResp : undefined,
       updated: "agora",
       openedAt,
       phone,
@@ -244,23 +236,6 @@ export default function CreateTicket() {
             </Select>
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-          <div>
-            <Label>Dentista Responsável (Clínico)</Label>
-            <Select value={dentistResp} onValueChange={setDentistResp}>
-              <SelectTrigger><SelectValue placeholder="Selecione o dentista (opcional)" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">Nenhum</SelectItem>
-                {dentists.filter((d) => d.status === "Ativo").map((d) => (
-                  <SelectItem key={d.id} value={d.name}>{d.name} — {d.specialty}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <Button variant="outline" className="gap-2" onClick={() => setNewDentistOpen(true)}>
-            <UserPlus className="w-4 h-4" /> Adicionar Dentista
-          </Button>
-        </div>
         <Button className="w-full mt-2" onClick={handleCreate}>Criar Ticket</Button>
       </CardContent>
     </Card>
@@ -287,27 +262,6 @@ export default function CreateTicket() {
         <TabsContent value="pj">{renderForm()}</TabsContent>
         <TabsContent value="dentist">{renderDentistForm()}</TabsContent>
       </Tabs>
-
-      {/* Dentist modal triggered from PF/PJ tabs */}
-      <Dialog open={newDentistOpen} onOpenChange={setNewDentistOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Cadastrar Novo Dentista Voluntário</DialogTitle></DialogHeader>
-          <div className="space-y-3">
-            <div><Label>Nome</Label><Input value={ndName} onChange={(e) => setNdName(e.target.value)} placeholder="Nome completo" /></div>
-            <div><Label>Especialidade</Label><Input value={ndSpecialty} onChange={(e) => setNdSpecialty(e.target.value)} placeholder="Ex: Ortodontia" /></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><Label>Telefone</Label><Input value={ndPhone} onChange={(e) => setNdPhone(maskPhone(e.target.value))} placeholder="(00) 00000-0000" /></div>
-              <div><Label>E-mail</Label><Input value={ndEmail} onChange={(e) => setNdEmail(e.target.value)} placeholder="email@exemplo.com" /></div>
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              <div><Label>CRO</Label><Input value={ndCrm} onChange={(e) => setNdCrm(e.target.value)} placeholder="CRO-XX 0000" /></div>
-              <div><Label>Cidade</Label><Input value={ndCity} onChange={(e) => setNdCity(e.target.value)} placeholder="Cidade" /></div>
-              <div><Label>UF</Label><Input value={ndUf} onChange={(e) => setNdUf(e.target.value.toUpperCase().slice(0, 2))} placeholder="UF" /></div>
-            </div>
-            <Button className="w-full" onClick={handleCreateDentist}><Plus className="w-4 h-4 mr-1" /> Cadastrar</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

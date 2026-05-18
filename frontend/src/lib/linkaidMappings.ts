@@ -35,7 +35,7 @@ export const CANAL_LABELS = {
 
 export const CLASSIFICACAO_LABELS = {
   SAUDE: "Saúde",
-  EMERGENCIA: "Emergência",
+  EMERGENCIA: "Saúde",
   AGENDAMENTO: "Agendamento",
   DOACAO: "Doação",
   PARCERIA: "Parceria",

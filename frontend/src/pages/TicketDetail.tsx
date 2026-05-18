@@ -46,6 +46,7 @@ export default function TicketDetail() {
   const [dentistResp, setDentistResp] = useState(ticket?.dentistResponsible || "");
   const [channel, setChannel] = useState(ticket?.channel || "WhatsApp");
   const [senderName, setSenderName] = useState(ticket?.sender || "");
+  const [senderNameDirty, setSenderNameDirty] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -66,15 +67,22 @@ export default function TicketDetail() {
   }, [id, loadTicket]);
 
   useEffect(() => {
+    setSenderName("");
+    setSenderNameDirty(false);
+  }, [id]);
+
+  useEffect(() => {
     if (ticket) {
       setPriority(ticket.priority);
       setStatus(ticket.status);
       setResponsible(ticket.responsible);
       setDentistResp(ticket.dentistResponsible || "");
       setChannel(ticket.channel);
-      setSenderName(ticket.sender);
+      if (!senderNameDirty) {
+        setSenderName(ticket.sender);
+      }
     }
-  }, [ticket]);
+  }, [ticket, senderNameDirty]);
 
   useEffect(() => {
     if (!id || !/^\d+$/.test(id)) return;
@@ -146,6 +154,8 @@ export default function TicketDetail() {
 
     try {
       await updateTicket(id, { sender: normalizedName });
+      setSenderName(normalizedName);
+      setSenderNameDirty(false);
       toast.success("Nome do remetente salvo com sucesso");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Erro ao salvar nome do remetente");
@@ -337,7 +347,7 @@ export default function TicketDetail() {
           <TabsContent value="personal">
             <div className="space-y-3 mt-2">
               <div className="grid grid-cols-2 gap-3">
-                <div><Label className="text-xs">Nome</Label><Input className="h-8 text-sm" value={senderName} onChange={(event) => setSenderName(event.target.value)} /></div>
+                <div><Label className="text-xs">Nome</Label><Input className="h-8 text-sm" value={senderName} onChange={(event) => { setSenderName(event.target.value); setSenderNameDirty(true); }} /></div>
                 <div><Label className="text-xs">CPF</Label><Input className="h-8 text-sm" defaultValue={ticket.cpf} /></div>
               </div>
               <div className="grid grid-cols-2 gap-3">

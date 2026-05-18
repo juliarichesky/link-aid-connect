@@ -112,7 +112,7 @@ public class WebhookBO {
     private String inferirClassificacao(String texto, String intent) {
         String base = ((intent == null ? "" : intent) + " " + texto).toLowerCase();
         if (base.contains("emerg") || base.contains("dor") || base.contains("sangramento")) {
-            return "EMERGENCIA";
+            return "SAUDE";
         }
         if (base.contains("doa")) {
             return "DOACAO";
@@ -167,10 +167,15 @@ public class WebhookBO {
                 || codigoClassificacao.equals("FEEDBACK")) {
             return false;
         }
+        String texto = request.body() == null ? "" : request.body().toLowerCase();
         return codigoClassificacao.equals("EMERGENCIA")
                 || codigoClassificacao.equals("AGENDAMENTO")
                 || intent.startsWith("ajuda_")
-                || intent.contains("emergencia");
+                || intent.contains("emergencia")
+                || texto.contains("dor")
+                || texto.contains("urgente")
+                || texto.contains("sangramento")
+                || texto.contains("inchado");
     }
 
     private String respostaIa(String respostaIa, String protocolo, boolean incluirProtocolo) {

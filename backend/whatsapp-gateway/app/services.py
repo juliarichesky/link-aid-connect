@@ -65,7 +65,7 @@ class LocalTriageService:
             intent = "falar_atendente"
         elif any(word in text for word in ["dor", "urgente", "sangramento", "inchado", "emergencia"]):
             priority = "CRITICA"
-            classification = "EMERGENCIA"
+            classification = "SAUDE"
             intent = "emergencia"
         elif any(word in text for word in ["agendar", "consulta", "retorno", "horario"]):
             priority = "ALTA"
@@ -275,7 +275,7 @@ def _priority_from_intent_or_text(intent: str | None, message: str) -> str:
 def _classification_from_intent_or_text(intent: str | None, message: str) -> str:
     base = f"{intent or ''} {message}".lower()
     if any(word in base for word in ["emerg", "dor", "sangramento"]):
-        return "EMERGENCIA"
+        return "SAUDE"
     if "agend" in base or "consulta" in base:
         return "AGENDAMENTO"
     if "doa" in base or "patrocin" in base:

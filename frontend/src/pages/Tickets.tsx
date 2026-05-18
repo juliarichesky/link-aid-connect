@@ -173,7 +173,7 @@ const CLASSIFICATION_FILTER_OPTIONS: ClassificationFilterOption[] = [
   {
     value: "saude",
     label: "Saúde",
-    classifications: ["Saúde", "Emergência", "Agendamento"],
+    classifications: ["Saúde", "Agendamento"],
   },
   {
     value: "parceria",
@@ -211,6 +211,7 @@ const ticketTypeLabel = (type: string) =>
   normalizeForFilter(type) === "dentista voluntario" ? TIPO_CONTATO_LABELS.VOLUNTARIO : type;
 
 const ticketClassificationLabel = (classification: string) =>
+  normalizeForFilter(classification) === "emergencia" ? "Saúde" :
   normalizeForFilter(classification) === "voluntariado odontologico" ? "Voluntariado" : classification;
 
 const parseSortableDate = (value: string) => {
