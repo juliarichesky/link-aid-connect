@@ -74,7 +74,7 @@ export default function TicketDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { tickets, teamMembers, dentists, loadTicket, updateTicket, updateContact, addChatMessage, releasePhoneForTesting } = useTickets();
+  const { tickets, teamMembers, dentists, loading, loadTicket, updateTicket, updateContact, addChatMessage, releasePhoneForTesting } = useTickets();
   const [reply, setReply] = useState("");
   const [loadingDetail, setLoadingDetail] = useState(() => Boolean(id && /^\d+$/.test(id)));
   const [releasingPhone, setReleasingPhone] = useState(false);
@@ -239,7 +239,7 @@ export default function TicketDetail() {
   if (!ticket) {
     return (
       <div className="p-6 text-center text-muted-foreground">
-        <p>{loadingDetail ? "Carregando ticket..." : "Ticket não encontrado"}</p>
+        <p>{loadingDetail || loading ? "Carregando ticket..." : "Ticket não encontrado"}</p>
         <Button variant="ghost" className="mt-4" onClick={() => navigate(backUrl)}>
           <ArrowLeft className="w-4 h-4 mr-1" /> Voltar
         </Button>

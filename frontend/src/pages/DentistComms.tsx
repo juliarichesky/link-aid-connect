@@ -22,7 +22,7 @@ interface ChatMessage {
 }
 
 export default function DentistComms() {
-  const { dentists } = useTickets();
+  const { dentists, loading } = useTickets();
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -234,7 +234,11 @@ export default function DentistComms() {
               </TableRow>
             ))}
             {filtered.length === 0 && (
-              <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Nenhum dentista encontrado</TableCell></TableRow>
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  {loading ? "Carregando dentistas..." : "Nenhum dentista encontrado"}
+                </TableCell>
+              </TableRow>
             )}
           </TableBody>
         </Table>

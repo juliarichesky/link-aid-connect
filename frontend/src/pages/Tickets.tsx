@@ -357,7 +357,7 @@ const ticketMatchesClassificationFilter = (ticket: Ticket, option: Classificatio
 };
 
 export default function Tickets() {
-  const { tickets, archiveTicket } = useTickets();
+  const { tickets, loading, archiveTicket } = useTickets();
   const [search, setSearch] = useState("");
   const [channelFilter, setChannelFilter] = useState<ChannelFilterValue>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");
@@ -559,7 +559,9 @@ export default function Tickets() {
             })}
             {paginated.length === 0 && (
               <TableRow>
-                <TableCell colSpan={11} className="text-center py-8 text-muted-foreground">Nenhum ticket encontrado</TableCell>
+                <TableCell colSpan={11} className="text-center py-8 text-muted-foreground">
+                  {loading ? "Carregando tickets..." : "Nenhum ticket encontrado"}
+                </TableCell>
               </TableRow>
             )}
           </TableBody>

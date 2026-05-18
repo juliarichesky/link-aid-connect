@@ -45,7 +45,7 @@ const typeOptions = [
 export default function CreateTicket() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { tickets, teamMembers, dentists, addTicket, addDentist } = useTickets();
+  const { tickets, teamMembers, dentists, loading, addTicket, addDentist } = useTickets();
   const [tab, setTab] = useState(searchParams.get("tab") || "pf");
 
   useEffect(() => {
@@ -229,6 +229,9 @@ export default function CreateTicket() {
             <Select value={responsible} onValueChange={setResponsible}>
               <SelectTrigger><SelectValue placeholder="Selecione o responsável" /></SelectTrigger>
               <SelectContent>
+                {loading && (
+                  <SelectItem value="loading-responsibles" disabled>Carregando responsáveis...</SelectItem>
+                )}
                 {teamMembers.map((m) => (
                   <SelectItem key={m.name} value={m.name}>{m.name} — {m.role}</SelectItem>
                 ))}
@@ -236,7 +239,9 @@ export default function CreateTicket() {
             </Select>
           </div>
         </div>
-        <Button className="w-full mt-2" onClick={handleCreate}>Criar Ticket</Button>
+        <Button className="w-full mt-2" onClick={handleCreate} disabled={loading}>
+          {loading ? "Carregando dados..." : "Criar Ticket"}
+        </Button>
       </CardContent>
     </Card>
   );
@@ -249,7 +254,9 @@ export default function CreateTicket() {
 
       <div>
         <h1 className="text-2xl font-display font-bold">Criar Ticket</h1>
-        <p className="text-sm text-muted-foreground">Cadastro manual de atendimento</p>
+        <p className="text-sm text-muted-foreground">
+          {loading ? "Carregando opções de atendimento..." : "Cadastro manual de atendimento"}
+        </p>
       </div>
 
       <Tabs value={tab} onValueChange={(v) => { setTab(v); setDoc(""); }}>

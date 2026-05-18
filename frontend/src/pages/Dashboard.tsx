@@ -364,6 +364,11 @@ export default function Dashboard() {
                 <Bar dataKey="contatos" fill="hsl(214, 80%, 52%)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
+            {loading && (
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                Carregando volume de contatos...
+              </p>
+            )}
             {!loading && !hasVolume && (
               <p className="text-xs text-muted-foreground text-center mt-2">
                 Nenhum contato cadastrado neste período.
@@ -402,7 +407,7 @@ export default function Dashboard() {
               </>
             ) : (
               <div className="h-40 flex items-center justify-center text-sm text-muted-foreground text-center">
-                Nenhum contato cadastrado.
+                {loading ? "Carregando tipos de contato..." : "Nenhum contato cadastrado."}
               </div>
             )}
           </CardContent>
@@ -434,7 +439,9 @@ export default function Dashboard() {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground text-center py-6">Nenhum contato cadastrado.</p>
+            <p className="text-sm text-muted-foreground text-center py-6">
+              {loading ? "Carregando contatos..." : "Nenhum contato cadastrado."}
+            </p>
           )}
         </CardContent>
       </Card>

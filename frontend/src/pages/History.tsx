@@ -265,7 +265,7 @@ const SortableHeader = ({ label, column, widthClass, sortConfig, onSort }: Sorta
 };
 
 export default function History() {
-  const { tickets: globalTickets, updateTicket } = useTickets();
+  const { tickets: globalTickets, loading, updateTicket } = useTickets();
   const [search, setSearch] = useState("");
   const [channelFilter, setChannelFilter] = useState<ChannelFilterValue>("all");
   const [dentistFilter, setDentistFilter] = useState("all");
@@ -305,7 +305,9 @@ export default function History() {
     }));
 
   const existingIds = new Set(staticHistoryTickets.map((t) => t.id));
-  const merged = [...staticHistoryTickets, ...resolvedFromGlobal.filter((t) => !existingIds.has(t.id))];
+  const merged = loading
+    ? []
+    : [...staticHistoryTickets, ...resolvedFromGlobal.filter((t) => !existingIds.has(t.id))];
 
   // Sort: Resolvido first, then Fechado
   const defaultSorted = [...merged].sort((a, b) => {
@@ -590,7 +592,9 @@ export default function History() {
             })}
             {paginated.length === 0 && (
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">Nenhum resultado encontrado</TableCell>
+                <TableCell colSpan={10} className="text-center py-8 text-muted-foreground">
+                  {loading ? "Carregando histórico..." : "Nenhum resultado encontrado"}
+                </TableCell>
               </TableRow>
             )}
           </TableBody>
