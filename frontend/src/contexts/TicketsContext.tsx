@@ -22,6 +22,7 @@ import {
   PRIORIDADE_LABELS,
   prioridadeLabel,
   type PrioridadeLabel,
+  editableContactTypeLabel,
   statusTicketCodigo,
   statusTicketLabel,
   tipoContatoCodigo,
@@ -420,12 +421,13 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
 
   const buildContactRequest = (contact: Contact): ApiContatoRequest => {
     const { city, uf } = splitLocation(contact.location);
+    const contactType = editableContactTypeLabel(contact.type);
     return {
       nome: contact.name,
       documento: onlyDigits(contact.cpf),
       email: contact.email || undefined,
       telefone: onlyDigits(contact.phone),
-      tipoContatoCodigo: tipoContatoCodigo(contact.type) || "SOLICITANTE",
+      tipoContatoCodigo: tipoContatoCodigo(contactType) || "SOLICITANTE",
       cidade: city,
       uf,
       observacao: contact.observation || undefined,

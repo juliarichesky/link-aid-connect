@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/pagination";
 import { useEffect, useState, useMemo } from "react";
 import { useTickets, type Contact } from "@/contexts/TicketsContext";
-import { TIPO_CONTATO_LABELS } from "@/lib/linkaidMappings";
+import { EDITABLE_CONTACT_TYPE_LABELS, editableContactTypeLabel, TIPO_CONTATO_LABELS } from "@/lib/linkaidMappings";
 import { maskCNPJ, maskCPF, maskPhone } from "@/lib/masks";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -30,13 +30,7 @@ const typeColors: Record<string, string> = {
 
 const ITEMS_PER_PAGE = 10;
 
-const typeOptions = [
-  TIPO_CONTATO_LABELS.SOLICITANTE,
-  TIPO_CONTATO_LABELS.BENEFICIARIO,
-  TIPO_CONTATO_LABELS.DOADOR,
-  TIPO_CONTATO_LABELS.VOLUNTARIO,
-  TIPO_CONTATO_LABELS.PARCEIRO,
-];
+const typeOptions = [...EDITABLE_CONTACT_TYPE_LABELS];
 
 interface DerivedContact {
   id?: number;
@@ -154,7 +148,7 @@ export default function Contacts() {
     const { city, uf } = splitLocation(selected.location);
     setContactForm({
       name: selected.name,
-      type: selected.type || TIPO_CONTATO_LABELS.SOLICITANTE,
+      type: editableContactTypeLabel(selected.type),
       cpf: selected.cpf === "-" ? "" : maskDocument(selected.cpf),
       phone: selected.phone ? maskPhone(selected.phone) : "",
       email: selected.email,
@@ -175,10 +169,11 @@ export default function Contacts() {
       return;
     }
 
+    const normalizedType = editableContactTypeLabel(contactForm.type);
     const updatedContact: Contact = {
       id: selected.id,
       name: contactForm.name.trim(),
-      type: contactForm.type,
+      type: normalizedType,
       cpf: contactForm.cpf.trim() || "-",
       phone: contactForm.phone.trim(),
       email: contactForm.email.trim(),

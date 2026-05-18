@@ -75,6 +75,13 @@ export type DentistaStatusCodigo = keyof typeof DENTISTA_STATUS_LABELS;
 export type DentistaStatusLabel = (typeof DENTISTA_STATUS_LABELS)[DentistaStatusCodigo];
 export type PerfilCodigo = keyof typeof PERFIL_LABELS;
 
+export const EDITABLE_CONTACT_TYPE_LABELS = [
+  TIPO_CONTATO_LABELS.SOLICITANTE,
+  TIPO_CONTATO_LABELS.BENEFICIARIO,
+  TIPO_CONTATO_LABELS.DOADOR,
+  TIPO_CONTATO_LABELS.PARCEIRO,
+] as const;
+
 const STATUS_TICKET_ALIASES: Record<string, StatusTicketCodigo> = {
   AGUARDANDO: "AGUARDANDO_CLIENTE",
   FECHADO: "RESOLVIDO",
@@ -151,6 +158,9 @@ export const tipoContatoRegistroLabel = (codigo?: string | null, nome?: string |
 
 export const tipoContatoCodigo = (label?: string | null) =>
   codigoPorLabel(TIPO_CONTATO_LABELS, label) as TipoContatoCodigo | undefined;
+
+export const editableContactTypeLabel = (label?: string | null): string =>
+  EDITABLE_CONTACT_TYPE_LABELS.find((type) => type === label) || TIPO_CONTATO_LABELS.SOLICITANTE;
 
 export const canalLabel = (codigo?: string | null) =>
   labelPorCodigo(CANAL_LABELS, codigo);

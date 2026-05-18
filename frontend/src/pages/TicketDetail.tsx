@@ -12,7 +12,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
 import { useTickets, type Contact, type Ticket } from "@/contexts/TicketsContext";
-import { TIPO_CONTATO_LABELS } from "@/lib/linkaidMappings";
+import { EDITABLE_CONTACT_TYPE_LABELS, editableContactTypeLabel, TIPO_CONTATO_LABELS } from "@/lib/linkaidMappings";
 import { maskCNPJ, maskCPF, maskPhone } from "@/lib/masks";
 import { ticketDisplayProtocol } from "@/lib/ticketDisplay";
 import { toast } from "sonner";
@@ -25,13 +25,7 @@ const typeColors: Record<string, string> = {
   Parceiro: "bg-info/15 text-info border-info/30",
 };
 
-const contactTypeOptions = [
-  TIPO_CONTATO_LABELS.SOLICITANTE,
-  TIPO_CONTATO_LABELS.BENEFICIARIO,
-  TIPO_CONTATO_LABELS.DOADOR,
-  TIPO_CONTATO_LABELS.VOLUNTARIO,
-  TIPO_CONTATO_LABELS.PARCEIRO,
-];
+const contactTypeOptions = [...EDITABLE_CONTACT_TYPE_LABELS];
 
 const splitLocation = (location: string) => {
   const [city = "", uf = ""] = location.split(",").map((part) => part.trim());
@@ -50,7 +44,7 @@ const personalDataFromTicket = (ticket?: Ticket) => {
     cpf: ticket?.cpf && ticket.cpf !== "-" ? maskDocument(ticket.cpf) : "",
     phone: ticket?.phone ? maskPhone(ticket.phone) : "",
     email: ticket?.email || "",
-    type: ticket?.type || TIPO_CONTATO_LABELS.SOLICITANTE,
+    type: editableContactTypeLabel(ticket?.type),
     city,
     uf,
   };
@@ -199,13 +193,14 @@ export default function TicketDetail() {
     }
 
     const normalizedUf = personalData.uf.trim().toUpperCase().slice(0, 2);
+    const normalizedType = editableContactTypeLabel(personalData.type);
     const updatedContact: Contact = {
       id: ticket.idContato,
       name: normalizedName,
       cpf: personalData.cpf.trim() || "-",
       phone: personalData.phone.trim(),
       email: personalData.email.trim(),
-      type: personalData.type,
+      type: normalizedType,
       location: [personalData.city.trim(), normalizedUf].filter(Boolean).join(", "),
     };
 
