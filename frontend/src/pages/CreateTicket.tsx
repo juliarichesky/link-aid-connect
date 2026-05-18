@@ -38,10 +38,11 @@ const priorityMap: Record<string, Priority> = {
 };
 
 const typeOptions = [
-  { value: TIPO_CONTATO_LABELS.BENEFICIARIO, label: TIPO_CONTATO_LABELS.BENEFICIARIO },
-  { value: TIPO_CONTATO_LABELS.PARCEIRO, label: TIPO_CONTATO_LABELS.PARCEIRO },
   { value: TIPO_CONTATO_LABELS.DOADOR, label: TIPO_CONTATO_LABELS.DOADOR },
   { value: TIPO_CONTATO_LABELS.VOLUNTARIO, label: TIPO_CONTATO_LABELS.VOLUNTARIO },
+  { value: TIPO_CONTATO_LABELS.PARCEIRO, label: TIPO_CONTATO_LABELS.PARCEIRO },
+  { value: TIPO_CONTATO_LABELS.SOLICITANTE, label: TIPO_CONTATO_LABELS.SOLICITANTE },
+  { value: TIPO_CONTATO_LABELS.BENEFICIARIO, label: TIPO_CONTATO_LABELS.BENEFICIARIO },
 ];
 
 export default function CreateTicket() {
@@ -67,7 +68,7 @@ export default function CreateTicket() {
   const [priority, setPriority] = useState("");
   const [responsible, setResponsible] = useState("");
   const [dentistResp, setDentistResp] = useState("");
-  const [ticketType, setTicketType] = useState<string>(TIPO_CONTATO_LABELS.BENEFICIARIO);
+  const [ticketType, setTicketType] = useState<string>(TIPO_CONTATO_LABELS.SOLICITANTE);
 
   // New dentist modal
   const [newDentistOpen, setNewDentistOpen] = useState(false);

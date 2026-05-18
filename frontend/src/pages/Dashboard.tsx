@@ -34,7 +34,7 @@ import {
   type ApiContatoResponse,
   type ApiDashboardResponse,
 } from "@/lib/linkaidApi";
-import { tipoContatoLabel } from "@/lib/linkaidMappings";
+import { tipoContatoRegistroLabel } from "@/lib/linkaidMappings";
 
 type Period = "weekly" | "monthly" | "yearly";
 
@@ -118,7 +118,7 @@ const contactTimestamp = (contact: ApiContatoResponse) =>
   toDate(contact.dataCadastro)?.getTime() ?? 0;
 
 const contactTypeName = (contact: ApiContatoResponse) =>
-  tipoContatoLabel(contact.tipoContatoCodigo) || contact.tipoContatoNome || "Sem tipo";
+  tipoContatoRegistroLabel(contact.tipoContatoCodigo, contact.tipoContatoNome) || "Sem tipo";
 
 const buildContactVolume = (contacts: ApiContatoResponse[], period: Period): VolumeBucket[] => {
   const today = startOfDay(new Date());

@@ -40,6 +40,7 @@ const priorityClasses: Record<Priority, string> = {
 };
 
 const typeColors: Record<string, string> = {
+  [TIPO_CONTATO_LABELS.SOLICITANTE]: "bg-warning/15 text-warning",
   [TIPO_CONTATO_LABELS.BENEFICIARIO]: "bg-warning/15 text-warning",
   [TIPO_CONTATO_LABELS.DOADOR]: "bg-primary/15 text-primary",
   [TIPO_CONTATO_LABELS.VOLUNTARIO]: "bg-success/15 text-success",

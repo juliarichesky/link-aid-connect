@@ -92,7 +92,7 @@ public class ContatoBO {
         contato.setDocumento(docNormalizado);
         contato.setEmail(normalizarEmail(email));
         contato.setTelefone(normalizarTexto(telefone));
-        contato.setTipoContato(buscarTipo(tipoContatoCodigo == null ? "BENEFICIARIO" : tipoContatoCodigo));
+        contato.setTipoContato(buscarTipo(tipoContatoCodigo == null ? "SOLICITANTE" : tipoContatoCodigo));
         contato.setCidade(normalizarTexto(cidade));
         contato.setUf(normalizarUf(uf));
         contato.setObservacao(normalizarTexto(observacao));

@@ -17,11 +17,11 @@ export const PRIORIDADE_LABELS = {
 } as const;
 
 export const TIPO_CONTATO_LABELS = {
+  SOLICITANTE: "Solicitante",
   BENEFICIARIO: "Beneficiário",
   DOADOR: "Doador",
   PARCEIRO: "Parceiro",
   VOLUNTARIO: "Dentista voluntário",
-  ORGANIZACAO: "Organização",
 } as const;
 
 export const CANAL_LABELS = {
@@ -130,6 +130,21 @@ export const prioridadeCodigo = (label?: string | null) =>
 
 export const tipoContatoLabel = (codigo?: string | null) =>
   labelPorCodigo(TIPO_CONTATO_LABELS, codigo);
+
+// Dados antigos foram gravados como BENEFICIARIO antes da separacao entre
+// solicitantes e beneficiarios. Mantemos BENEFICIARIO como opcao manual, mas
+// exibimos esses registros legados da API como Solicitante nas telas.
+export const tipoContatoRegistroLabel = (codigo?: string | null, nome?: string | null) => {
+  const normalizedCode = codigo?.trim().toUpperCase();
+  const normalizedName = nome ? normalize(nome) : "";
+  const legacyBeneficiarioName = normalize(TIPO_CONTATO_LABELS.BENEFICIARIO);
+
+  if (normalizedCode === "BENEFICIARIO" || (!normalizedCode && normalizedName === legacyBeneficiarioName)) {
+    return TIPO_CONTATO_LABELS.SOLICITANTE;
+  }
+
+  return tipoContatoLabel(codigo) || nome || "";
+};
 
 export const tipoContatoCodigo = (label?: string | null) =>
   codigoPorLabel(TIPO_CONTATO_LABELS, label) as TipoContatoCodigo | undefined;

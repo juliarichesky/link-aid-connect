@@ -37,7 +37,7 @@ public class WebhookBO {
                 null,
                 null,
                 request.from(),
-                primeiroValor(request.tipoContatoCodigo(), "BENEFICIARIO"),
+                primeiroValor(request.tipoContatoCodigo(), "SOLICITANTE"),
                 null,
                 null,
                 canalPorOrigem(origem),

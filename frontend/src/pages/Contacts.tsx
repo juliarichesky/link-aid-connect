@@ -14,6 +14,7 @@ import { useTickets } from "@/contexts/TicketsContext";
 import { useNavigate } from "react-router-dom";
 
 const typeColors: Record<string, string> = {
+  Solicitante: "bg-warning/15 text-warning",
   Beneficiário: "bg-warning/15 text-warning",
   Doador: "bg-primary/15 text-primary",
   "Dentista voluntário": "bg-success/15 text-success",

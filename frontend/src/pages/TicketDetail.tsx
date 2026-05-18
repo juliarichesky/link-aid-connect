@@ -16,12 +16,13 @@ import { toast } from "sonner";
 
 const defaultMessages = [
   { from: "client", text: "Olá, gostaria de saber sobre o tratamento odontológico gratuito.", time: "14:30" },
-  { from: "ai", text: "Classificação automática: Saúde — Prioridade: Alta. Resumo: Beneficiário buscando informações sobre tratamento gratuito.", time: "14:30" },
+  { from: "ai", text: "Classificação automática: Saúde — Prioridade: Alta. Resumo: Solicitante buscando informações sobre tratamento gratuito.", time: "14:30" },
   { from: "agent", text: "Olá Maria! Obrigado por entrar em contato. Vou verificar as vagas disponíveis para você.", time: "14:35" },
   { from: "client", text: "Muito obrigada! Preciso para meu filho de 8 anos.", time: "14:37" },
 ];
 
 const typeColors: Record<string, string> = {
+  Solicitante: "bg-warning/15 text-warning border-warning/30",
   Beneficiário: "bg-warning/15 text-warning border-warning/30",
   Doador: "bg-primary/15 text-primary border-primary/30",
   "Dentista voluntário": "bg-success/15 text-success border-success/30",
@@ -156,7 +157,7 @@ export default function TicketDetail() {
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div><p className="text-xs text-muted-foreground">Classificação</p><Badge className="mt-1">{ticket.classification}</Badge></div>
-            <div><p className="text-xs text-muted-foreground">Resumo</p><p className="text-xs mt-1">Beneficiária busca tratamento odontológico gratuito para filho de 8 anos.</p></div>
+            <div><p className="text-xs text-muted-foreground">Resumo</p><p className="text-xs mt-1">Solicitante busca tratamento odontológico gratuito para filho de 8 anos.</p></div>
           </CardContent>
         </Card>
 

@@ -386,6 +386,9 @@ INSERT INTO T_LKA_PERFIL (cd_perfil, nm_perfil)
 VALUES ('COLABORADOR', 'Colaborador');
 
 INSERT INTO T_LKA_TIPO_CONTATO (cd_tipo_contato, nm_tipo_contato)
+VALUES ('SOLICITANTE', 'Solicitante');
+
+INSERT INTO T_LKA_TIPO_CONTATO (cd_tipo_contato, nm_tipo_contato)
 VALUES ('BENEFICIARIO', 'Beneficiario');
 
 INSERT INTO T_LKA_TIPO_CONTATO (cd_tipo_contato, nm_tipo_contato)
@@ -396,9 +399,6 @@ VALUES ('PARCEIRO', 'Parceiro');
 
 INSERT INTO T_LKA_TIPO_CONTATO (cd_tipo_contato, nm_tipo_contato)
 VALUES ('VOLUNTARIO', 'Dentista voluntario');
-
-INSERT INTO T_LKA_TIPO_CONTATO (cd_tipo_contato, nm_tipo_contato)
-VALUES ('ORGANIZACAO', 'Organizacao');
 
 INSERT INTO T_LKA_CANAL (cd_canal, nm_canal)
 VALUES ('WHATSAPP', 'WhatsApp');
@@ -502,14 +502,14 @@ VALUES (
 INSERT INTO T_LKA_CONTATO (
     id_tipo_contato, nm_contato, doc_contato, email_contato, tel_contato, nm_cidade, sg_uf, ds_observacao
 ) VALUES (
-    (SELECT id_tipo_contato FROM T_LKA_TIPO_CONTATO WHERE cd_tipo_contato = 'BENEFICIARIO'),
+    (SELECT id_tipo_contato FROM T_LKA_TIPO_CONTATO WHERE cd_tipo_contato = 'SOLICITANTE'),
     'Maria Oliveira',
     '12345678900',
     'maria@email.com',
     '+5511999990000',
     'Sao Paulo',
     'SP',
-    'Beneficiaria solicitando informacoes sobre tratamento odontologico.'
+    'Solicitante pedindo informacoes sobre tratamento odontologico.'
 );
 
 INSERT INTO T_LKA_CONTATO (
@@ -522,13 +522,13 @@ INSERT INTO T_LKA_CONTATO (
     '+552133334444',
     'Rio de Janeiro',
     'RJ',
-    'Organizacao parceira interessada em proposta conjunta.'
+    'Instituicao parceira interessada em proposta conjunta.'
 );
 
 INSERT INTO T_LKA_CONTATO (
     id_tipo_contato, nm_contato, doc_contato, email_contato, tel_contato, nm_cidade, sg_uf, ds_observacao
 ) VALUES (
-    (SELECT id_tipo_contato FROM T_LKA_TIPO_CONTATO WHERE cd_tipo_contato = 'BENEFICIARIO'),
+    (SELECT id_tipo_contato FROM T_LKA_TIPO_CONTATO WHERE cd_tipo_contato = 'SOLICITANTE'),
     'Pedro Almeida',
     '55566677788',
     'pedro.a@email.com',
@@ -586,8 +586,8 @@ INSERT INTO T_LKA_TICKET (
     (SELECT id_usuario FROM T_LKA_USUARIO WHERE email_usuario = 'colab@linkaid.com'),
     (SELECT id_dentista FROM T_LKA_DENTISTA WHERE nr_cro = 'CRO-SP-12345'),
     'Duvida sobre tratamento odontologico',
-    'Beneficiaria quer entender como funciona o atendimento odontologico gratuito.',
-    'Beneficiaria buscando informacoes sobre tratamento gratuito.',
+    'Solicitante quer entender como funciona o atendimento odontologico gratuito.',
+    'Solicitante buscando informacoes sobre tratamento gratuito.',
     92.50,
     TO_TIMESTAMP('2026-05-14 09:00', 'YYYY-MM-DD HH24:MI'),
     TO_TIMESTAMP('2026-05-14 09:15', 'YYYY-MM-DD HH24:MI')

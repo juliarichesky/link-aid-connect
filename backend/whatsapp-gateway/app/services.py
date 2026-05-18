@@ -269,7 +269,7 @@ def _contact_type_from_triage(triage: TriageResult) -> str:
         return "PARCEIRO"
     if any(token in base for token in ["VOLUNTARIADO", "VOLUNTARIO", "VOLUNTARIA", "DENTISTA_VOLUNTARIO"]):
         return "VOLUNTARIO"
-    return "BENEFICIARIO"
+    return "SOLICITANTE"
 
 
 def _triage_summary(prefix: str, classification: str, priority: str) -> str:
