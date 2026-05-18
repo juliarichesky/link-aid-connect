@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, Plus, Archive, MessageCircle, Instagram, Mail, MoreHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/classnames";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useTickets, type Priority } from "@/contexts/TicketsContext";
+import { useTickets, type Priority, type Ticket } from "@/contexts/TicketsContext";
 import { CANAL_LABELS, PRIORIDADE_LABELS, TIPO_CONTATO_LABELS } from "@/lib/linkaidMappings";
 import { toast } from "sonner";
 
@@ -47,33 +47,215 @@ const typeColors: Record<string, string> = {
 };
 
 const ITEMS_PER_PAGE = 10;
+const FILTER_SELECT_CLASS = "w-56";
+
+type StatusFilterOptionValue = "em-triagem" | "aguardando-atendimento" | "em-andamento" | "finalizados";
+type StatusFilterValue = "all" | StatusFilterOptionValue;
+
+type StatusFilterOption = {
+  value: StatusFilterOptionValue;
+  label: string;
+  statuses: string[];
+};
+
+const STATUS_FILTER_OPTIONS: StatusFilterOption[] = [
+  {
+    value: "em-triagem",
+    label: "Em triagem",
+    statuses: ["Novo", "Aguardando triagem", "Em triagem"],
+  },
+  {
+    value: "aguardando-atendimento",
+    label: "Aguardando Atendimento",
+    statuses: ["Aberto", "Aguardando", "Aguardando cliente", "Aguardando Atendimento"],
+  },
+  {
+    value: "em-andamento",
+    label: "Em andamento",
+    statuses: ["Em atendimento", "Em andamento"],
+  },
+  {
+    value: "finalizados",
+    label: "Finalizados",
+    statuses: ["Resolvido", "Arquivado", "Cancelado", "Fechado", "Finalizados"],
+  },
+];
+
+const FINALIZED_STATUS_FILTER = "finalizados";
+
+type ChannelFilterOptionValue = "whatsapp" | "instagram" | "email" | "outros";
+type ChannelFilterValue = "all" | ChannelFilterOptionValue;
+
+type ChannelFilterOption = {
+  value: ChannelFilterOptionValue;
+  label: string;
+  channels: string[];
+};
+
+const CHANNEL_FILTER_OPTIONS: ChannelFilterOption[] = [
+  {
+    value: "whatsapp",
+    label: "WhatsApp",
+    channels: [CANAL_LABELS.WHATSAPP],
+  },
+  {
+    value: "instagram",
+    label: "Instagram",
+    channels: [CANAL_LABELS.INSTAGRAM],
+  },
+  {
+    value: "email",
+    label: "Email",
+    channels: [CANAL_LABELS.EMAIL, "Email"],
+  },
+  {
+    value: "outros",
+    label: "Outros",
+    channels: [CANAL_LABELS.MANUAL, "Manual", "Cadastro manual", "Outros"],
+  },
+];
+
+type ClassificationFilterOptionValue = "saude" | "parceria" | "voluntariado" | "doacao" | "geral";
+type ClassificationFilterValue = "all" | ClassificationFilterOptionValue;
+
+type ClassificationFilterOption = {
+  value: ClassificationFilterOptionValue;
+  label: string;
+  classifications: string[];
+};
+
+const CLASSIFICATION_FILTER_OPTIONS: ClassificationFilterOption[] = [
+  {
+    value: "saude",
+    label: "Saúde",
+    classifications: ["Saúde", "Emergência", "Agendamento"],
+  },
+  {
+    value: "parceria",
+    label: "Parceria",
+    classifications: ["Parceria"],
+  },
+  {
+    value: "voluntariado",
+    label: "Voluntariado",
+    classifications: ["Voluntariado", "Voluntariado odontológico"],
+  },
+  {
+    value: "doacao",
+    label: "Doação",
+    classifications: ["Doação"],
+  },
+  {
+    value: "geral",
+    label: "Geral",
+    classifications: ["Geral", "Social", "Feedback"],
+  },
+];
+
+const SPECIFIC_CLASSIFICATION_FILTERS = CLASSIFICATION_FILTER_OPTIONS.filter(
+  (option) => option.value !== "geral",
+);
+
+const normalizeForFilter = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+const channelFilterFromParam = (value: string | null): ChannelFilterValue => {
+  if (!value) return "all";
+  const normalizedValue = normalizeForFilter(value);
+  return CHANNEL_FILTER_OPTIONS.find((option) =>
+    option.channels.some((channel) => normalizeForFilter(channel) === normalizedValue) ||
+    normalizeForFilter(option.label) === normalizedValue,
+  )?.value || "all";
+};
+
+const ticketMatchesClassificationFilter = (ticket: Ticket, option: ClassificationFilterOption): boolean => {
+  if (option.value === "geral") {
+    return !SPECIFIC_CLASSIFICATION_FILTERS.some((specificOption) =>
+      ticketMatchesClassificationFilter(ticket, specificOption),
+    );
+  }
+
+  if (option.classifications.includes(ticket.classification)) return true;
+
+  const subject = normalizeForFilter(ticket.subject);
+  if (option.value === "voluntariado") {
+    return ticket.type === TIPO_CONTATO_LABELS.VOLUNTARIO ||
+      subject.includes("voluntariado") ||
+      subject.includes("dentista voluntario");
+  }
+  if (option.value === "doacao") {
+    return ticket.type === TIPO_CONTATO_LABELS.DOADOR ||
+      subject.includes("doacao") ||
+      subject.includes("doar");
+  }
+  if (option.value === "parceria") {
+    return ticket.type === TIPO_CONTATO_LABELS.PARCEIRO ||
+      subject.includes("parceria") ||
+      subject.includes("convenio");
+  }
+  if (option.value === "saude") {
+    return subject.includes("triagem") ||
+      subject.includes("odontolog") ||
+      subject.includes("tratamento") ||
+      subject.includes("agendamento") ||
+      subject.includes("dor de dente");
+  }
+
+  return false;
+};
 
 export default function Tickets() {
   const { tickets, archiveTicket } = useTickets();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [searchParams] = useSearchParams();
+  const [channelFilter, setChannelFilter] = useState<ChannelFilterValue>(() =>
+    channelFilterFromParam(searchParams.get("channel")),
+  );
+  const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
-  const [classificationFilter, setClassificationFilter] = useState("all");
+  const [classificationFilter, setClassificationFilter] = useState<ClassificationFilterValue>("all");
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
-  const channelFilter = searchParams.get("channel") || "all";
-  const classifications = [...new Set(tickets.map((t) => t.classification))];
+  useEffect(() => {
+    setChannelFilter(channelFilterFromParam(searchParams.get("channel")));
+  }, [searchParams]);
 
   const filtered = tickets.filter((t) => {
-    if (t.status === "Resolvido" || t.status === "Arquivado") return false;
+    const selectedChannel = CHANNEL_FILTER_OPTIONS.find((option) => option.value === channelFilter);
+    const selectedStatus = STATUS_FILTER_OPTIONS.find((option) => option.value === statusFilter);
+    const selectedClassification = CLASSIFICATION_FILTER_OPTIONS.find((option) => option.value === classificationFilter);
+    const isFinalized = STATUS_FILTER_OPTIONS
+      .find((option) => option.value === FINALIZED_STATUS_FILTER)
+      ?.statuses.includes(t.status);
+
+    if (isFinalized && statusFilter !== FINALIZED_STATUS_FILTER) return false;
+
     const ticketCode = t.protocol || t.id;
     const matchSearch = t.sender.toLowerCase().includes(search.toLowerCase()) || t.subject.toLowerCase().includes(search.toLowerCase()) || ticketCode.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === "all" || t.status === statusFilter;
+    const matchStatus = statusFilter === "all" || Boolean(selectedStatus?.statuses.includes(t.status));
     const matchPriority = priorityFilter === "all" || t.priority === priorityFilter;
-    const matchClassification = classificationFilter === "all" || t.classification === classificationFilter;
-    const matchChannel = channelFilter === "all" || t.channel === channelFilter;
+    const matchClassification = classificationFilter === "all" ||
+      Boolean(selectedClassification && ticketMatchesClassificationFilter(t, selectedClassification));
+    const matchChannel = channelFilter === "all" || Boolean(selectedChannel?.channels.includes(t.channel));
     return matchSearch && matchStatus && matchPriority && matchClassification && matchChannel;
   });
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
+  const selectedChannelOption = CHANNEL_FILTER_OPTIONS.find((option) => option.value === channelFilter);
+
+  const handleChannelFilterChange = (value: ChannelFilterValue) => {
+    setChannelFilter(value);
+    setPage(1);
+
+    const option = CHANNEL_FILTER_OPTIONS.find((item) => item.value === value);
+    navigate(option ? `/tickets?channel=${encodeURIComponent(option.channels[0])}` : "/tickets");
+  };
 
   const handleArchive = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -90,7 +272,7 @@ export default function Tickets() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-display font-bold">
-            Tickets {channelFilter !== "all" && <span className="text-primary">— {channelFilter}</span>}
+            Tickets {selectedChannelOption && <span className="text-primary">— {selectedChannelOption.label}</span>}
           </h1>
           <p className="text-sm text-muted-foreground">Visão geral de atendimentos</p>
         </div>
@@ -105,16 +287,24 @@ export default function Tickets() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Buscar por nome, assunto ou ID..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} className="pl-9" />
         </div>
-        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
+        <Select value={channelFilter} onValueChange={(v) => handleChannelFilterChange(v as ChannelFilterValue)}>
+          <SelectTrigger className={FILTER_SELECT_CLASS}><SelectValue placeholder="Canais" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="Novo">Novo</SelectItem>
-            <SelectItem value="Aberto">Aberto</SelectItem>
-            <SelectItem value="Aguardando">Aguardando</SelectItem>
+            {CHANNEL_FILTER_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={classificationFilter} onValueChange={(v) => { setClassificationFilter(v as ClassificationFilterValue); setPage(1); }}>
+          <SelectTrigger className={FILTER_SELECT_CLASS}><SelectValue placeholder="Classificação" /></SelectTrigger>
+          <SelectContent>
+            {CLASSIFICATION_FILTER_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Select value={priorityFilter} onValueChange={(v) => { setPriorityFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Prioridade" /></SelectTrigger>
+          <SelectTrigger className={FILTER_SELECT_CLASS}><SelectValue placeholder="Prioridade" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="Crítica">Crítica</SelectItem>
             <SelectItem value="Alta">Alta</SelectItem>
@@ -122,11 +312,11 @@ export default function Tickets() {
             <SelectItem value="Baixa">Baixa</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={classificationFilter} onValueChange={(v) => { setClassificationFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-40"><SelectValue placeholder="Classificação" /></SelectTrigger>
+        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v as StatusFilterValue); setPage(1); }}>
+          <SelectTrigger className={FILTER_SELECT_CLASS}><SelectValue placeholder="Status" /></SelectTrigger>
           <SelectContent>
-            {classifications.map((c) => (
-              <SelectItem key={c} value={c}>{c}</SelectItem>
+            {STATUS_FILTER_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -138,6 +328,7 @@ export default function Tickets() {
               setStatusFilter("all");
               setPriorityFilter("all");
               setClassificationFilter("all");
+              setChannelFilter("all");
               setPage(1);
               if (channelFilter !== "all") navigate("/tickets");
             }}
@@ -173,7 +364,7 @@ export default function Tickets() {
                   key={t.id}
                   className="cursor-pointer hover:bg-accent/60 transition-colors"
                   onClick={() => {
-                    const backUrl = channelFilter !== "all" ? `/tickets?channel=${encodeURIComponent(channelFilter)}` : "/tickets";
+                    const backUrl = selectedChannelOption ? `/tickets?channel=${encodeURIComponent(selectedChannelOption.channels[0])}` : "/tickets";
                     navigate(`/tickets/${t.id}`, { state: { backUrl } });
                   }}
                 >

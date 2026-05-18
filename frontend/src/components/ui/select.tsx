@@ -24,20 +24,52 @@ const Select = ({ value, defaultValue, onValueChange, children }: SelectProps) =
   const [internalValue, setInternalValue] = React.useState(defaultValue);
   const [open, setOpen] = React.useState(false);
   const [items] = React.useState(() => new Map<string, React.ReactNode>());
+  const rootRef = React.useRef<HTMLDivElement>(null);
   const activeValue = value ?? internalValue;
   const setValue = (nextValue: string) => {
     if (value === undefined) setInternalValue(nextValue);
     onValueChange?.(nextValue);
     setOpen(false);
   };
-  return <SelectContext.Provider value={{ value: activeValue, setValue, open, setOpen, items }}>{children}</SelectContext.Provider>;
+
+  React.useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <SelectContext.Provider value={{ value: activeValue, setValue, open, setOpen, items }}>
+      <div ref={rootRef} className="relative">
+        {children}
+      </div>
+    </SelectContext.Provider>
+  );
 };
 
 const SelectGroup = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
 const SelectValue = ({ placeholder }: { placeholder?: React.ReactNode }) => {
   const context = React.useContext(SelectContext);
-  return <span>{context?.value ? context.items.get(context.value) ?? context.value : placeholder}</span>;
+  const shouldShowPlaceholder = !context?.value || context.value === "all";
+  return <span>{shouldShowPlaceholder ? placeholder : context.items.get(context.value) ?? context.value}</span>;
 };
 
 const SelectTrigger = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
@@ -80,7 +112,7 @@ const SelectContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
     <div
       ref={ref}
       role="listbox"
-      className={cn("relative z-50 mt-1 max-h-96 min-w-[8rem] overflow-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95", className)}
+      className={cn("absolute left-0 top-full z-50 mt-1 max-h-96 min-w-full overflow-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95", className)}
       {...props}
     >
       {children}
