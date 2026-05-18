@@ -11,6 +11,7 @@ import com.turmadobem.dao.UsuarioDAO;
 import com.turmadobem.dto.LinkAidDtos;
 import com.turmadobem.exception.BusinessException;
 import com.turmadobem.exception.NotFoundException;
+import com.turmadobem.integration.WhatsAppGatewayClient;
 import com.turmadobem.model.Canal;
 import com.turmadobem.model.Classificacao;
 import com.turmadobem.model.Contato;
@@ -65,6 +66,9 @@ public class TicketBO {
 
     @Inject
     ClassificacaoDAO classificacaoDAO;
+
+    @Inject
+    WhatsAppGatewayClient whatsAppGatewayClient;
 
     @Transactional(Transactional.TxType.SUPPORTS)
     public List<LinkAidDtos.TicketResponse> listar(String status, String canal, Long responsavelId, int page, int size) {
@@ -153,6 +157,7 @@ public class TicketBO {
         Ticket ticket = buscarEntidade(idTicket);
         Usuario usuario = resolverUsuarioMensagem(request, idUsuarioPadrao);
         TicketMensagem mensagem = registrarMensagem(ticket, request.tipoRemetente(), request.mensagem(), usuario);
+        enviarWhatsappSeNecessario(ticket, mensagem);
         return ApiMapper.mensagem(mensagem);
     }
 
@@ -290,6 +295,28 @@ public class TicketBO {
         } else {
             ticket.setDataFechamento(null);
         }
+    }
+
+    private void enviarWhatsappSeNecessario(Ticket ticket, TicketMensagem mensagem) {
+        if (!"ATENDENTE".equals(mensagem.getTipoRemetente()) || !ticketEhWhatsapp(ticket)) {
+            return;
+        }
+
+        String telefone = ticket.getContato() == null ? null : ticket.getContato().getTelefone();
+        if (telefone == null || telefone.isBlank()) {
+            throw new BusinessException("Contato sem telefone para envio via WhatsApp.");
+        }
+
+        whatsAppGatewayClient.enviarMensagem(telefone, mensagem.getMensagem());
+    }
+
+    private boolean ticketEhWhatsapp(Ticket ticket) {
+        String codigo = ticket.getCanal() == null ? null : ticket.getCanal().getCodigo();
+        if (codigo == null) {
+            return false;
+        }
+        String normalized = codigo.toUpperCase();
+        return normalized.contains("WHATSAPP") || normalized.contains("WATSON") || normalized.contains("TWILIO");
     }
 
     private Canal buscarCanal(String codigo) {

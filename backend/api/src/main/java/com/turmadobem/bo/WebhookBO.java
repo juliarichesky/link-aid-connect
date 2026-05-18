@@ -1,5 +1,6 @@
 package com.turmadobem.bo;
 
+import com.turmadobem.dao.TicketDAO;
 import com.turmadobem.dao.WebhookEventoDAO;
 import com.turmadobem.dto.LinkAidDtos;
 import com.turmadobem.exception.BusinessException;
@@ -18,6 +19,9 @@ public class WebhookBO {
     TicketBO ticketBO;
 
     @Inject
+    TicketDAO ticketDAO;
+
+    @Inject
     WebhookEventoDAO webhookEventoDAO;
 
     @Transactional
@@ -30,6 +34,13 @@ public class WebhookBO {
         String classificacao = primeiroValor(request.classificacaoCodigo(), inferirClassificacao(request.body(), request.intent()));
         String origem = primeiroValor(request.origem(), "WATSON_SANDBOX").toUpperCase();
         String nome = primeiroValor(request.nome(), request.from(), "Contato WhatsApp");
+        Ticket ticketAberto = ticketDAO.buscarAbertoPorTelefone(request.from());
+        if (ticketAberto != null) {
+            ticketBO.registrarMensagem(ticketAberto, "CONTATO", request.body(), null);
+            ticketBO.registrarMensagem(ticketAberto, "IA", respostaIaComProtocolo(request.respostaIa(), ticketAberto.getProtocolo()), null);
+            registrarEvento(ticketAberto, request, origem, "PROCESSADO");
+            return ticketBO.buscar(ticketAberto.getIdTicket());
+        }
 
         LinkAidDtos.TicketRequest ticketRequest = new LinkAidDtos.TicketRequest(
                 null,
@@ -54,17 +65,20 @@ public class WebhookBO {
         Ticket ticket = ticketBO.criarEntidade(ticketRequest);
         ticketBO.registrarMensagem(ticket, "CONTATO", request.body(), null);
         ticketBO.registrarMensagem(ticket, "IA", respostaIaComProtocolo(request.respostaIa(), ticket.getProtocolo()), null);
+        registrarEvento(ticket, request, origem, "PROCESSADO");
 
+        return ticketBO.buscar(ticket.getIdTicket());
+    }
+
+    private void registrarEvento(Ticket ticket, LinkAidDtos.WebhookTicketRequest request, String origem, String status) {
         WebhookEvento evento = new WebhookEvento();
         evento.setTicket(ticket);
         evento.setOrigem(origem);
         evento.setExternalId(request.externalId());
         evento.setPayload(primeiroValor(request.payload(), payloadBasico(request)));
-        evento.setStatusProcessamento("PROCESSADO");
+        evento.setStatusProcessamento(status);
         evento.setDataRecebimento(LocalDateTime.now());
         webhookEventoDAO.persist(evento);
-
-        return ticketBO.buscar(ticket.getIdTicket());
     }
 
     private String inferirPrioridade(String texto) {

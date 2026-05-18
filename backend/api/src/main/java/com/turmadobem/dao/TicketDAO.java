@@ -38,6 +38,31 @@ public class TicketDAO implements PanacheRepository<Ticket> {
         return list("contato.idContato = ?1 order by dataAbertura desc", idContato);
     }
 
+    public Ticket buscarAbertoPorTelefone(String telefone) {
+        if (telefone == null || telefone.isBlank()) {
+            return null;
+        }
+
+        String telefoneNormalizado = telefone.replaceAll("\\D", "");
+        if (telefoneNormalizado.isBlank()) {
+            return null;
+        }
+
+        TypedQuery<Ticket> query = getEntityManager().createQuery("""
+                select t
+                from Ticket t
+                join t.contato c
+                join t.status s
+                where function('regexp_replace', c.telefone, '[^0-9]', '') = :telefone
+                  and s.codigo not in :statusFinais
+                order by t.dataAtualizacao desc, t.idTicket desc
+                """, Ticket.class);
+        query.setParameter("telefone", telefoneNormalizado);
+        query.setParameter("statusFinais", List.of("RESOLVIDO", "CANCELADO", "ARQUIVADO"));
+        query.setMaxResults(1);
+        return query.getResultStream().findFirst().orElse(null);
+    }
+
     public List<Ticket> ultimosTickets(int limite) {
         return find("order by dataAbertura desc")
                 .page(0, Math.min(Math.max(limite, 1), 20))

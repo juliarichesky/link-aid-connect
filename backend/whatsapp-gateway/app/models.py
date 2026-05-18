@@ -1,6 +1,17 @@
 from pydantic import BaseModel, Field
 
 
+class WhatsAppOutboundRequest(BaseModel):
+    to: str = Field(min_length=8)
+    body: str = Field(min_length=1, max_length=1600)
+
+
+class WhatsAppOutboundResponse(BaseModel):
+    sid: str
+    status: str | None = None
+    to: str
+
+
 class TwilioInboundMessage(BaseModel):
     message_sid: str = Field(default="")
     account_sid: str = Field(default="")

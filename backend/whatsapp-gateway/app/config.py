@@ -10,7 +10,9 @@ class Settings(BaseSettings):
     public_base_url: str | None = None
     request_timeout_seconds: float = 10.0
 
+    twilio_account_sid: str | None = None
     twilio_auth_token: str | None = None
+    twilio_whatsapp_from: str = "whatsapp:+14155238886"
     twilio_validate_signature: bool = False
 
     watson_enabled: bool = True
@@ -38,6 +40,7 @@ class Settings(BaseSettings):
                 self.watson_api_key,
                 self.watson_url,
                 self.watson_assistant_id,
+                self.watson_environment_id,
             ]
         )
 

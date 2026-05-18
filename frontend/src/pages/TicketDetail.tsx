@@ -73,6 +73,18 @@ export default function TicketDetail() {
     }
   }, [ticket]);
 
+  useEffect(() => {
+    if (!id || !/^\d+$/.test(id)) return;
+
+    const intervalId = window.setInterval(() => {
+      loadTicket(id).catch(() => {
+        // A toast a cada polling deixaria a conversa barulhenta; o carregamento inicial ja mostra erro.
+      });
+    }, 5000);
+
+    return () => window.clearInterval(intervalId);
+  }, [id, loadTicket]);
+
   const handleSave = async (field: string, value: string) => {
     if (!id) return;
     try {
