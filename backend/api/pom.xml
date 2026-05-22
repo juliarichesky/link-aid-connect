@@ -4,9 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.turmadobem</groupId>
-    <artifactId>turma-do-bem</artifactId>
+    <artifactId>linkaid-api</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>turma-do-bem</name>
+    <name>LinkAid API</name>
+    <description>Backend Java/Quarkus do LinkAid para gestao de tickets da Turma do Bem.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
